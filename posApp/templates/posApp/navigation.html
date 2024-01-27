@@ -1,0 +1,116 @@
+{% load static %}
+<!-- partial:partials/_sidebar.html -->
+<aside id="nav" class="mdc-drawer mdc-drawer--dismissible mdc-drawer--open bg-dark bg-gradient">
+    <div class="mdc-drawer__header border-bottom border-light">
+        {% if branch1 %}
+        <a href="{% url 'home-page' pk=branch1.pk %}" class="brand-logo">
+            <h3 class="text-center text-light">{{ branch1.name }}</h3>
+        </a>
+        {% elif branch %}
+        <a href="{% url 'home-page' pk=branch.pk %}" class="brand-logo">
+            <h3 class="text-center text-light">{{ branch.name }}</h3>
+        </a>
+        {% endif %}
+    </div>
+    <div class="mdc-drawer__content">
+        <div class="mdc-list-group">
+            <nav class="mdc-list mdc-drawer-menu">
+                <div class="mdc-list-item mdc-drawer-item">
+                    {% if branch1 %}
+                    <a class="mdc-drawer-link" href="{% url 'home-page' pk=branch1.pk %}">
+                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">home</i> Home
+                    </a>
+                    {% elif branch %}
+                    <a class="mdc-drawer-link" href="{% url 'home-page' pk=branch.pk %}">
+                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">home</i> Home
+                    </a>
+                    {% endif %}
+                </div>
+                {% if branch1 %}
+                <div class="mdc-list-item mdc-drawer-item">
+                    <a class="mdc-drawer-link" href="{% url 'category-page' pk=branch1.pk %}">
+                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">list</i> Category List
+                    </a>
+                </div>
+                {% elif branch %}
+                <div class="mdc-list-item mdc-drawer-item">
+                    <a class="mdc-drawer-link" href="{% url 'category-page' pk=branch.pk %}">
+                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">list</i> Category List
+                    </a>
+                </div>
+                {% endif %}
+                {% if branch1 %}
+                <div class="mdc-list-item mdc-drawer-item">
+                    <a class="mdc-drawer-link" href="{% url 'product-page' pk=branch1.pk %}">
+                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">label</i> Product List
+                    </a>
+                </div>
+                {% elif branch %}
+                <div class="mdc-list-item mdc-drawer-item">
+                    <a class="mdc-drawer-link" href="{% url 'product-page' pk=branch.pk %}">
+                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">label</i> Product List
+                    </a>
+                </div>
+                {% endif %}
+                {% if branch1 %}
+                <div class="mdc-list-item mdc-drawer-item">
+                    <a class="mdc-drawer-link" href="{% url 'pos-page' pk=branch1.pk %}">
+                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">payment</i> POS
+                    </a>
+                </div>
+                {% elif branch %}
+                <div class="mdc-list-item mdc-drawer-item">
+                    <a class="mdc-drawer-link" href="{% url 'pos-page' pk=branch.pk %}">
+                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">payment</i> POS
+                    </a>
+                </div>
+                {% endif %}
+                {% if branch1 %}
+                <div class="mdc-list-item mdc-drawer-item">
+                    <a class="mdc-drawer-link" href="{% url 'sales-page' pk=branch1.pk %}">
+                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">receipt</i> Sales
+                    </a>
+                </div>
+                {% elif branch %}
+                <div class="mdc-list-item mdc-drawer-item">
+                    <a class="mdc-drawer-link" href="{% url 'sales-page' pk=branch.pk %}">
+                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">receipt</i> Sales
+                    </a>
+                </div>
+                {% endif %}
+<br>
+<div class="container-fluid">
+<hr>
+</div>
+<br>
+                {% if branch1 %}
+                <div class="mdc-list-item mdc-drawer-item">
+                    <a class="mdc-drawer-link" href="{% url 'inventory' pk=branch1.pk %}">
+                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i> Inventory
+                    </a>
+                </div>
+                {% elif branch %}
+                <div class="mdc-list-item mdc-drawer-item">
+                    <a class="mdc-drawer-link" href="{% url 'inventory' pk=branch.pk %}">
+                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i> Inventory
+                    </a>
+                </div>
+                {% endif %}
+                {% if branch1 %}
+                <div class="mdc-list-item mdc-drawer-item">
+                    <a class="mdc-drawer-link" href="{% url 'todays-sales' pk=branch1.pk %}">
+                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i> Today's Sales
+                    </a>
+                </div>
+                {% elif branch %}
+                <div class="mdc-list-item mdc-drawer-item">
+                    <a class="mdc-drawer-link" href="{% url 'todays-sales' pk=branch.pk %}">
+                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i> Today's Sales
+                    </a>
+                </div>
+                {% endif %}
+            </nav>
+        </div>
+    </div>
+</aside>
+<!-- partial -->

@@ -1,0 +1,59 @@
+{% extends "posApp/base.html" %} {% block pageContent %}
+{% if branch %}
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card py-2">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="card-title mb-0">Today's Sales Items</h4>
+        </div>
+    </div>
+</div>
+<div style="display: inline;">
+<button id="print" style="border-width: 0px; width: 140px; height: 60px;"> Print Today's Sale Items
+</button>
+</div>
+<div id="today_sales_items" class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <colgroup>
+                    <col width="5%">
+                    <col width="20%">
+                    <col width="20%">
+                    <col width="25%">
+                    <col width="15%">
+                    <col width="15%">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th class="text-center py-1">#</th>
+                        <th class="text-center py-1">Sale ID</th>
+                        <th class="text-center py-1">Product</th>
+                        <th class="text-center py-1">Price</th>
+                        <th class="text-center py-1">Quantity</th>
+                        <th class="text-center py-1">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sale in todays_sale_items %}
+                    <tr>
+                        <td class="px-2 py-1 text-center">{{ sale.id }}</td>
+                        <td class="px-2 py-1 text-start">{{ sale.sale_id }}</td>
+                        <td class="px-2 py-1 text-start">{{ sale.product_id }}</td>
+                        <td class="px-2 py-1 text-end">D{{ sale.price }}</td>
+                        <td class="px-2 py-1 text-end">{{ sale.qty }}</td>
+                        <td class="px-2 py-1 text-center">D{{ sale.total }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+<script>
+const printBtn = document.getElementById('print')
+printBtn.addEventListener('click', function(){
+    print()
+})
+</script>
+{% endblock pageContent %}
