@@ -30,7 +30,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-
+CSRF_TRUSTED_ORIGINS = ['https://*.wriberpos.com']
 # Application definition
 
 INSTALLED_APPS = [
@@ -156,5 +156,6 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-LOGIN_REDIRECT_URL = '/'
-LOGIN_URL = '/login'
+LOGIN_REDIRECT_URL = ''
+LOGIN_URL = '/login/'
+
