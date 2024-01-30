@@ -40,7 +40,7 @@ class CustomAccountManager(BaseUserManager):
 
 
 class Users(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(_('email address'), unique=True)
+    email = models.EmailField(_('email address'), unique=True, primary_key=True)
     username = models.CharField(max_length=150, unique=True)
     country = CountryField()
     phone_number = models.CharField(max_length=20, blank=True)
@@ -140,6 +140,7 @@ class Sales(models.Model):
     date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
     branch_owner = models.ForeignKey(Branch, null=True, related_name='salesbranch', on_delete=models.CASCADE)
+    user = models.ForeignKey(Users, related_name='salesuser', on_delete=models.DO_NOTHING, null=True, default="wriberpos@gmail.com")
 
     def __str__(self):
         return self.code

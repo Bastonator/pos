@@ -64,7 +64,7 @@ def index(request):
 
 
 def user_account(request, pk):
-    user = Users.objects.get(id=pk)
+    user = Users.objects.get(email=pk)
     branch = Branch.objects.filter(user=pk)
     return render(request, 'posApp/UserDash.html', {'user': user, 'branch': branch})
 
@@ -100,8 +100,8 @@ def branch_register(request):
         branch_user2 = request.POST.get('user2')
         branch_user3 = request.POST.get('user3')
         branch = Branch.objects.create(id=branch_id, name=branch_name, location=None, phone=branch_phone)
-        branch.user.add(
-            branch_user or None)  # it is branch.user.add because user is how the many to many field is designated in the models.py
+        branch.user.add(branch_user or None)
+        # it is branch.user.add because user is how the many to many field is designated in the models.py
         branch.user.add(branch_user2 or None)
         branch.user.add(branch_user3 or None)
         context['branchid'] = branch
@@ -406,7 +406,7 @@ def save_pos(request, pk):
     try:
         sales = Sales(code=code, sub_total=data['sub_total'], tax=data['tax'], tax_amount=data['tax_amount'],
                       grand_total=data['grand_total'], tendered_amount=data['tendered_amount'],
-                      amount_change=data['amount_change'], branch_owner=branch).save()
+                      amount_change=data['amount_change'], branch_owner=branch, user=request.user).save()
         sale_id = Sales.objects.last().pk
         i = 0
         for prod in data.getlist('product_id[]'):
