@@ -145,6 +145,15 @@ class Sales(models.Model):
     def __str__(self):
         return self.code
 
+    def sold_by(self):
+        return self.user.email
+
+    def branch(self):
+        return self.branch_owner
+
+    def code_again(self):
+        return self.code
+
 class salesItems(models.Model):
     sale_id = models.ForeignKey(Sales,on_delete=models.CASCADE)
     product_id = models.ForeignKey(Products,on_delete=models.CASCADE)
@@ -152,4 +161,5 @@ class salesItems(models.Model):
     qty = models.FloatField(default=0)
     total = models.FloatField(default=0)
     date_added = models.DateTimeField(default=timezone.now, null=True)
-    branch_owner = models.ForeignKey(Branch, null=True, related_name='saleitembranch', on_delete=models.CASCADE) 
+    branch_owner = models.ForeignKey(Branch, null=True, related_name='saleitembranch', on_delete=models.CASCADE)
+    user = models.ForeignKey(Users, related_name='saleitemuser', on_delete=models.DO_NOTHING, null=True)

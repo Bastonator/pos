@@ -15,10 +15,9 @@
                     <col width="5%">
                     <col width="15%">
                     <col width="18%">
+                    <col width="24%">
                     <col width="15%">
                     <col width="10%">
-                    <col width="13%">
-                    <col width="24%">
                     <col width="13%">
                 </colgroup>
                 <thead>
@@ -26,23 +25,22 @@
                         <th class="text-center py-1" width="5%">#</th>
                         <th class="text-center py-1" width="15%">DateTime</th>
                         <th class="text-center py-1" width="18%">Trans. Code</th>
+                        <th class="text-center py-1" width="24%">Sold by</th>
                         <th class="text-center py-1" width="15%">Total</th>
                         <th class="text-center py-1" width="10%">Tax Inclusive</th>
-                        <th class="text-center py-1" width="13%">Items</th>
-                        <th class="text-center py-1" width="24%">Sold by</th>
                         <th class="text-center py-1" width="13%">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for sale in sale_data %}
+                {% if sales %}
+                    {% for sale in sales %}
                     <tr>
                         <td class="px-2 py-1 text-center" width="5%">{{ sale.id }}</td>
                         <td class="px-2 py-1 text-start" width="15%">{{ sale.date_added|date:'Y-m-d H:i' }}</td>
                         <td class="px-2 py-1 text-start" width="18%">{{ sale.code }}</td>
+                        <td class="px-2 py-1 text-center" width="24%">by {{ sale.sold_by }}</td>
                         <td class="px-2 py-1 text-end" width="15%">D{{ sale.grand_total|intcomma }}</td>
                         <td class="px-2 py-1 text-end" width="10%">({{ sale.tax }}%) {{ sale.tax_amount|intcomma:2 }}</td>
-                        <td class="px-2 py-1 text-center" width="13%">{{ sale.item_count|intcomma }}</td>
-                        <td class="text-center" width="24%">{{ sale.user }}</td>
                         <td class="px-2 py-1 text-center" width="13%">
                             <button class="mdc-button mdc-button--raised p-1 icon-button filled-button--light mdc-ripple-upgraded view-data" type="button" data-id="{{ sale.id }}" title="View Receipt">
                                 <i class="material-icons mdc-button__icon">receipt</i>
@@ -55,6 +53,7 @@
                         </td>
                     </tr>
                     {% endfor %}
+                {% endif %}
                 </tbody>
             </table>
         </div>

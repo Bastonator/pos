@@ -393,6 +393,7 @@ def save_pos(request, pk):
     resp = {'status': 'failed', 'msg': ''}
     branch = Branch.objects.get(id=pk)
     data = request.POST
+    seller = Users.objects.get(email=request.user)
     pref = datetime.now().year + datetime.now().year
     i = 1
     while True:
@@ -406,7 +407,7 @@ def save_pos(request, pk):
     try:
         sales = Sales(code=code, sub_total=data['sub_total'], tax=data['tax'], tax_amount=data['tax_amount'],
                       grand_total=data['grand_total'], tendered_amount=data['tendered_amount'],
-                      amount_change=data['amount_change'], branch_owner=branch, user=request.user).save()
+                      amount_change=data['amount_change'], branch_owner=branch, user=seller).save()
         sale_id = Sales.objects.last().pk
         i = 0
         for prod in data.getlist('product_id[]'):
@@ -419,7 +420,7 @@ def save_pos(request, pk):
             product.stock = product.stock - float(qty)
             product.save()
             print({'sale_id': sale, 'product_id': product, 'qty': qty, 'price': price, 'total': total})
-            salesItems(sale_id=sale, product_id=product, qty=qty, price=price, total=total, branch_owner=branch).save()
+            salesItems(sale_id=sale, product_id=product, qty=qty, price=price, total=total, branch_owner=branch, user=seller).save()
             i += int(1)
         resp['status'] = 'success'
         resp['sale_id'] = sale_id
@@ -472,6 +473,7 @@ def salesList(request, pk):
         'sale_data': sale_data,
         'branch': branch,
         'branch1': branch1,
+        'sales': sales
     }
     # return HttpResponse('')
     return render(request, 'posApp/sales.html', context)
