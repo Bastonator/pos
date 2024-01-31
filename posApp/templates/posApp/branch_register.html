@@ -84,12 +84,60 @@
                                         <input
                                           type="text"
                                           class="form-control"
-                                          id="defaultFormControlInput5"
+                                          id="defaultFormControlInput8"
                                           placeholder="Third controlling user"
                                           name="user3"
-                                          list="userlist2"
+                                          list="userlist3"
                                           aria-describedby="defaultFormControlHelp" />
                                           <datalist id="userlist3">
+                                             {% for user in user %}
+                                             <option value="{{ user.id }}">-<strong>{{ user.email }}-{{ user.username }}</strong></option>
+                                             {% endfor %}
+                                          </datalist>
+                                      </div>
+                                        <div>
+                                        <label for="defaultFormControlInput" class="form-label">Branch Users</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="defaultFormControlInput7"
+                                          placeholder="Third controlling user"
+                                          name="user4"
+                                          list="userlist4"
+                                          aria-describedby="defaultFormControlHelp" />
+                                          <datalist id="userlist4">
+                                             {% for user in user %}
+                                             <option value="{{ user.id }}">-<strong>{{ user.email }}-{{ user.username }}</strong></option>
+                                             {% endfor %}
+                                          </datalist>
+                                      </div>
+                                        <div>
+                                        <label for="defaultFormControlInput" class="form-label">Branch Users</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="defaultFormControlInput5"
+                                          placeholder="Third controlling user"
+                                          name="user5"
+                                          list="userlist5"
+                                          aria-describedby="defaultFormControlHelp" />
+                                          <datalist id="userlist5">
+                                             {% for user in user %}
+                                             <option value="{{ user.id }}">-<strong>{{ user.email }}-{{ user.username }}</strong></option>
+                                             {% endfor %}
+                                          </datalist>
+                                      </div>
+                                        <div>
+                                        <label for="defaultFormControlInput" class="form-label">Branch Users</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="defaultFormControlInput10"
+                                          placeholder="Third controlling user"
+                                          name="user6"
+                                          list="userlist6"
+                                          aria-describedby="defaultFormControlHelp" />
+                                          <datalist id="userlist6">
                                              {% for user in user %}
                                              <option value="{{ user.id }}">-<strong>{{ user.email }}-{{ user.username }}</strong></option>
                                              {% endfor %}
@@ -109,6 +157,18 @@
                                           aria-describedby="defaultFormControlHelp" />
                                         <div id="defaultFormControlHelp3" class="form-text">
                                           We'll never share your details with anyone else.
+                                        </div>
+                                      </div>
+                                        <div>
+                                        <label for="defaultFormControlInput" class="form-label">Branch Address</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="defaultFormControlInput55"
+                                          placeholder="Address"
+                                          name="branchaddress"
+                                          aria-describedby="defaultFormControlHelp" />
+                                        <div id="defaultFormControlHelp55" class="form-text">
                                         </div>
                                       </div>
                                       <div class="input-group">

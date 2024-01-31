@@ -69,6 +69,7 @@ class Branch(models.Model):
     id = models.CharField(max_length=100, unique=True, primary_key=True, auto_created=False)
     name = models.CharField(max_length=100, null=True)
     location = CountryField(null=True, blank=True)
+    address = models.CharField(max_length=555, null=True, blank=True)
     phone = models.IntegerField(null=True, blank=True)
     user = models.ManyToManyField(Users, related_name='branchusers', null=True)
 
@@ -117,6 +118,7 @@ class Products(models.Model):
     name = models.TextField()
     description = models.TextField()
     price = models.FloatField(default=0)
+    cost_price = models.FloatField(default=0)
     status = models.IntegerField(default=1)
     date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)

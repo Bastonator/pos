@@ -35,6 +35,10 @@
                 <input type="text" name="price" id="price" class="form-control form-control-sm rounded-0" value="{% if product.price %}{{product.price}}{% endif %}" required>
             </div>
             <div class="form-group mb-3">
+                <label for="cost_price" class="control-label">Cost price</label>
+                <input type="text" name="cost_price" id="cost_price" class="form-control form-control-sm rounded-0" value="{% if product.cost_price %}{{product.cost_price}}{% endif %}" required>
+            </div>
+            <div class="form-group mb-3">
                 <label for="stock" class="control-label">In Stock</label>
                 <input type="text" name="stock" id="stock" class="form-control form-control-sm rounded-0" value="{% if product.stock %}{{product.stock}}{% endif %}" required>
             </div>

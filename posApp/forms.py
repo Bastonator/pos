@@ -3,6 +3,7 @@ from django.forms.models import ModelForm
 from .models import Users, Branch, Category, Products, Sales
 from django_countries.fields import CountryField
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, PasswordResetForm, SetPasswordForm
 
 
 class RegistrationForm(UserCreationForm):
@@ -165,3 +166,34 @@ class SaleForm(forms.ModelForm):
             'tendered_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'in stock'}),
             'amount_change': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'in stock'}),
         }
+
+
+class PwdResetForm(PasswordResetForm):
+    email = forms.EmailField(max_length=255, widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder': 'Email'}))
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        e = Users.objects.filter(email=email)
+        if not e:
+            raise forms.ValidationError(
+                "Sorry there is an error, try again"
+            )
+        return email
+
+
+class PwdResetConfirmForm(SetPasswordForm):
+    new_password1 = forms.CharField(
+        label='New password', widget=forms.PasswordInput(
+            attrs={'class': 'form-control', 'placeholder': 'New password'}))
+    new_password2 = forms.CharField(
+        label='New password', widget=forms.PasswordInput(
+            attrs={'class': 'form-control', 'placeholder': 'New password'}))
+
+    def clean_new_password2(self):
+        cnd = self.cleaned_data
+        if cnd['new_password1'] != cnd['new_password2']:
+            raise forms.ValidationError("Sorry, the passwords you entered don't match")
+        return cnd['new_password1']
+
+

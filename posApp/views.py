@@ -12,6 +12,12 @@ from django.shortcuts import redirect
 import json, sys
 from datetime import date, datetime
 from posApp.forms import RegistrationForm, BranchForm, CategoryForm, ProductForm, SaleForm
+from django.conf import settings
+from django.core.paginator import Paginator
+from django.contrib.admin.views.decorators import staff_member_required
+
+from django.core.mail import send_mail, EmailMultiAlternatives
+from django.template.loader import get_template
 
 
 # Login
@@ -66,6 +72,25 @@ def index(request):
 def user_account(request, pk):
     user = Users.objects.get(email=pk)
     branch = Branch.objects.filter(user=pk)
+    branch_user = Branch.objects.filter(user=pk).get()
+
+    for user in branch_user.user.all():
+        print(user.email)
+        email = user.email
+
+    subject = "Someone just logged into your POS system!!!"
+    from_email = settings.EMAIL_HOST_USER
+    to_email = [email]
+    stuff = settings.BASE_DIR
+    fullpath = stuff.joinpath("posApp/templates/posApp/log_in_email.html")
+    fullpath = stuff / ("posApp/templates/posApp/log_in_email.html")
+    with open(fullpath) as f:
+        # with open(settings.BASE_DIR + "/Stores/templates/order_info_email.html") as f:
+        order_message = f.read()
+    order_message = EmailMultiAlternatives(subject=subject, body=order_message, from_email=from_email, to=to_email)
+    html_template = get_template('posApp/log_in_email.html').render({'user': user, 'branch': branch})
+    order_message.attach_alternative(html_template, "text/html")
+    order_message.send()
     return render(request, 'posApp/UserDash.html', {'user': user, 'branch': branch})
 
 
@@ -95,18 +120,28 @@ def branch_register(request):
         branch_id = request.POST.get('branchid')
         branch_name = request.POST.get('branchname')
         # branch.location = request.POST['branchlocation']
+        branch_address = request.POST.get('branchaddress')
         branch_phone = request.POST.get('phone')
         branch_user = request.POST.get('user1')
         branch_user2 = request.POST.get('user2')
         branch_user3 = request.POST.get('user3')
-        branch = Branch.objects.create(id=branch_id, name=branch_name, location=None, phone=branch_phone)
+        branch_user4 = request.POST.get('user4')
+        branch_user5 = request.POST.get('user5')
+        branch_user6 = request.POST.get('user6')
+        branch = Branch.objects.create(id=branch_id, name=branch_name, location=None, address=branch_address, phone=branch_phone)
         branch.user.add(branch_user or None)
         # it is branch.user.add because user is how the many to many field is designated in the models.py
         branch.user.add(branch_user2 or None)
         branch.user.add(branch_user3 or None)
+        branch.user.add(branch_user4 or None)
+        branch.user.add(branch_user5 or None)
+        branch.user.add(branch_user6 or None)
         context['branchid'] = branch
         context['created'] = True
     return render(request, 'posApp/branch_register.html', context=context)
+
+
+
 
 
 @login_required
@@ -325,6 +360,7 @@ def save_product(request, pk):
                                                                              name=data['name'],
                                                                              description=data['description'],
                                                                              price=float(data['price']),
+                                                                             cost_price=float(data['cost_price']),
                                                                              status=data['status'],
                                                                              stock=int(data['stock']),
                                                                              expiry_date=request.POST.get('date'),
@@ -332,6 +368,7 @@ def save_product(request, pk):
             else:
                 save_product = Products(code=data['code'], category_id=category, name=data['name'],
                                         description=data['description'], price=float(data['price']),
+                                        cost_price=float(data['cost_price']),
                                         status=data['status'], stock=int(data['stock']), branch_owner=branch,
                                         expiry_date=request.POST.get('date'), image=request.FILES['img'])
                 save_product.save()
@@ -497,7 +534,7 @@ def receipt(request, pk):
         'branch': branch
     }
 
-    return render(request, 'posApp/receipt.html', context)
+    return render(request, 'posApp/newreceipt.html', context)
     # return HttpResponse('')
 
 

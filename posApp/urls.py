@@ -7,6 +7,8 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path
 from django.views.generic.base import RedirectView
+from .forms import PwdResetForm, PwdResetConfirmForm
+
 
 urlpatterns = [
     #path('redirect-admin', RedirectView.as_view(url="/admin"),name="redirect-admin"),
@@ -40,6 +42,23 @@ urlpatterns = [
     path('inventory/<str:pk>', views.inventory, name="inventory"),
     path('todays_sales/<str:pk>', views.todays_sales, name="todays-sales"),
     path('todays_sales_items/<str:pk>', views.todays_sale_items, name="todays-sale_items"),
+    path('password_reset/',
+         auth_views.PasswordResetView.as_view(template_name="registration/password_reset_form.html",
+                                              form_class=PwdResetForm),
+         name='password_reset'),
+
+    path('password_reset/done/',
+         auth_views.PasswordResetDoneView.as_view(template_name="registration/password_reset_done.html"),
+         name='password_reset_done'),
+
+    path('reset/<uidb64>/<token>/',
+         auth_views.PasswordResetConfirmView.as_view(template_name="registration/password_reset_confirm.html",
+                                                     form_class=PwdResetConfirmForm),
+         name='password_reset_confirm'),
+
+    path('reset/done/',
+         auth_views.PasswordResetCompleteView.as_view(template_name="registration/password_reset_complete.html"),
+         name='password_reset_complete'),
     # path('employees', views.employees, name="employee-page"),
     # path('manage_employees', views.manage_employees, name="manage_employees-page"),
     # path('save_employee', views.save_employee, name="save-employee-page"),

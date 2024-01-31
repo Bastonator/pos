@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 import mimetypes
@@ -32,6 +33,8 @@ ALLOWED_HOSTS = ["*"]
 
 CSRF_TRUSTED_ORIGINS = ['https://*.wriberpos.com']
 # Application definition
+
+SESSION_COOKIE_AGE = 3600
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -62,7 +65,9 @@ ROOT_URLCONF = 'pos.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'Templates')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -142,6 +147,13 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 AUTH_USER_MODEL = 'posApp.Users'
 
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'wriberpos@gmail.com'
+EMAIL_HOST_PASSWORD = 'wsiyelwcodpsljsq'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_RECIEVER = 'nwosuedward6@gmail.com'
+
 AWS_ACCESS_KEY_ID = 'AKIA6ODU744AECT6MGMY'
 AWS_SECRET_ACCESS_KEY = '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'
 AWS_STORAGE_BUCKET_NAME = 'wriberposbucket'
@@ -159,3 +171,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = ''
 LOGIN_URL = '/login/'
 
+#wsiy elwc odps ljsq

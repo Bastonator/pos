@@ -1,0 +1,157 @@
+{% load humanize %}
+{% if branch %}
+<style>
+    #uni_modal .modal-footer {
+        display: none
+    }
+    * {
+    font-size: 12px;
+    font-family: 'Times New Roman';
+}
+
+td,
+th,
+tr,
+table {
+    border-top: 1px solid black;
+    border-collapse: collapse;
+}
+
+td.description,
+th.description {
+    width: 75px;
+    max-width: 75px;
+}
+
+td.quantity,
+th.quantity {
+    width: 40px;
+    max-width: 40px;
+    word-break: break-all;
+}
+
+td.price,
+th.price {
+    width: 40px;
+    max-width: 40px;
+    word-break: break-all;
+}
+
+.centered {
+    text-align: center;
+    align-content: center;
+}
+
+.ticket {
+    width: 155px;
+    max-width: 155px;
+}
+
+img {
+    max-width: inherit;
+    width: inherit;
+}
+@media print {
+    body {
+    visibility: hidden;
+  }
+  #outprint {
+    visibility: visible;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
+</style>
+        <div class="container-fluid ticket">
+            <div id="outprint">
+            <p class="centered">{{ branch.name }}
+                <br>{{ branch.address }}
+                <br>{{ branch.phone }}</p>
+            <hr>
+            <div class="lh-1">
+            <div>
+                <span>Date:</span> {{ transaction.date_added|date:"d M Y" }} <br>
+                <span><strong>Receipt No:</strong></span> {{ transaction.code }}
+            </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="quantity">Qty</th>
+                        <th class="description">Descript</th>
+                        <th class="description">Unit prc.</th>
+                        <th class="price">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for item in salesItems %}
+                    <tr>
+                        <td class="quantity">{{ item.qty|intcomma|floatformat:0 }}</td>
+                        <td class="description">{{ item.product_id }}</td>
+                        <td class="description"> {{ item.price|intcomma }}</td>
+                        <td class="price">{{ item.total|intcomma }}</td>
+                    </tr>
+                {% endfor %}
+                    <tr>
+                        <td class="quantity"></td>
+                        <td class="description">SUB TOTAL</td>
+                        <td class="price">{{ transaction.grand_total|intcomma }}</td>
+                    </tr>
+                    <tr>
+                        <td class="quantity"></td>
+                        <td class="description">Tax <small>(inclusive)</small>: {{ transaction.tax|intcomma }}%</td>
+                        <td class="price">{{ transaction.tax_amount|intcomma|floatformat:2 }}</td>
+                    </tr>
+                    <tr>
+                        <td class="quantity"></td>
+                        <td class="description">Tendered</td>
+                        <td class="price">{{ transaction.tendered_amount|intcomma }}</td>
+                    </tr>
+                     <tr>
+                        <td class="quantity"></td>
+                        <td class="description">Change</td>
+                        <td class="price">{{ transaction.amount_change|intcomma }}</td>
+                    </tr>
+                </tbody>
+            </table>
+                <p class="centered">Thanks for your purchase!</p>
+            </div>
+            <div class="clear-fix py-3"></div>
+            <div class="d-flex w-100 justify-content-end">
+                <button id="btnPrint" class="hidden-print">Print</button>
+                <!--<button class="btn btn-light bg-gradient border rounded-0 btn-sm me-1" type="button" id="receipt_print"><i class="mdi mdi-printer"></i> Print</button>-->
+                <button class="btn btn-secondary bg-gradient border rounded-0 btn-sm" type="button" data-bs-dismiss="modal"><i class="mdi mdi-close"></i> Close</button>
+            </div>
+
+        </div>
+{% endif %}
+<script>
+    $(function() {
+        $('#receipt_print').click(function() {
+            var head = $('head').clone()
+            var p = $('#outprint').clone()
+            var el = $("<div>")
+            head.append('<style>body{background-color:unset !important}</style>')
+            el.append(head)
+            el.find('title').text("Receipt - Print View")
+            el.append(p)
+            start_loader()
+            var nw = window.open('', '_blank', "width=800,height=800,left=300, top = 200")
+            nw.document.write(el.html())
+            nw.document.close()
+            setTimeout(() => {
+                nw.print()
+                setTimeout(() => {
+                    nw.close()
+                    end_loader()
+                }, 250)
+            }, 300)
+        })
+    })
+
+    const $btnPrint = document.querySelector("#btnPrint");
+    $btnPrint.addEventListener("click", () => {
+        window.print();
+    });
+</script>
