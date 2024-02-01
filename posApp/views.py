@@ -72,26 +72,13 @@ def index(request):
 def user_account(request, pk):
     user = Users.objects.get(email=pk)
     branch = Branch.objects.filter(user=pk)
-    branch_user = Branch.objects.filter(user=pk).get()
+    return render(request, 'posApp/index.html', {'user': user, 'branch': branch})
 
-    for user in branch_user.user.all():
-        print(user.email)
-        email = user.email
 
-    subject = "Someone just logged into your POS system!!!"
-    from_email = settings.EMAIL_HOST_USER
-    to_email = [email]
-    stuff = settings.BASE_DIR
-    fullpath = stuff.joinpath("posApp/templates/posApp/log_in_email.html")
-    fullpath = stuff / ("posApp/templates/posApp/log_in_email.html")
-    with open(fullpath) as f:
-        # with open(settings.BASE_DIR + "/Stores/templates/order_info_email.html") as f:
-        order_message = f.read()
-    order_message = EmailMultiAlternatives(subject=subject, body=order_message, from_email=from_email, to=to_email)
-    html_template = get_template('posApp/log_in_email.html').render({'user': user, 'branch': branch})
-    order_message.attach_alternative(html_template, "text/html")
-    order_message.send()
-    return render(request, 'posApp/UserDash.html', {'user': user, 'branch': branch})
+def branches(request, pk):
+    user = Users.objects.get(email=pk)
+    branch = Branch.objects.filter(user=pk)
+    return render(request, 'posApp/tables-data.html', {'user': user, 'branch': branch})
 
 
 def account_register(request):
@@ -110,10 +97,11 @@ def account_register(request):
 
 
 @login_required
-def branch_register(request):
+def branch_register(request, pk):
+    users = Users.objects.get(email=pk)
     # user = Branch.objects.filter(user=request.user)
     user = Users.objects.all()
-    context = {'user': user}
+    context = {'user': user, 'users': users}
     if request.method == "POST":
         # form = BranchForm(request.POST or None)
         # branch = form
@@ -138,7 +126,7 @@ def branch_register(request):
         branch.user.add(branch_user6 or None)
         context['branchid'] = branch
         context['created'] = True
-    return render(request, 'posApp/branch_register.html', context=context)
+    return render(request, 'posApp/tables-general.html', context=context)
 
 
 @login_required
@@ -177,6 +165,25 @@ def manage_users(request, pk):
 def home(request, pk):
     if request.user.is_authenticated:
         branch = Branch.objects.get(id=pk)
+        users = branch.user.all()
+
+        for user in users:
+            print(user.email)
+            email = user.email
+
+        subject = "Someone just logged into your POS system!!!"
+        from_email = settings.EMAIL_HOST_USER
+        to_email = [email]
+        stuff = settings.BASE_DIR
+        fullpath = stuff.joinpath("posApp/templates/posApp/log_in_email.html")
+        fullpath = stuff / ("posApp/templates/posApp/log_in_email.html")
+        with open(fullpath) as f:
+            # with open(settings.BASE_DIR + "/Stores/templates/order_info_email.html") as f:
+            order_message = f.read()
+        order_message = EmailMultiAlternatives(subject=subject, body=order_message, from_email=from_email, to=to_email)
+        html_template = get_template('posApp/log_in_email.html').render({'user': user, 'branch': branch})
+        order_message.attach_alternative(html_template, "text/html")
+        order_message.send()
         now = datetime.now()
         current_year = now.strftime("%Y")
         current_month = now.strftime("%m")

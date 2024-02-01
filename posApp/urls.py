@@ -13,7 +13,7 @@ from .forms import PwdResetForm, PwdResetConfirmForm
 urlpatterns = [
     #path('redirect-admin', RedirectView.as_view(url="/admin"),name="redirect-admin"),
     path('', views.index, name='home'),
-    path('branch_register/', views.branch_register, name='branchregister'),
+    path('branch_register/<str:pk>', views.branch_register, name='branchregister'),
     path('<str:pk>', views.home, name="home-page"),
     path('login/', views.login_account, name='login-me'),
     #path('login', auth_views.LoginView.as_view(template_name = 'posApp/login.html',redirect_authenticated_user=True), name="login"),
@@ -21,6 +21,7 @@ urlpatterns = [
     path('logout/', views.logoutuser, name="logout"),
     path('account_register/', views.account_register, name='account-register'),
     path('account/<str:pk>', views.user_account, name='user-dash'),
+    path('branches/<str:pk>', views.branches, name='branch-dash'),
     path('branch_users/<str:pk>/<str:pk1>', views.branch_users, name="users"),
     path('delete_branch_users/<str:pk>/<str:pk1>', views.delete_branch_users, name="delete-user"),
     path('manage_branch/<str:pk>', views.manage_users, name="manage-branch"),

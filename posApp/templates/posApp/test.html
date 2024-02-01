@@ -35,4 +35,39 @@
     })
 </script>
 
+
+{% if branch %}
+<div class="container-fluid">
+    <a href="{% url 'cat-add' pk=branch.pk %}">
+        <button>
+            Add Category
+        </button>
+    </a>
+</div>
+{% endif %}
+{% if branch %}
+<div class="container-fluid">
+    <a href="{% url 'prod-add' pk=branch.pk %}">
+        <button>
+            Add Product
+        </button>
+    </a>
+</div>
+{% endif %}
+{% if branch %}
+<div class="container-fluid">
+    <a href="{% url 'sale-add' pk=branch.pk %}">
+        <button>
+            Add Sale
+        </button>
+    </a>
+</div>
+{% endif %}
+
 </html>
+
+
+
+
+branch = Branch.objects.get(id=pk)
+    users = branch.user.all()

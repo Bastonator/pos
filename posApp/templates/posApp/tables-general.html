@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Dashboard - NiceAdmin Bootstrap Template</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">-->
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/quill/quill.snow.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/quill/quill.bubble.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/simple-datatables/style.css' %}" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: NiceAdmin
+  * Updated: Jan 09 2024 with Bootstrap v5.3.2
+  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="index.html" class="logo d-flex align-items-center">
+        <span class="d-none d-lg-block">NiceAdmin</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div><!-- End Logo -->
+
+    <!--<div class="search-bar">
+      <form class="search-form d-flex align-items-center" method="POST" action="#">
+        <input type="text" name="query" placeholder="Search" title="Enter search keyword">
+        <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+      </form>
+    </div><!-- End Search Bar -->
+
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+
+        <li class="nav-item d-block d-lg-none">
+          <a class="nav-link nav-icon search-bar-toggle " href="#">
+            <i class="bi bi-search"></i>
+          </a>
+        </li><!-- End Search Icon-->
+        <li class="nav-item dropdown pe-3">
+
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="" data-bs-toggle="dropdown">
+            <span class="d-none d-md-block dropdown-toggle ps-2">{{ request.user.email }}</span>
+          </a><!-- End Profile Iamge Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li class="dropdown-header">
+              <h6>{{ request.user.username }}</h6>
+              {% if user.is_superuser %}
+              <span>Master User</span>
+              {% elif user.is_staff %}
+              <span>Admin</span>
+              {% else %}
+              <span>Staff</span>
+              {% endif %}
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <!--<li>
+              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                <i class="bi bi-person"></i>
+                <span>My Profile</span>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                <i class="bi bi-gear"></i>
+                <span>Account Settings</span>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
+                <i class="bi bi-question-circle"></i>
+                <span>Need Help?</span>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>-->
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="{% url 'logout' %}">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Sign Out</span>
+              </a>
+            </li>
+
+          </ul><!-- End Profile Dropdown Items -->
+        </li><!-- End Profile Nav -->
+
+      </ul>
+    </nav><!-- End Icons Navigation -->
+
+  </header><!-- End Header -->
+
+  <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'user-dash' request.user %}">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+      <li class="nav-item">
+        <a class="nav-link " data-bs-target="#tables-nav" data-bs-toggle="collapse" href="">
+          <i class="bi bi-layout-text-window-reverse"></i><span>Branches</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="tables-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
+          <li>
+            {% if users %}
+            <a href="{% url 'branch-dash' pk=users.pk %}" class="">
+              <i class="bi bi-circle"></i><span>View Branches</span>
+            </a>
+
+            <a href="{% url 'branchregister' pk=users.pk %}" class="active">
+              <i class="bi bi-circle"></i><span>Create Branch</span>
+            </a>
+            {% endif %}
+          </li>
+        </ul>
+      </li>
+
+    </ul>
+
+  </aside><!-- End Sidebar-->
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Create Branch</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'user-dash' request.user %}">Home</a></li>
+          <li class="breadcrumb-item">Branches</li>
+          <li class="breadcrumb-item active">Add new</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+
+
+{% block content %}
+
+{% if not created %}
+
+                    <div class="constainer-fluid row">
+                             <form class="account-form p-4 rounded col-lg-10 mx-auto" action="" method="POST">
+                                {% csrf_token %}
+                                <h3 class="mb-2 font-weight-bold">Create a Branch</h3>
+                                <p class="mb-4">It only takes a minute.</p>
+                                <div class="col-md-6">
+                                  <div class="card mb-4">
+                                    <h5 class="card-header">Start here</h5>
+                                    <div class="card-body demo-vertical-spacing demo-only-element">
+                                      <div>
+                                        <label for="defaultFormControlInput" class="form-label">Branch Name</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="defaultFormControlInput"
+                                          placeholder="Branch Name"
+                                          name="branchname"
+                                          aria-describedby="defaultFormControlHelp" />
+                                        <div id="defaultFormControlHelp" class="form-text">
+                                          We'll never share your details with anyone else.
+                                        </div>
+                                      </div>
+                                      <div>
+                                        <label for="defaultFormControlInput" class="form-label">Branch  Master User</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="defaultFormControlInput3"
+                                          placeholder="Master User"
+                                          name="user1"
+                                          list="userlist1"
+                                          aria-describedby="defaultFormControlHelp" />
+                                          <datalist id="userlist1">
+                                             {% for user in user %}
+                                             <option value="{{ user.id }}">-<strong>{{ user.email }}-{{ user.username }}</strong></option>
+                                             {% endfor %}
+                                          </datalist>
+                                      </div>
+                                      <div>
+                                        <label for="defaultFormControlInput" class="form-label">Branch User 2</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="defaultFormControlInput4"
+                                          placeholder="Second controlling user"
+                                          name="user2"
+                                          list="userlist2"
+                                          aria-describedby="defaultFormControlHelp" />
+                                          <datalist id="userlist2">
+                                             {% for user in user %}
+                                             <option value="{{ user.id }}">-<strong>{{ user.email }}-{{ user.username }}</strong></option>
+                                             {% endfor %}
+                                          </datalist>
+                                      </div>
+                                      <div>
+                                        <label for="defaultFormControlInput" class="form-label">Branch User 3</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="defaultFormControlInput8"
+                                          placeholder="Third controlling user"
+                                          name="user3"
+                                          list="userlist3"
+                                          aria-describedby="defaultFormControlHelp" />
+                                          <datalist id="userlist3">
+                                             {% for user in user %}
+                                             <option value="{{ user.id }}">-<strong>{{ user.email }}-{{ user.username }}</strong></option>
+                                             {% endfor %}
+                                          </datalist>
+                                      </div>
+                                        <div>
+                                        <label for="defaultFormControlInput" class="form-label">Branch User 4 </label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="defaultFormControlInput7"
+                                          placeholder="Fourth controlling user"
+                                          name="user4"
+                                          list="userlist4"
+                                          aria-describedby="defaultFormControlHelp" />
+                                          <datalist id="userlist4">
+                                             {% for user in user %}
+                                             <option value="{{ user.id }}">-<strong>{{ user.email }}-{{ user.username }}</strong></option>
+                                             {% endfor %}
+                                          </datalist>
+                                      </div>
+                                        <div>
+                                        <label for="defaultFormControlInput" class="form-label">Branch User 5</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="defaultFormControlInput5"
+                                          placeholder="Fifth controlling user"
+                                          name="user5"
+                                          list="userlist5"
+                                          aria-describedby="defaultFormControlHelp" />
+                                          <datalist id="userlist5">
+                                             {% for user in user %}
+                                             <option value="{{ user.id }}">-<strong>{{ user.email }}-{{ user.username }}</strong></option>
+                                             {% endfor %}
+                                          </datalist>
+                                      </div>
+                                        <div>
+                                        <label for="defaultFormControlInput" class="form-label">Branch User 6</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="defaultFormControlInput10"
+                                          placeholder="Sixth controlling user"
+                                          name="user6"
+                                          list="userlist6"
+                                          aria-describedby="defaultFormControlHelp" />
+                                          <datalist id="userlist6">
+                                             {% for user in user %}
+                                             <option value="{{ user.id }}">-<strong>{{ user.email }}-{{ user.username }}</strong></option>
+                                             {% endfor %}
+                                          </datalist>
+                                      </div>
+                                        <label>{{ form.location.label }}<span class="text-muted small">
+                                        (Required)</span></label>
+                                        {{ form.location }}
+                                        <div>
+                                        <label for="defaultFormControlInput" class="form-label">Branch phone</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="defaultFormControlInput6"
+                                          placeholder="e.g. 7217688"
+                                          name="phone"
+                                          aria-describedby="defaultFormControlHelp" />
+                                        <div id="defaultFormControlHelp3" class="form-text">
+                                          We'll never share your details with anyone else.
+                                        </div>
+                                      </div>
+                                        <div>
+                                        <label for="defaultFormControlInput" class="form-label">Branch Address</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="defaultFormControlInput55"
+                                          placeholder="Address"
+                                          name="branchaddress"
+                                          aria-describedby="defaultFormControlHelp" />
+                                        <div id="defaultFormControlHelp55" class="form-text">
+                                        </div>
+                                      </div>
+                                      <br>
+                                      <div class="input-group">
+                                        <span class="input-group-text" id="basic-addon14">https://wriberpos.com/</span>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          placeholder="URL"
+                                          id="basic-url1"
+                                          name="branchid"
+                                          aria-describedby="basic-addon14" />
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                 <input class="btn btn-success btn-block py-2 mb-4 mt-5 fw500 w-100" type="submit" VALUE="Register branch">
+                            </form>
+                </div>
+{% else %}
+
+<a href="{% url 'home-page' branchid.id %}">
+    click here to view your branch!!
+</a>
+
+{% endif %}
+{% endblock %}
+
+      <div class="row">
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; Copyright <strong><span>wriber</span></strong>. All Rights Reserved
+    </div>
+    <div class="credits">
+      <!-- All the links in the footer should remain intact. -->
+      <!-- You can delete the links only if you purchased the pro version. -->
+      <!-- Licensing information: https://bootstrapmade.com/license/ -->
+      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+      Designed by <a href="https://wrbr.xyz">Wriber</a>
+    </div>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js'%}"></script>
+  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/chart.js/chart.umd.js' %}"></script>
+  <script src="{% static 'assets/vendor/echarts/echarts.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/quill/quill.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/simple-datatables/simple-datatables.js' %}"></script>
+  <script src="{% static 'assets/vendor/tinymce/tinymce.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
+
+  <!-- Template Main JS File -->
+  <script src="{% static 'assets/js/main.js' %}"></script>
+
+</body>
+
+</html>

@@ -49,7 +49,7 @@
     <div class="mdc-card info-card info-card--warning">
         <div class="card-inner">
             <h5 class="card-title">Today's Sales</h5>
-            <h5 class="font-weight-light pb-2 mb-1 border-bottom">{{ total_sales|intcomma }}</h5>
+            <h5 class="font-weight-light pb-2 mb-1 border-bottom">GMD{{ total_sales|intcomma }}</h5>
             <p class="tx-12 text-muted">Total Sales Today</p>
             <div class="card-icon-wrapper">
                 <i class="mdi mdi-cash-multiple"></i>
@@ -58,31 +58,4 @@
     </div>
 </div>
 
-{% if branch %}
-<div class="container-fluid">
-    <a href="{% url 'cat-add' pk=branch.pk %}">
-        <button>
-            Add Category
-        </button>
-    </a>
-</div>   
-{% endif %} 
-{% if branch %}
-<div class="container-fluid">
-    <a href="{% url 'prod-add' pk=branch.pk %}">
-        <button>
-            Add Product
-        </button>
-    </a>
-</div>   
-{% endif %} 
-{% if branch %}
-<div class="container-fluid">
-    <a href="{% url 'sale-add' pk=branch.pk %}">
-        <button>
-            Add Sale
-        </button>
-    </a>
-</div>   
-{% endif %} 
 {% endblock pageContent %}
