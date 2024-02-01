@@ -80,7 +80,7 @@
                 {% endif %}
 <br>
 <div class="container-fluid">
-<hr>
+<hr style="color: white;">
 </div>
 <br>
                 {% if branch1 %}
@@ -108,6 +108,23 @@
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i> Today's Sales
                     </a>
                 </div>
+                {% endif %}
+                {% if user.is_superuser %}
+                    {% if branch1 %}
+                    <div class="mdc-list-item mdc-drawer-item">
+                        <a class="mdc-drawer-link" href="{% url 'users' pk=branch1.pk %}">
+                            <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i>Manage Users
+                        </a>
+                    </div>
+                    {% elif branch %}
+                        {% if user %}
+                    <div class="mdc-list-item mdc-drawer-item">
+                        <a class="mdc-drawer-link" href="{% url 'users' pk=branch.pk pk1=user.pk %}">
+                            <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i>Manage Users
+                        </a>
+                    </div>
+                        {% endif %}
+                    {% endif %}
                 {% endif %}
             </nav>
         </div>

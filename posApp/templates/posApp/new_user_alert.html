@@ -1,0 +1,17 @@
+{% extends "posApp/base.html" %} {% block pageContent %}
+{% if branch %}
+
+
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card">
+        <a href="{% url 'home-page' pk=branch.pk %}">
+        <h5>
+            The user is verified and has been added to the branch.
+        </h5>
+        </a>
+    </div>
+</div>
+
+
+{% endif %}
+{% endblock pageContent %}

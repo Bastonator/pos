@@ -141,7 +141,36 @@ def branch_register(request):
     return render(request, 'posApp/branch_register.html', context=context)
 
 
+@login_required
+def branch_users(request, pk, pk1):
+    branch = Branch.objects.get(id=pk)
+    users = branch.user.all()
+    user = Users.objects.get(email=pk1)
+    return render(request, 'posApp/branch_users.html', {'branch': branch, 'users': users, 'user': user})
 
+
+@login_required
+def delete_branch_users(request, pk, pk1):
+    branch = Branch.objects.get(id=pk)
+    #user = Users.objects.get(email=pk)
+    branch.user.remove(Users.objects.get(email=pk1))
+    return render(request, 'posApp/home.html', {'branch': branch})
+
+
+@login_required
+def manage_users(request, pk):
+    branch = Branch.objects.get(id=pk)
+    users = Users.objects.all()
+    context = {
+        'branch': branch,
+        'users': users,
+    }
+    if request.method == "POST":
+        new_user = request.POST.get('new_user')
+        branch_user = Branch.objects.get(id=pk)
+        branch_user.user.add(new_user or None)
+        return render(request, 'posApp/new_user_alert.html', context)
+    return render(request, 'posApp/manage_users.html', context)
 
 
 @login_required
