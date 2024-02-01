@@ -36,10 +36,12 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
-</head>
+
 <style>
   .login{
     color: blue;
+    background-color: white;
+    transition: 0.7s;
   }
   .login:hover{
     color: white;
@@ -47,6 +49,7 @@
   }
 </style>
 
+</head>
 <body>
 
   <!-- ======= Header ======= -->
@@ -54,7 +57,7 @@
 
     <div class="d-flex align-items-center justify-content-between">
       <a href="index.html" class="logo d-flex align-items-center">
-        <span class="d-none d-lg-block">NiceAdmin</span>
+          <span class="d-none d-lg-block">Wriber</span>
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
@@ -64,16 +67,12 @@
         <input type="text" name="query" placeholder="Search" title="Enter search keyword">
         <button type="submit" title="Search"><i class="bi bi-search"></i></button>
       </form>
-    </div><!-- End Search Bar -->
+    </div> End Search Bar -->
 
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
 
-        <li class="nav-item d-block d-lg-none">
-          <a class="nav-link nav-icon search-bar-toggle " href="#">
-            <i class="bi bi-search"></i>
-          </a>
-        </li><!-- End Search Icon-->
+        <!-- End Search Icon-->
         <li class="nav-item dropdown pe-3">
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
@@ -167,6 +166,12 @@
             </a>
           </li>
         </ul>
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="{% url 'logout' %}">
+            <i class="bi bi-box-arrow-in-right"></i>
+            <span>Sign Out</span>
+          </a>
+      </li>
       </li><!-- End Tables Nav -->
 
     </ul>
@@ -187,6 +192,7 @@
 
     <section class="section dashboard">
 
+      <br>
       {% if request.user.is_authenticated %}
         <center>
         <h4 style="color: green;">
@@ -194,13 +200,16 @@
         </h4>
         </center>
       {% else %}
-          <a href="{% url 'login-me' %}">
-            <button class="login" style="color: white; border-radius: 5px; width: 300px; height: 50px;
-                        border-color: lime; border-width: 2px;">
-                        Click Here to log in you are not logged in
+      <br>
+      <center>
+          <a class="login-me" href="{% url 'login-me' %}">
+            <button class="login-me" style="border-radius: 10px; width: 300px; height: 50px;
+                        border-color: none; border-width: 0px; transition:0.7s;">
+                        Click Here to log in.
             </button>
           </a>
       {% endif %}
+        </center>
 
       <div class="row">
 
