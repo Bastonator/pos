@@ -34,7 +34,7 @@ ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = ['https://*.wriberpos.com']
 # Application definition
 
-SESSION_COOKIE_AGE = 3600
+SESSION_COOKIE_AGE = 360000
 
 INSTALLED_APPS = [
     'django.contrib.admin',
