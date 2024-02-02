@@ -111,11 +111,13 @@
                 {% endif %}
                 {% if user.is_superuser %}
                     {% if branch1 %}
+                        {% if user %}
                     <div class="mdc-list-item mdc-drawer-item">
                         <a class="mdc-drawer-link" href="{% url 'users' pk=branch1.pk %}">
                             <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i>Manage Users
                         </a>
                     </div>
+                        {% endif %}
                     {% elif branch %}
                         {% if user %}
                     <div class="mdc-list-item mdc-drawer-item">
