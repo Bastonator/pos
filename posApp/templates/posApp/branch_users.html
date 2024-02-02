@@ -20,9 +20,17 @@
     <div class="card" style="width: 300px;">
     <div class="card-body">
       <p class="card-text">{{ user.email }}</p>
+        {% if user.is_superuser %}
+        <p class="card-text"> Masteruser</p>
+        {% elif user.is_staff %}
+        <p class="card-text"> Admin </p>
+        {% else %}
+        <p class="card-text">Staff</p>
+        {% endif %}
       <a href="{% url 'delete-user' pk=branch.pk pk1=user.pk %}" class="card-link" style="color: red;">Delete User from branch</a>
     </div>
     </div>
+        <br>
       {% endfor %}
     </div>
 </div>

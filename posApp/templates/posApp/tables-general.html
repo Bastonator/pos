@@ -148,10 +148,11 @@
             <a href="{% url 'branch-dash' pk=users.pk %}" class="">
               <i class="bi bi-circle"></i><span>View Branches</span>
             </a>
-
+            {% if users.is_superuser %}
             <a href="{% url 'branchregister' pk=users.pk %}" class="active">
               <i class="bi bi-circle"></i><span>Create Branch</span>
             </a>
+            {% endif %}
             {% endif %}
           </li>
         </ul>

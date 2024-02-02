@@ -194,9 +194,11 @@ body {
             <a href="{% url 'branch-dash' pk=user.pk %}" class="active">
               <i class="bi bi-circle"></i><span>View Branches</span>
             </a>
+              {% if user.is_superuser %}
             <a href="{% url 'branchregister' pk=user.pk %}" class="">
               <i class="bi bi-circle"></i><span>Create Branch</span>
             </a>
+              {% endif %}
           </li>
         </ul>
          <li class="nav-item">
@@ -225,18 +227,6 @@ body {
     </div><!-- End Page Title -->
 
     <section class="section">
-      <center>
-      <h6>
-        Click the button below to create a branch.
-      </h6>
-
-        <a href="{% url 'branchregister' pk=user.pk %}">
-        <button style="color: white; background-color: springgreen; border-radius: 5px; width: 300px; height: 50px;
-                        border-color: lime; border-width: 2px;">
-          Create branch
-        </button>
-      </a>
-      </center>
 
       <div class="row">
     {% if branch %}
