@@ -113,7 +113,7 @@
                     {% if branch1 %}
                         {% if user %}
                     <div class="mdc-list-item mdc-drawer-item">
-                        <a class="mdc-drawer-link" href="{% url 'users' pk=branch1.pk %}">
+                        <a class="mdc-drawer-link" href="{% url 'users' pk=branch1.pk pk1=user.pk %}">
                             <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i>Manage Users
                         </a>
                     </div>
