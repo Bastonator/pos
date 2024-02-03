@@ -36,7 +36,7 @@
             </div>
             <div class="form-group mb-3">
                 <label for="cost_price" class="control-label">Cost price</label>
-                <input type="text" name="cost_price" id="cost_price" class="form-control form-control-sm rounded-0" value="{% if product.cost_price %}{{product.cost_price}}{% endif %}" required>
+                <input type="text" name="cost_price" id="cost_price" class="form-control form-control-sm rounded-0" value="{% if product.cost_price %}{{product.cost_price}}{% endif %}">
             </div>
             <div class="form-group mb-3">
                 <label for="stock" class="control-label">In Stock</label>
@@ -48,7 +48,7 @@
             </div>
             <div class="form-group mb-3">
                 <label for="img" class="control-label">Product image</label>
-                <input type="file" name="img" id="formFile"  class="form-control form-control-sm rounded-0" required>{% if product.image %}{{product.image.url}}{% else %} this prod has no image{% endif %}
+                <input type="file" name="img" id="formFile"  class="form-control form-control-sm rounded-0">{% if product.image %}{{product.image.url}}{% else %} NO IMAGE {% endif %}
             </div>
             <div class="form-group mb-3">
                 <label for="status" class="control-label">Status</label>
