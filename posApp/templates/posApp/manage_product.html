@@ -69,6 +69,10 @@
     </form>
     </div>
     <script>
+    $('#description').val($('#description').val() + 'Just some info');
+
+    $('#cost_price').val($('#cost_price').val() + '100');
+
         $(function() {
             $('#product-form').submit(function(e) {
                 e.preventDefault();
