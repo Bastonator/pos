@@ -15,34 +15,34 @@
                 <colgroup>
                     <col width="5%">
                     <col width="20%">
-                    <col width="20%">
-                    <col width="25%">
+                    <col width="30%">
+                    <col width="15%">
                     <col width="15%">
                     <col width="15%">
                 </colgroup>
                 <thead>
                     <tr id="stock-head">
                         <th class="text-center py-1" width="5%">#</th>
-                        <th class="text-center py-1" width="20%">Category</th>
-                        <th class="text-center py-1" width="27%">Product</th>
-                        <th class="text-center py-1" width="29%">Description</th>
-                        <th class="text-center py-1" width="9%">Status</th>
-                        <th class="text-center py-1" width="10%">Stock</th>
+                        <th class="text-center py-1" width="25%">Category</th>
+                        <th class="text-center py-1" width="40%">Product</th>
+                        <th class="text-center py-1" width="10%">Status</th>
+                        <th class="text-center py-1" width="9.5%">Stock</th>
+                        <th class="text-center py-1" width="10%">Date added</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for product in products %}
                     <tr id="stock-body">
                         <td class="px-2 py-1 text-center" width="5%">{{ product.id }}</td>
-                        <td class="px-2 py-1 text-start" width="20%">{{ product.category_id }}</td>
-                        <td class="px-2 py-1 text-start" width="27%">{{ product.code }} - {{ product.name }}</td>
-                        <td class="px-2 py-1 text-start" width="29%">{{ product.description }}</td>
-                        <td class="px-2 py-1 text-center" width="9%">
+                        <td class="px-2 py-1 text-start" width="25%">{{ product.category_id }}</td>
+                        <td class="px-2 py-1 text-start" width="40%">{{ product.code }} - {{ product.name }}</td>
+                        <td class="px-2 py-1 text-center" width="10%">
                             {% if product.status == 1 %}
                             <span class="badge bg-primary rounded-pill px-3">Active</span> {% else %}
                             <span class="badge bg-secondary rounded-pill px-3">Inactive</span> {% endif %}
                         </td>
-                        <td class="px-2 py-1 text-start" width="10%">{{ product.stock }}</td>
+                        <td class="px-2 py-1 text-center" width="9.5%">{{ product.stock }}</td>
+                        <td class="px-2 py-1 text-center" width="10%">{{ product.date_added|date:'Y-m-d' }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
