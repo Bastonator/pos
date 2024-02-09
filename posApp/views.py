@@ -335,7 +335,7 @@ def addnew_prod(request, pk):
 def products(request, pk):
     branch = Branch.objects.get(id=pk)
     branch1 = Branch.objects.get(id=pk)
-    product_list = Products.objects.filter(branch_owner_id=pk).order_by('name').values()
+    product_list = Products.objects.filter(branch_owner_id=pk).order_by('name')
     context = {
         'page_title': 'Product List',
         'products': product_list,
