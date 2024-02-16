@@ -166,24 +166,6 @@ def home(request, pk):
     if request.user.is_authenticated:
         branch = Branch.objects.get(id=pk)
         users = branch.user.all()
-
-        for user in users:
-            print(user.email)
-            email = user.email
-
-        subject = "Someone just logged into your POS system!!!"
-        from_email = settings.EMAIL_HOST_USER
-        to_email = [email]
-        stuff = settings.BASE_DIR
-        fullpath = stuff.joinpath("posApp/templates/posApp/log_in_email.html")
-        fullpath = stuff / ("posApp/templates/posApp/log_in_email.html")
-        with open(fullpath) as f:
-            # with open(settings.BASE_DIR + "/Stores/templates/order_info_email.html") as f:
-            order_message = f.read()
-        order_message = EmailMultiAlternatives(subject=subject, body=order_message, from_email=from_email, to=to_email)
-        html_template = get_template('posApp/log_in_email.html').render({'user': user, 'branch': branch})
-        order_message.attach_alternative(html_template, "text/html")
-        order_message.send()
         now = datetime.now()
         current_year = now.strftime("%Y")
         current_month = now.strftime("%m")
