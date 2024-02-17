@@ -509,7 +509,7 @@ def addnew_sale(request, pk):
 def salesList(request, pk):
     branch = Branch.objects.get(id=pk)
     branch1 = Branch.objects.get(id=pk)
-    sales = Sales.objects.filter(branch_owner_id=pk)
+    sales = Sales.objects.filter(branch_owner_id=pk).order_by('-id')
     sale_data = []
     for sale in sales:
         data = {}
@@ -574,7 +574,7 @@ def delete_sale(request, pk):
 @login_required
 def inventory(request, pk):
     branch = Branch.objects.get(id=pk)
-    products = Products.objects.filter(branch_owner_id=pk)
+    products = Products.objects.filter(branch_owner_id=pk).order_by('name')
     return render(request, 'posApp/inventory.html', {'branch': branch, 'products': products})
 
 
@@ -589,7 +589,7 @@ def todays_sales(request, pk):
         date_added__year=current_year,
         date_added__month=current_month,
         date_added__day=current_day
-    ).filter(branch_owner_id=pk)
+    ).filter(branch_owner_id=pk).order_by('-id')
     return render(request, 'posApp/todays_sales.html', {'branch': branch, 'today_sales': today_sales})
 
 
@@ -604,5 +604,5 @@ def todays_sale_items(request, pk):
         date_added__year=current_year,
         date_added__month=current_month,
         date_added__day=current_day
-    ).filter(branch_owner_id=pk)
+    ).filter(branch_owner_id=pk).order_by('-id')
     return render(request, 'posApp/todays_sale_items.html', {'branch': branch, 'todays_sale_items': todays_sale_items})

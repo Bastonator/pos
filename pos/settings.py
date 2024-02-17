@@ -34,7 +34,7 @@ ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = ['https://*.wriberpos.com']
 # Application definition
 
-SESSION_COOKIE_AGE = 720
+SESSION_COOKIE_AGE = 7200
 SESSION_SAVE_EVERY_REQUEST = True
 
 INSTALLED_APPS = [
