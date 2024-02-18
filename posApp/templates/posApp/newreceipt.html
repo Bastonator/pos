@@ -5,8 +5,9 @@
         display: none
     }
     * {
-    font-size: 17px;
+    font-size: 16px;
     font-family: 'Arial';
+    font-weight: 900;
 }
 
 td,
@@ -43,7 +44,7 @@ th.price {
 }
 
 .ticket {
-    width: 155px;
+    width: 170px;
     max-width: 155px;
 }
 
@@ -63,15 +64,12 @@ img {
   }
 }
 </style>
-        <div class="container-fluid ticket">
+        <div class="container-fluid ticket" style="margin-top: -20px;">
             <div id="outprint">
             <p class="centered">{{ branch.name }}
-                <br>{{ branch.address }}
-                <br>{{ branch.phone }}</p>
-            <hr>
+                <br>{{ branch.address }} / {{ branch.phone }}</p>
             <div class="lh-1">
             <div>
-                <span>Date:</span> {{ transaction.date_added|date:"d M Y" }} <br>
                 <span><strong>Receipt No:</strong></span> {{ transaction.code }}
             </div>
             </div>
@@ -88,34 +86,24 @@ img {
                 {% for item in salesItems %}
                     <tr>
                         <td class="quantity">{{ item.qty|intcomma|floatformat:0 }}</td>
-                        <td class="description">{{ item.product_id }}</td>
+                        <td class="description">{{ item.product_id.name }}</td>
                         <td class="description"> {{ item.price|intcomma }}</td>
                         <td class="price">{{ item.total|intcomma }}</td>
                     </tr>
                 {% endfor %}
                     <tr>
                         <td class="quantity"></td>
-                        <td class="description">SUB TOTAL</td>
+                        <td class="description" style="font-size: 13px;">SUB TOTAL</td>
                         <td class="price">GMD{{ transaction.grand_total|intcomma }}</td>
                     </tr>
                     <tr>
                         <td class="quantity"></td>
-                        <td class="description">Tax <small>(inclusive)</small>: {{ transaction.tax|intcomma }}%</td>
+                        <td class="description" style="font-size: 13px;">Tax <small>(inclusive)</small>: {{ transaction.tax|intcomma }}%</td>
                         <td class="price">{{ transaction.tax_amount|intcomma|floatformat:2 }}</td>
-                    </tr>
-                    <tr>
-                        <td class="quantity"></td>
-                        <td class="description">Tendered</td>
-                        <td class="price">{{ transaction.tendered_amount|intcomma }}</td>
-                    </tr>
-                     <tr>
-                        <td class="quantity"></td>
-                        <td class="description">Change</td>
-                        <td class="price">{{ transaction.amount_change|intcomma }}</td>
                     </tr>
                 </tbody>
             </table>
-                <p class="centered">Thanks for your purchase!</p>
+                <p class="centered" style="font-size: 15px;">Thanks for your purchase!</p>
             </div>
             <div class="clear-fix py-3"></div>
             <div class="d-flex w-100 justify-content-end">
