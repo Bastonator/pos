@@ -414,7 +414,7 @@ def delete_product(request, pk):
 def shift_list(request, pk):
     branch = Branch.objects.get(id=pk)
     branch1 = Branch.objects.get(id=pk)
-    shifts = Shifts.objects.filter(branch_owner_id=pk)
+    shifts = Shifts.objects.filter(branch_owner_id=pk).order_by('-id')
     return render(request, 'posApp/shifts.html', {'branch': branch, 'branch1': branch1, 'shifts': shifts})
 
 
