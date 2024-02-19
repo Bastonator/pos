@@ -1,0 +1,39 @@
+{% extends "posApp/base.html" %} {% block pageContent %}
+{% if branch %}
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card py-2">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="card-title mb-0">Shift list</h4>
+            {% if user.is_superuser %}
+            <div class="text-start">
+                <a href="{% url 'start-shift' pk=branch.pk %}">
+                <button class="btn btn-primary bg-gradient btn-sm rounded-0"><i class="mdi mdi-plus"></i><span>Start New Shift</span></button>
+                </a>
+            </div>
+            {% elif user.is_staff %}
+            <div class="text-start">
+                <a href="{% url 'start-shift' pk=branch.pk %}">
+                <button class="btn btn-primary bg-gradient btn-sm rounded-0"><i class="mdi mdi-plus"></i><span>Start New Shift</span></button>
+                </a>
+            </div>
+            {% else %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card">
+    {% for shift in shifts %}
+    <div class="card" style="width: 300px;">
+    <div class="card-body">
+      <h5 class="card-text">{{ shift.name }}</h5>
+        <p class="card-text"> It was started {{ shift.date_added }}</p>
+      <a href="{% url 'shift-sales' pk=branch.pk pk1=shift.pk %}" class="card-link" style="color: blue;">View Shift Sales</a>
+    </div>
+    </div>
+        <br>
+      {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock pageContent %}

@@ -1,0 +1,28 @@
+{% extends "posApp/base.html" %} {% block pageContent %}
+{% if branch %}
+
+  {% if not created %}
+
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card">
+    <form action="" id="product-form" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group mb-3">
+            <label for="shift" class="control-label">What shift is this? Morning shift or Night Shift</label>
+            <br>
+            <input type="text" name="shift_name" id="shift" class="form-control form-control-sm rounded-0" required>
+        </div>
+            <input class="btn btn-success btn-block py-2 mb-4 mt-5 fw500 w-100" type="submit" style="margin-top: -10px;" VALUE="Start shift">
+    </form>
+    </div>
+</div>
+  {% else %}
+
+  <a href="{% url 'shift' pk=branch.pk %}">
+      Shift has started. All sales will now be added to this shift
+  </a>
+
+  {% endif %}
+
+{% endif %}
+{% endblock pageContent %}

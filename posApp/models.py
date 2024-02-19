@@ -131,6 +131,21 @@ class Products(models.Model):
     def __str__(self):
         return self.code + " - " + self.name
 
+
+class Shifts(models.Model):
+    name = models.CharField(max_length=200)
+    user = models.ForeignKey(Users, null=True, related_name='shiftuser', on_delete=models.CASCADE)
+    branch_owner = models.ForeignKey(Branch, null=True, related_name='shiftbranch', on_delete=models.CASCADE)
+    date_added = models.DateTimeField(default=timezone.now)
+    shift_sales = models.IntegerField(null=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("shift-sales", kwargs={"pk": self.pk})
+
+
 class Sales(models.Model):
     code = models.CharField(max_length=100)
     sub_total = models.FloatField(default=0)
@@ -143,6 +158,7 @@ class Sales(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
     branch_owner = models.ForeignKey(Branch, null=True, related_name='salesbranch', on_delete=models.CASCADE)
     user = models.ForeignKey(Users, related_name='salesuser', on_delete=models.DO_NOTHING, null=True, default="wriberpos@gmail.com")
+    shift_sold = models.ForeignKey(Shifts, null=True, related_name='shiftsold', on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return self.code

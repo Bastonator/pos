@@ -2,7 +2,7 @@ from pickle import FALSE
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from flask import jsonify
-from posApp.models import Category, Products, Sales, salesItems
+from posApp.models import Category, Products, Sales, salesItems, Shifts
 from django.db.models import Count, Sum
 from posApp.models import Branch, Users
 from django.contrib import messages
@@ -176,7 +176,7 @@ def home(request, pk):
             date_added__year=current_year,
             date_added__month=current_month,
             date_added__day=current_day
-        ))
+        ).filter(branch_owner_id=pk))
         today_sales = Sales.objects.filter(
             date_added__year=current_year,
             date_added__month=current_month,
@@ -410,6 +410,40 @@ def delete_product(request, pk):
         resp['status'] = 'failed'
     return HttpResponse(json.dumps(resp), content_type="application/json")
 
+@login_required
+def shift_list(request, pk):
+    branch = Branch.objects.get(id=pk)
+    branch1 = Branch.objects.get(id=pk)
+    shifts = Shifts.objects.filter(branch_owner_id=pk)
+    return render(request, 'posApp/shifts.html', {'branch': branch, 'branch1': branch1, 'shifts': shifts})
+
+
+def start_shift(request, pk):
+    branch = Branch.objects.get(id=pk)
+    branch1 = Branch.objects.get(id=pk)
+    context = {'branch': branch, 'branch1': branch1}
+    if request.method == "POST":
+        name = request.POST.get('shift_name')
+        shift = Shifts.objects.create(name=name, branch_owner=branch, user=request.user)
+        context['shiftid'] = shift
+        context['created'] = True
+    return render(request, 'posApp/startshift.html', context=context)
+
+
+def shift_sales(request, pk, pk1):
+    branch = Branch.objects.get(id=pk)
+    branch1 = Branch.objects.get(id=pk)
+    shift = Shifts.objects.get(id=pk1)
+    sales = Sales.objects.filter(shift_sold_id=pk1)
+    total = 0
+
+    for sale in sales:
+        total = total + sale.grand_total
+        print(total)
+
+    shift.shift_sales = total
+    return render(request, 'posApp/shiftsales.html', {'branch': branch, 'branch1': branch1, 'shift': shift, 'sales': sales, 'total': total})
+
 
 @login_required
 def pos(request, pk):
@@ -447,6 +481,7 @@ def checkout_modal(request, pk):
 def save_pos(request, pk):
     resp = {'status': 'failed', 'msg': ''}
     branch = Branch.objects.get(id=pk)
+    shift = Shifts.objects.filter(branch_owner_id=pk).last()
     data = request.POST
     seller = Users.objects.get(email=request.user)
     pref = datetime.now().year + datetime.now().year
@@ -462,7 +497,7 @@ def save_pos(request, pk):
     try:
         sales = Sales(code=code, sub_total=data['sub_total'], tax=data['tax'], tax_amount=data['tax_amount'],
                       grand_total=data['grand_total'], tendered_amount=data['tendered_amount'],
-                      amount_change=data['amount_change'], branch_owner=branch, user=seller).save()
+                      amount_change=data['amount_change'], branch_owner=branch, user=seller, shift_sold=shift).save()
         sale_id = Sales.objects.last().pk
         i = 0
         for prod in data.getlist('product_id[]'):
