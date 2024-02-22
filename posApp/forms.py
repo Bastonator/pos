@@ -1,6 +1,6 @@
 from django import forms
 from django.forms.models import ModelForm
-from .models import Users, Branch, Category, Products, Sales
+from .models import Users, Branch, Category, Products, Sales, Move
 from django_countries.fields import CountryField
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.forms import UserCreationForm, PasswordResetForm, SetPasswordForm
@@ -197,3 +197,21 @@ class PwdResetConfirmForm(SetPasswordForm):
         return cnd['new_password1']
 
 
+class MoveForm(forms.ModelForm):
+    class Meta:
+        model = Move
+        fields = ('branch_from', 'branch_to', 'qty', 'branch_owner')
+
+        labels = {
+            'branch_from': '',
+            'branch_to': '',
+            'qty': '',
+            'branch_owner': 'Branch'
+        }
+
+        widgets = {
+            'branch_from': forms.Select(attrs={'class': 'form-control', 'placeholder': ''}),
+            'branch_to': forms.Select(attrs={'class': 'form-control', 'placeholder': ''}),
+            'qty': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'How much are you sending?'}),
+            'branch_owner': forms.Select(attrs={'class': 'form-control', 'placeholder': ''}),
+        }

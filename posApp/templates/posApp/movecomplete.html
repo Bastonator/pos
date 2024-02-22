@@ -1,0 +1,13 @@
+{% extends "posApp/base.html" %} {% block pageContent %}
+{% if branch %}
+
+<center>
+  <h3>
+    <a href="{% url 'product-page' pk=branch.pk %}">
+      Movement of product to new location has been executed
+    </a>
+  </h3>
+</center>
+
+{% endif %}
+{% endblock pageContent %}

@@ -1,6 +1,26 @@
 {% load static %}
+
+<style>
+    .account-form input {
+        border: 2px solid #ccc;
+        height: calc(2em + .75rem + 2px);
+    }
+
+    .account-form input:focus {
+        border-color: #1497ff;
+        box-shadow: none;
+    }
+    .mdc-drawer-link{
+    transition: 0.6s;
+    }
+    .mdc-drawer-link:hover{
+    background-color: black;
+    color: white;
+    }
+</style>
+
 <!-- partial:partials/_sidebar.html -->
-<aside id="nav" class="mdc-drawer mdc-drawer--dismissible mdc-drawer--open bg-dark bg-gradient">
+<aside id="nav" class="mdc-drawer mdc-drawer--dismissible mdc-drawer--open bg-dark bg-gradient" style="border-radius: 2px;">
     <div class="mdc-drawer__header border-bottom border-light">
         {% if branch1 %}
         <a href="{% url 'home-page' pk=branch1.pk %}" class="brand-logo">
@@ -15,7 +35,7 @@
     <div class="mdc-drawer__content">
         <div class="mdc-list-group">
             <nav class="mdc-list mdc-drawer-menu">
-                <div class="mdc-list-item mdc-drawer-item">
+                <div class="mdc-list-item mdc-drawer-item" style="border-radius: 15px;">
                     {% if branch1 %}
                     <a class="mdc-drawer-link" href="{% url 'home-page' pk=branch1.pk %}">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">home</i> Home
@@ -27,52 +47,52 @@
                     {% endif %}
                 </div>
                 {% if branch1 %}
-                <div class="mdc-list-item mdc-drawer-item">
+                <div class="mdc-list-item mdc-drawer-item" style="border-radius: 15px;">
                     <a class="mdc-drawer-link" href="{% url 'category-page' pk=branch1.pk %}">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">list</i> Category List
                     </a>
                 </div>
                 {% elif branch %}
-                <div class="mdc-list-item mdc-drawer-item">
+                <div class="mdc-list-item mdc-drawer-item" style="border-radius: 15px;">
                     <a class="mdc-drawer-link" href="{% url 'category-page' pk=branch.pk %}">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">list</i> Category List
                     </a>
                 </div>
                 {% endif %}
                 {% if branch1 %}
-                <div class="mdc-list-item mdc-drawer-item">
+                <div class="mdc-list-item mdc-drawer-item" style="border-radius: 15px;">
                     <a class="mdc-drawer-link" href="{% url 'product-page' pk=branch1.pk %}">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">label</i> Product List
                     </a>
                 </div>
                 {% elif branch %}
-                <div class="mdc-list-item mdc-drawer-item">
+                <div class="mdc-list-item mdc-drawer-item" style="border-radius: 15px;">
                     <a class="mdc-drawer-link" href="{% url 'product-page' pk=branch.pk %}">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">label</i> Product List
                     </a>
                 </div>
                 {% endif %}
                 {% if branch1 %}
-                <div class="mdc-list-item mdc-drawer-item">
+                <div class="mdc-list-item mdc-drawer-item" style="border-radius: 15px;">
                     <a class="mdc-drawer-link" href="{% url 'pos-page' pk=branch1.pk %}">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">payment</i> POS
                     </a>
                 </div>
                 {% elif branch %}
-                <div class="mdc-list-item mdc-drawer-item">
+                <div class="mdc-list-item mdc-drawer-item" style="border-radius: 15px;">
                     <a class="mdc-drawer-link" href="{% url 'pos-page' pk=branch.pk %}">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">payment</i> POS
                     </a>
                 </div>
                 {% endif %}
                 {% if branch1 %}
-                <div class="mdc-list-item mdc-drawer-item">
+                <div class="mdc-list-item mdc-drawer-item" style="border-radius: 15px;">
                     <a class="mdc-drawer-link" href="{% url 'sales-page' pk=branch1.pk %}">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">receipt</i> Sales
                     </a>
                 </div>
                 {% elif branch %}
-                <div class="mdc-list-item mdc-drawer-item">
+                <div class="mdc-list-item mdc-drawer-item" style="border-radius: 15px;">
                     <a class="mdc-drawer-link" href="{% url 'sales-page' pk=branch.pk %}">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">receipt</i> Sales
                     </a>
@@ -84,26 +104,26 @@
 </div>
 <br>
                 {% if branch1 %}
-                <div class="mdc-list-item mdc-drawer-item">
+                <div class="mdc-list-item mdc-drawer-item" style="border-radius: 15px;">
                     <a class="mdc-drawer-link" href="{% url 'inventory' pk=branch1.pk %}">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i> Inventory
                     </a>
                 </div>
                 {% elif branch %}
-                <div class="mdc-list-item mdc-drawer-item">
+                <div class="mdc-list-item mdc-drawer-item" style="border-radius: 15px;">
                     <a class="mdc-drawer-link" href="{% url 'inventory' pk=branch.pk %}">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i> Inventory
                     </a>
                 </div>
                 {% endif %}
                 {% if branch1 %}
-                <div class="mdc-list-item mdc-drawer-item">
+                <div class="mdc-list-item mdc-drawer-item" style="border-radius: 15px;">
                     <a class="mdc-drawer-link" href="{% url 'todays-sales' pk=branch1.pk %}">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i> Today's Sales
                     </a>
                 </div>
                 {% elif branch %}
-                <div class="mdc-list-item mdc-drawer-item">
+                <div class="mdc-list-item mdc-drawer-item" style="border-radius: 15px;">
                     <a class="mdc-drawer-link" href="{% url 'todays-sales' pk=branch.pk %}">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i> Today's Sales
                     </a>
@@ -112,7 +132,7 @@
                 {% if user.is_superuser %}
                     {% if branch1 %}
                         {% if user %}
-                    <div class="mdc-list-item mdc-drawer-item">
+                    <div class="mdc-list-item mdc-drawer-item" style="border-radius: 15px;">
                         <a class="mdc-drawer-link" href="{% url 'users' pk=branch1.pk pk1=user.pk %}">
                             <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i>Manage Users
                         </a>
@@ -120,7 +140,7 @@
                         {% endif %}
                     {% elif branch %}
                         {% if user %}
-                    <div class="mdc-list-item mdc-drawer-item">
+                    <div class="mdc-list-item mdc-drawer-item" style="border-radius: 15px;">
                         <a class="mdc-drawer-link" href="{% url 'users' pk=branch.pk pk1=user.pk %}">
                             <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i>Manage Users
                         </a>
@@ -129,13 +149,13 @@
                     {% endif %}
                 {% endif %}
                 {% if branch1 %}
-                <div class="mdc-list-item mdc-drawer-item">
+                <div class="mdc-list-item mdc-drawer-item" style="border-radius: 15px;">
                     <a class="mdc-drawer-link" href="{% url 'shift' pk=branch1.pk %}">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i> Shifts
                     </a>
                 </div>
                 {% elif branch %}
-                <div class="mdc-list-item mdc-drawer-item">
+                <div class="mdc-list-item mdc-drawer-item" style="border-radius: 15px;">
                     <a class="mdc-drawer-link" href="{% url 'shift' pk=branch.pk %}">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i> Shifts
                     </a>

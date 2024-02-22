@@ -2,7 +2,7 @@ from pickle import FALSE
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from flask import jsonify
-from posApp.models import Category, Products, Sales, salesItems, Shifts
+from posApp.models import Category, Products, Sales, salesItems, Shifts, ProductChange, changeItems, Move
 from django.db.models import Count, Sum
 from posApp.models import Branch, Users
 from django.contrib import messages
@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 import json, sys
 from datetime import date, datetime
-from posApp.forms import RegistrationForm, BranchForm, CategoryForm, ProductForm, SaleForm
+from posApp.forms import RegistrationForm, BranchForm, CategoryForm, ProductForm, SaleForm, MoveForm
 from django.conf import settings
 from django.core.paginator import Paginator
 from django.contrib.admin.views.decorators import staff_member_required
@@ -641,3 +641,139 @@ def todays_sale_items(request, pk):
         date_added__day=current_day
     ).filter(branch_owner_id=pk).order_by('-id')
     return render(request, 'posApp/todays_sale_items.html', {'branch': branch, 'todays_sale_items': todays_sale_items})
+
+
+@login_required
+def product_change(request, pk):
+    branch = Branch.objects.get(id=pk)
+    branch1 = Branch.objects.get(id=pk)
+    products = Products.objects.filter(branch_owner_id=pk, status=1)
+    product_json = []
+    for product in products:
+        product_json.append({'id': product.id, 'name': product.name, 'price': float(product.price)})
+    context = {
+        'page_title': "Point of Sale",
+        'products': products,
+        'product_json': json.dumps(product_json),
+        'branch': branch,
+        'branch1': branch1,
+    }
+    # return HttpResponse('')
+    return render(request, 'posApp/productchange.html', context)
+
+
+@login_required
+def change_modal(request, pk):
+    branch = Branch.objects.get(id=pk)
+    grand_total = 0
+    if 'grand_total' in request.GET:
+        grand_total = request.GET['grand_total']
+    context = {
+        'grand_total': grand_total,
+        'branch': branch
+    }
+    return render(request, 'posApp/stockchange_checkout.html', context)
+
+
+@login_required
+def save_change(request, pk):
+    resp = {'status': 'failed', 'msg': ''}
+    branch = Branch.objects.get(id=pk)
+    data = request.POST
+    pref = datetime.now().year + datetime.now().year
+    i = 1
+    while True:
+        code = '{:0>5}'.format(i)
+        i += int(1)
+        check = ProductChange.objects.filter(code=str(pref) + str(code)).all()
+        if len(check) <= 0:
+            break
+    code = str(pref) + str(code)
+
+    try:
+        change = ProductChange(code=code, sub_total=data['sub_total'], tax=data['tax'], tax_amount=data['tax_amount'],
+                      grand_total=data['grand_total'], tendered_amount=data['tendered_amount'],
+                      amount_change=data['amount_change'], branch_owner=branch, user=request.user).save()
+        change_id = ProductChange.objects.last().pk
+        i = 0
+        for prod in data.getlist('product_id[]'):
+            product_id = prod
+            change = ProductChange.objects.filter(id=change_id).first()
+            product = Products.objects.filter(id=product_id).first()
+            qty = data.getlist('qty[]')[i]
+            price = data.getlist('price[]')[i]
+            total = float(qty) * float(price)
+            product.stock = product.stock + float(qty)
+            product.save()
+            print({'change_id': change, 'product_id': product, 'qty': qty, 'price': price, 'total': total})
+            changeItems(change_id=change, product_id=product, qty=qty, price=price, total=total, branch_owner=branch).save()
+            i += int(1)
+        resp['status'] = 'success'
+        resp['change_id'] = change_id
+        messages.success(request, "Stock has been added.")
+    except:
+        resp['msg'] = "An error occured"
+        print("Unexpected error:", sys.exc_info()[0])
+    return HttpResponse(json.dumps(resp), content_type="application/json")
+
+
+@login_required
+def receipt_forstock(request, pk):
+    branch = Branch.objects.get(id=pk)
+    id = request.GET.get('id')
+    change = ProductChange.objects.filter(branch_owner_id=pk, id=id).first()
+    transaction = {}
+    for field in ProductChange._meta.get_fields():
+        if field.related_model is None:
+            transaction[field.name] = getattr(ProductChange, field.name)
+    ItemList = changeItems.objects.filter(change_id=change).all()
+
+    total = 0
+    for sale in ItemList:
+        total = total + sale.total
+        print(total)
+
+    context = {
+        "transaction": transaction,
+        "salesItems": ItemList,
+        'branch': branch,
+        'total': total
+    }
+
+    return render(request, 'posApp/stockchange_receipt.html', context)
+
+
+@login_required
+def move_product(request, pk, pk1):
+    branch = Branch.objects.get(id=pk)
+    branch1 = Branch.objects.get(id=pk)
+    branches = Branch.objects.all()
+    products = Products.objects.get(id=pk1)
+    form = MoveForm(request.POST or None, request.FILES or None)
+    context = {'branch': branch, 'branch1': branch1, 'products': products, 'branches': branches, 'form': form}
+    if request.method == "POST":
+        print(form)
+        if form.is_valid():
+            move = form.save(commit=False)
+            move.user = request.user
+            move.product = products
+            move.save()
+
+            quantity_moved = move.qty
+
+            products.stock = int(products.stock) - float(quantity_moved)
+            products.save()
+
+            product = Products.objects.create(code=products.code, category_id=products.category_id, name=products.name,
+                                              description=products.description,
+                                              price=products.price, status=products.status, branch_owner=move.branch_to,
+                                              stock=move.qty,
+                                              expiry_date=products.expiry_date, image=products.image)
+            product.save()
+
+            return render(request, 'posApp/movecomplete.html', {'branch': branch})
+    else:
+        form.fields["branch_from"].queryset = Branch.objects.filter(user=request.user)
+        form.fields["branch_to"].queryset = Branch.objects.filter(user=request.user)
+        form.fields["branch_owner"].queryset = Branch.objects.filter(user=request.user)
+    return render(request, 'posApp/moveproduct.html', context=context)

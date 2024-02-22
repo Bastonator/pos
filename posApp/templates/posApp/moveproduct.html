@@ -1,0 +1,32 @@
+{% extends "posApp/base.html" %} {% block pageContent %}
+{% if branch %}
+
+
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card">
+        <center>
+                <h3 align="left">Move Product</h3>
+            <br/><br/>
+                <div class="container" style="width: 800px; margin-left: 130px; justify-content: center;
+                            background-color: snow;">
+                    <form action="" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                {{form.branch_from}}
+                <br>
+                {{form.branch_to}}
+                <br>
+                {{form.qty}}
+                <br>
+                {{form.branch_owner}}
+                <hr>
+                         <div align="right">
+                            <input type="submit" value=" Make Movement" class="btn btn-outline-dark">
+                         </div>
+                    </form>
+                </div>
+            </center>
+    </div>
+</div>
+
+{% endif %}
+{% endblock pageContent %}

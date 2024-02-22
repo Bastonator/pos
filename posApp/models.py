@@ -112,6 +112,7 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+
 class Products(models.Model):
     code = models.CharField(max_length=100)
     category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
@@ -130,6 +131,43 @@ class Products(models.Model):
 
     def __str__(self):
         return self.code + " - " + self.name
+
+
+class ProductChange(models.Model):
+    code = models.CharField(max_length=100)
+    sub_total = models.FloatField(default=0)
+    grand_total = models.FloatField(default=0)
+    tax_amount = models.FloatField(default=0)
+    tax = models.FloatField(default=0)
+    tendered_amount = models.FloatField(default=0)
+    amount_change = models.FloatField(default=0)
+    date_added = models.DateTimeField(default=timezone.now)
+    date_updated = models.DateTimeField(auto_now=True)
+    branch_owner = models.ForeignKey(Branch, null=True, related_name='changebranch', on_delete=models.CASCADE)
+    user = models.ForeignKey(Users, null=True, related_name='changesuser', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.code
+
+
+class Move(models.Model):
+    branch_from = models.ForeignKey(Branch, related_name='movefrom', null=True, on_delete=models.DO_NOTHING)
+    branch_to = models.ForeignKey(Branch, related_name='moveto', null=True, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(Users, null=True, related_name='movingsuser', on_delete=models.CASCADE)
+    product = models.ForeignKey(Products,on_delete=models.CASCADE)
+    qty = models.FloatField(default=0)
+    date_added = models.DateTimeField(default=timezone.now, null=True)
+    branch_owner = models.ForeignKey(Branch, null=True, related_name='movebranch', on_delete=models.CASCADE)
+
+
+class changeItems(models.Model):
+    change_id = models.ForeignKey(ProductChange,on_delete=models.CASCADE)
+    product_id = models.ForeignKey(Products,on_delete=models.CASCADE)
+    price = models.FloatField(default=0)
+    qty = models.FloatField(default=0)
+    total = models.FloatField(default=0)
+    date_added = models.DateTimeField(default=timezone.now, null=True)
+    branch_owner = models.ForeignKey(Branch, null=True, related_name='changeitembranch', on_delete=models.CASCADE)
 
 
 class Shifts(models.Model):
