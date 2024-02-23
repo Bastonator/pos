@@ -113,7 +113,7 @@
         </td>
         <td class="px-2 py-1">
             <input type="hidden" name="product_id[]">
-            <input type="hidden" name="price[]">
+            <input type="hidden" name="cost_price[]">
             <input type="number" name="qty[]" min="0" class="form-control form-control-sm rounded-0 text-center">
         </td>
         <td class="px-2 py-1 product_name text-start"></td>
@@ -141,10 +141,10 @@
         var sub_total = 0;
         var grand_total = 0;
         $('#POS-field table tbody tr').each(function() {
-            price = $(this).find('[name="price[]"]').val()
+            cost_price = $(this).find('[name="cost_price[]"]').val()
             qty = $(this).find('[name="qty[]"]').val()
             qty = qty > 0 ? qty : 0
-            total = parseFloat(price) * parseFloat(qty)
+            total = parseFloat(cost_price) * parseFloat(qty)
             $(this).find('.product_total').text(parseFloat(total).toLocaleString('en-US'))
             sub_total += parseFloat(total)
         })
@@ -181,10 +181,10 @@
                 var tr = $($('noscript#item-clone').html()).clone()
                 tr.find('[name="qty[]"]').val(qty)
                 tr.find('[name="product_id[]"]').val(id)
-                tr.find('[name="price[]"]').val(data.price)
+                tr.find('[name="cost_price[]"]').val(data.cost_price)
                 tr.find('.product_name').text(data.name)
-                tr.find('.product_price').text(parseFloat(data.price).toLocaleString('en-US'))
-                tr.find('.product_total').text(parseFloat(data.price * qty).toLocaleString('en-US'))
+                tr.find('.product_price').text(parseFloat(data.cost_price).toLocaleString('en-US'))
+                tr.find('.product_total').text(parseFloat(data.cost_price * qty).toLocaleString('en-US'))
                 $('#POS-field table tbody').append(tr)
                 $('#product-id').val('').trigger('change')
                 $('#product-qty').val(1)
@@ -256,7 +256,7 @@
                         console.err(resp)
                     }
                     _this.prepend(el)
-                    el.show('slow')
+                    el.show('fast')
                     $("html, body, .modal").scrollTop(0);
                     end_loader()
                 }
