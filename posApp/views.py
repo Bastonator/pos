@@ -650,7 +650,7 @@ def product_change(request, pk):
     products = Products.objects.filter(branch_owner_id=pk, status=1)
     product_json = []
     for product in products:
-        product_json.append({'id': product.id, 'name': product.name, 'cost_price': float(product.cost_price)})
+        product_json.append({'id': product.id, 'name': product.name, 'cost_price': float(product.cost_price), 'stock' : int(product.stock)})
     context = {
         'page_title': "Point of Sale",
         'products': products,
@@ -702,8 +702,12 @@ def save_change(request, pk):
             product = Products.objects.filter(id=product_id).first()
             qty = data.getlist('qty[]')[i]
             price = data.getlist('cost_price[]')[i]
+            supplier = data.getlist('supplier')[i]
+            new_costprice = data.getlist('new_cost')[i]
             total = float(qty) * float(price)
             product.stock = product.stock + float(qty)
+            product.supplier = supplier
+            product.cost_price = new_costprice
             product.save()
             print({'change_id': change, 'product_id': product, 'qty': qty, 'price': price, 'total': total})
             changeItems(change_id=change, product_id=product, qty=qty, price=price, total=total, branch_owner=branch).save()
@@ -757,6 +761,7 @@ def move_product(request, pk, pk1):
             move = form.save(commit=False)
             move.user = request.user
             move.product = products
+            move.branch_owner = branch
             move.save()
 
             quantity_moved = move.qty

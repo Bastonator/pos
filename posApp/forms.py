@@ -200,18 +200,16 @@ class PwdResetConfirmForm(SetPasswordForm):
 class MoveForm(forms.ModelForm):
     class Meta:
         model = Move
-        fields = ('branch_from', 'branch_to', 'qty', 'branch_owner')
+        fields = ('branch_from', 'branch_to', 'qty')
 
         labels = {
             'branch_from': '',
             'branch_to': '',
-            'qty': '',
-            'branch_owner': 'Branch'
+            'qty': ''
         }
 
         widgets = {
             'branch_from': forms.Select(attrs={'class': 'form-control', 'placeholder': ''}),
             'branch_to': forms.Select(attrs={'class': 'form-control', 'placeholder': ''}),
-            'qty': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'How much are you sending?'}),
-            'branch_owner': forms.Select(attrs={'class': 'form-control', 'placeholder': ''}),
+            'qty': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'How much are you sending?'})
         }

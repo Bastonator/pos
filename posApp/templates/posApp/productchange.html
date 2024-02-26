@@ -16,7 +16,7 @@
     <div class="mdc-card">
         <form action="" id="pos-form">
             <fieldset>
-                <legend>Add Products</legend>
+                <legend>Add New Stock</legend>
                 <div class="row align-items-end">
                     <div class="col-lg-5 col-md-5 col-sm-12">
                         <div class="form-group mb-3">
@@ -49,18 +49,24 @@
                         <table class="table table-bordered">
                             <colgroup>
                                 <col width="5%">
+                                <col width="9%">
+                                <col width="25%">
+                                <col width="12%">
+                                <col width="10%">
+                                <col width="18%">
                                 <col width="15%">
-                                <col width="40%">
-                                <col width="20%">
-                                <col width="20%">
+                                <col width="5%">
                             </colgroup>
                             <thead>
                                 <tr class="bg-dark bg-gradient bg-opacity-50 text-light">
                                     <th class="py-1 px-2 text-center  text-light"></th>
-                                    <th class="py-1 px-2 text-center  text-light">QTY</th>
+                                    <th class="py-1 px-2 text-center  text-light">Qty added</th>
                                     <th class="py-1 px-2 text-center  text-light">Product</th>
                                     <th class="py-1 px-2 text-center  text-light">Cost Price</th>
                                     <th class="py-1 px-2 text-center  text-light">Total</th>
+                                    <th class="py-1 px-2 text-center  text-light">Supplier</th>
+                                    <th class="py-1 px-2 text-center  text-light">New Cost Price</th>
+                                    <th class="py-1 px-2 text-center  text-light">Stock</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -119,6 +125,13 @@
         <td class="px-2 py-1 product_name text-start"></td>
         <td class="px-2 py-1 product_price text-end"></td>
         <td class="px-2 py-1 product_total text-end"></td>
+        <td class="px-2 py-1">
+            <input type="text" name="supplier" id="supplier" class="form-control form-control-sm rounded-0 text-center">
+        </td>
+        <td class="px-2 py-1">
+            <input type="number" name="new_cost" id="new_cost" class="form-control form-control-sm rounded-0 text-center">
+        </td>
+        <td class="px-2 py-1 product_stock text-end"></td>
     </tr>
 </noscript>
 {% endif %} {% endblock pageContent %} {% block ScriptBlock %}
@@ -185,6 +198,7 @@
                 tr.find('.product_name').text(data.name)
                 tr.find('.product_price').text(parseFloat(data.cost_price).toLocaleString('en-US'))
                 tr.find('.product_total').text(parseFloat(data.cost_price * qty).toLocaleString('en-US'))
+                tr.find('.product_stock').text(parseFloat(data.stock).toLocaleString('en-US'))
                 $('#POS-field table tbody').append(tr)
                 $('#product-id').val('').trigger('change')
                 $('#product-qty').val(1)

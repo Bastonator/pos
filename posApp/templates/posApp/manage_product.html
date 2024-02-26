@@ -31,6 +31,10 @@
                 <textarea rows="5" name="description" id="description" class="form-control form-control-sm rounded-0" required>{% if product.description %}{{product.description}}{% endif %}</textarea>
             </div>
             <div class="form-group mb-3">
+                <label for="Supplier" class="control-label">Supplier</label>
+                <input type="text" name="Supplier" id="Supplier" class="form-control form-control-sm rounded-0" value="{% if product.supplier %}{{product.supplier}}{% endif %}" required>
+            </div>
+            <div class="form-group mb-3">
                 <label for="price" class="control-label">Price</label>
                 <input type="text" name="price" id="price" class="form-control form-control-sm rounded-0" value="{% if product.price %}{{product.price}}{% endif %}" required>
             </div>
