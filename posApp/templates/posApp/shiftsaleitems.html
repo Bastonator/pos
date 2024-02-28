@@ -45,14 +45,14 @@
                 {% if sale_data %}
                     {% for sold in sale_data %}
                     <tr>
-                        <td class="px-2 py-1 text-center">{{ sold.id|linebreaksbr }}</td>
-                        <td class="px-2 py-1 text-start">{{ sold.sale_id|linebreaksbr }}</td>
-                        <td class="px-2 py-1 text-start">{{ sold.product_id|linebreaksbr }}</td>
-                        <td class="px-2 py-1 text-end">D{{ sold.price|linebreaksbr }}</td>
-                        <td class="px-2 py-1 text-end">{{ sold.qty|linebreaksbr }}</td>
-                        <td class="px-2 py-1 text-center">D{{ sold.total|linebreaksbr }}</td>
+                        <td class="px-2 py-1 text-center">{{ sold.id }}</td>
+                        <td class="px-2 py-1 text-start">{{ sold.sale_id }}</td>
+                        <td class="px-2 py-1 text-start">{{ sold.product_id }}</td>
+                        <td class="px-2 py-1 text-end">D{{ sold.price }}</td>
+                        <td class="px-2 py-1 text-end">{{ sold.qty }}</td>
+                        <td class="px-2 py-1 text-center">D{{ sold.total }}</td>
                         <td class="px-2 py-1 text-center">{{ sold.date_added|date:'Y-m-d H:i' }}</td>
-                        <td class="px-2 py-1 text-center">{{ sold.user|linebreaksbr }}</td>
+                        <td class="px-2 py-1 text-center">{{ sold.user }}</td>
                     </tr>
                     {% endfor %}
                 {% endif %}

@@ -449,13 +449,13 @@ def shift_sale_items(request, pk, pk1):
     branch = Branch.objects.get(id=pk)
     branch1 = Branch.objects.get(id=pk)
     shift = Shifts.objects.get(id=pk1)
-    sales = Sales.objects.filter(shift_sold_id=pk1)
+    sales = Sales.objects.filter(shift_sold_id=pk1).order_by('-id')
     #did't work till i added sale data and made the data render in a list format. ofcourse i appeded the data at the end.
     sale_data = []
 
     for sale in sales:
         item = sale
-        for prod in salesItems.objects.filter(sale_id=item).order_by('id'):
+        for prod in salesItems.objects.filter(sale_id=item).order_by('-id'):
             print(prod)
             stuff = prod
             sale_data.append(stuff)

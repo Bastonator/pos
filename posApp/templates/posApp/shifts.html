@@ -29,8 +29,7 @@
     <div class="card-body">
       <h5 class="card-text">{{ shift.name }}</h5>
         <p class="card-text"> It was started {{ shift.date_added }}</p>
-      <a href="{% url 'shift-sales' pk=branch.pk pk1=shift.pk %}" class="card-link" style="color: blue;">View Shift Sales</a>
-    <a href="{% url 'shift-sale-items' pk=branch.pk pk1=shift.pk %}" class="card-link" style="color: green;">View Sold items </a>
+      <a href="{% url 'shift-sale-items' pk=branch.pk pk1=shift.pk %}" class="card-link" style="color: blue;">View Shift Sales</a>
     </div>
     </div>
         <br>
