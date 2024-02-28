@@ -49,6 +49,7 @@ urlpatterns = [
     path('shift/<str:pk>', views.shift_list, name="shift"),
     path('start_shift/<str:pk>', views.start_shift, name="start-shift"),
     path('shift_sales/<str:pk>/<str:pk1>', views.shift_sales, name="shift-sales"),
+    path('shift_sale_items/<str:pk>/<str:pk1>', views.shift_sale_items, name="shift-sale-items"),
     path('product_change/<str:pk>', views.product_change, name="change-page"),
     path('change_modal/<str:pk>', views.change_modal, name="checkout-modal-change"),
     path('save_change/<str:pk>', views.save_change, name="save-change"),

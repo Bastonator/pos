@@ -22,17 +22,20 @@
     </div>
 </div>
 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
-    <div class="mdc-card">
+    <div class="mdc-card" style="">
+        <div class="row">
     {% for shift in shifts %}
-    <div class="card" style="width: 300px;">
+    <div class="card" style="width: 350px; margin: 2px;">
     <div class="card-body">
       <h5 class="card-text">{{ shift.name }}</h5>
         <p class="card-text"> It was started {{ shift.date_added }}</p>
       <a href="{% url 'shift-sales' pk=branch.pk pk1=shift.pk %}" class="card-link" style="color: blue;">View Shift Sales</a>
+    <a href="{% url 'shift-sale-items' pk=branch.pk pk1=shift.pk %}" class="card-link" style="color: green;">View Sold items </a>
     </div>
     </div>
         <br>
       {% endfor %}
+        </div>
     </div>
 </div>
 {% endif %}

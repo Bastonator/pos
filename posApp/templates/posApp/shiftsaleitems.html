@@ -1,0 +1,65 @@
+{% extends "posApp/base.html" %}  {% block pageContent %}
+{% if branch %}
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card py-2">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="card-title mb-0">Shift Items sold</h4>
+            <div class="text-start">
+                {% if shift %}
+                    GMD{{ shift.shift_sales }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<button onclick="window.print()" id="print"> Print Sold Items
+</button>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <colgroup>
+                    <col width="5%">
+                    <col width="20%">
+                    <col width="25%">
+                    <col width="10%">
+                    <col width="10%">
+                    <col width="10%">
+                    <col width="10%">
+                    <col width="10%">
+
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th class="text-center py-1">#</th>
+                        <th class="text-center py-1">Sale ID</th>
+                        <th class="text-center py-1">Product</th>
+                        <th class="text-center py-1">Price</th>
+                        <th class="text-center py-1">Quantity</th>
+                        <th class="text-center py-1">Total</th>
+                        <th class="text-center py-1">Date Sold</th>
+                        <th class="text-center py-1">Sold by</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% if sale_data %}
+                    {% for sold in sale_data %}
+                    <tr>
+                        <td class="px-2 py-1 text-center">{{ sold.id|linebreaksbr }}</td>
+                        <td class="px-2 py-1 text-start">{{ sold.sale_id|linebreaksbr }}</td>
+                        <td class="px-2 py-1 text-start">{{ sold.product_id|linebreaksbr }}</td>
+                        <td class="px-2 py-1 text-end">D{{ sold.price|linebreaksbr }}</td>
+                        <td class="px-2 py-1 text-end">{{ sold.qty|linebreaksbr }}</td>
+                        <td class="px-2 py-1 text-center">D{{ sold.total|linebreaksbr }}</td>
+                        <td class="px-2 py-1 text-center">{{ sold.date_added|date:'Y-m-d H:i' }}</td>
+                        <td class="px-2 py-1 text-center">{{ sold.user|linebreaksbr }}</td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock pageContent %}

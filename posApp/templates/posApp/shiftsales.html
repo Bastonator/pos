@@ -12,6 +12,7 @@
         </div>
     </div>
 </div>
+
 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
     <div class="mdc-card">
         <div class="table-responsive">
@@ -22,7 +23,6 @@
                     <col width="20%">
                     <col width="25%">
                     <col width="15%">
-                    <col width="15%">
                 </colgroup>
                 <thead>
                     <tr>
@@ -31,7 +31,6 @@
                         <th class="text-center py-1">Trans. Code</th>
                         <th class="text-center py-1">Total</th>
                         <th class="text-center py-1">Tax Inclusive</th>
-                        <th class="text-center py-1">Items</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,7 +41,6 @@
                         <td class="px-2 py-1 text-start">{{ sale.code }}</td>
                         <td class="px-2 py-1 text-end">D{{ sale.grand_total|intcomma }}</td>
                         <td class="px-2 py-1 text-end">({{ sale.tax }}%) {{ sale.tax_amount|intcomma:2 }}</td>
-                        <td class="px-2 py-1 text-center">{{ sale.item_count|intcomma }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

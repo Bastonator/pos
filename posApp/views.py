@@ -445,6 +445,38 @@ def shift_sales(request, pk, pk1):
     return render(request, 'posApp/shiftsales.html', {'branch': branch, 'branch1': branch1, 'shift': shift, 'sales': sales, 'total': total})
 
 
+def shift_sale_items(request, pk, pk1):
+    branch = Branch.objects.get(id=pk)
+    branch1 = Branch.objects.get(id=pk)
+    shift = Shifts.objects.get(id=pk1)
+    sales = Sales.objects.filter(shift_sold_id=pk1)
+    #did't work till i added sale data and made the data render in a list format. ofcourse i appeded the data at the end.
+    sale_data = []
+
+    for sale in sales:
+        item = sale
+        for prod in salesItems.objects.filter(sale_id=item).order_by('id'):
+            print(prod)
+            stuff = prod
+            sale_data.append(stuff)
+            context = {
+                'branch': branch,
+                'branch1': branch1,
+                'shift': shift,
+                'sales': sales,
+                'sale_data': sale_data
+            }
+
+        total = 0
+
+        for sale in sales:
+            total = total + sale.grand_total
+            print(total)
+
+        shift.shift_sales = total
+        #data = salesItems.objects.filter(sale_id=item)
+    return render(request, 'posApp/shiftsaleitems.html', context)
+
 @login_required
 def pos(request, pk):
     branch = Branch.objects.get(id=pk)
