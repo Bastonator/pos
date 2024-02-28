@@ -459,13 +459,6 @@ def shift_sale_items(request, pk, pk1):
             print(prod)
             stuff = prod
             sale_data.append(stuff)
-            context = {
-                'branch': branch,
-                'branch1': branch1,
-                'shift': shift,
-                'sales': sales,
-                'sale_data': sale_data
-            }
 
         total = 0
 
@@ -474,7 +467,16 @@ def shift_sale_items(request, pk, pk1):
             print(total)
 
         shift.shift_sales = total
+
         #data = salesItems.objects.filter(sale_id=item)
+
+    context = {
+        'branch': branch,
+        'branch1': branch1,
+        'shift': shift,
+        'sales': sales,
+        'sale_data': sale_data
+    }
     return render(request, 'posApp/shiftsaleitems.html', context)
 
 @login_required
