@@ -81,7 +81,7 @@
                             <button class="mdc-button mdc-button--raised p-1 icon-button filled-button--light mdc-ripple-upgraded edit-data" type="button" data-id="{{ product.pk }}" title="Edit">
                                 <i class="material-icons mdc-button__icon">edit</i>
                             </button>
-                            <button class="mdc-button mdc-button--raised p-1 icon-button filled-button--danger mdc-ripple-upgraded delete-data" type="button" data-id="{{ product.pk }}" title="Delete">
+                            <button class="mdc-button mdc-button--raised p-1 icon-button filled-button--danger mdc-ripple-upgraded delete-data" type="button" data-id="{{ product.pk }}" data-name="{{ product.name }}" title="Delete">
                                 <i class="material-icons mdc-button__icon">deleteoutline</i>
                             </button>
                         </td>
@@ -96,6 +96,21 @@
         </div>
     </div>
 </div>
+
+{% if products.has_previous %}
+    <div class="" style="position: absolute; bottom: 55px; right: 175px;">
+        <a href="{% url 'product-page' pk=branch.pk  %}?page={{products.previous_page_number}}">
+        <button class="btn btn-primary bg-gradient btn-sm rounded-0" style="width: auto;"><i class="mdi mdi-plus"></i><span>Previous Product List</span></button>
+        </a>
+    </div>
+{% endif %}
+{% if products.has_next %}
+    <div class="" style="position: absolute; bottom: 55px; right: 40px;">
+        <a href="{% url 'product-page' pk=branch.pk  %}?page={{products.next_page_number}}">
+        <button class="btn btn-primary bg-gradient btn-sm rounded-0"><i class="mdi mdi-plus"></i><span>Next Product List</span></button>
+        </a>
+    </div>
+{% endif %}
 {% endblock pageContent %} {% block ScriptBlock %}
 <script>
     $(function() {
@@ -106,7 +121,7 @@
             uni_modal("Edit Product", "{% url 'manage_products-page' branch.pk %}?id=" + $(this).attr('data-id'))
         })
         $('.delete-data').click(function() {
-            _conf("Are you sure to delete this Product?", "delete_product", [$(this).attr('data-id')])
+            _conf("Are you sure to delete <b>" + $(this).attr('data-name') + "</b> Product?", "delete_product", [$(this).attr('data-id')])
         })
 
         $('#uni_modal').on('shown.bs.modal', function() {

@@ -9,6 +9,8 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
+from django.core.paginator import Paginator
+from django.core.paginator import EmptyPage
 import json, sys
 from datetime import date, datetime
 from posApp.forms import RegistrationForm, BranchForm, CategoryForm, ProductForm, SaleForm, MoveForm
@@ -318,9 +320,19 @@ def products(request, pk):
     branch = Branch.objects.get(id=pk)
     branch1 = Branch.objects.get(id=pk)
     product_list = Products.objects.filter(branch_owner_id=pk).order_by('name')
+
+    p = Paginator(product_list, 40)
+
+    page_num = request.GET.get('page', 1)
+    try:
+        page = p.page(page_num)
+    except EmptyPage:
+        page = p.page(1)
+
     context = {
         'page_title': 'Product List',
-        'products': product_list,
+        'products': page,
+        'product_list': product_list,
         'branch': branch,
         'branch1': branch1,
     }
