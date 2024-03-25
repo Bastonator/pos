@@ -1,0 +1,61 @@
+{% extends "labApp/base.html" %} {% block pageContent %}
+{% if lab %}
+
+
+
+<center>
+    <br>
+<div class="card product-add-home" style="background-color: white; width: 1290px; ">
+    <div class="card-add" style="border-color: slategray;">
+        <div class="card-header" style="height: 5rem" align="left">
+            <h1>What are the results of the test?</h1>
+        </div>
+        <div class="container">
+                <form action="" method="POST" enctype="multipart/form-data" style="width: 1264px;">
+                        {% csrf_token %}
+<br>
+
+                {{form.investigation_request}}
+                <br>
+                {{form.alanine_transferase}}
+                <br>
+
+<div style="display: flex;">
+                {{form.albumin}}            &nbsp; &nbsp;
+
+                {{form.ALP}}
+</div>
+<br>
+
+<div style="display: flex;">
+                {{form.aspartate_transferase}}             &nbsp; &nbsp;
+
+                {{form.Bilirubin_direct}}
+</div>
+<br>
+
+<div style="display: flex;">
+                {{form.Bilirubin_total}}            &nbsp; &nbsp;
+
+                {{form.GGT}}
+</div>
+<br>
+
+<div style="display: flex;">
+                {{form.Globin}}            &nbsp; &nbsp;
+
+                {{form.total_protein}}
+</div><br>
+
+                <div align="center">
+                    <input type="submit" value="Save test results" class="btn btn-outline-dark">
+                 </div>
+                 <br>
+            </form>
+    </div>
+</div>
+</div>
+</center>
+
+{% endif %}
+{% endblock %}

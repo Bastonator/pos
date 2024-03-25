@@ -201,6 +201,24 @@ body {
               {% endif %}
           </li>
         </ul>
+        <li class="nav-item">
+        <a class="nav-link " data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-journal-text"></i><span>Labs</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="forms-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
+          <li>
+            {% if user %}
+            <a href="{% url 'lab-dash' pk=user.pk %}" class="">
+              <i class="bi bi-circle"></i><span>View Labs</span>
+            </a>
+            {% if user.is_superuser %}
+            <a href="{% url 'labregister' pk=user.pk %}" class="">
+              <i class="bi bi-circle"></i><span>Create Lab</span>
+            </a>
+            {% endif %}
+            {% endif %}
+          </li>
+        </ul>
          <li class="nav-item">
           <a class="nav-link collapsed" href="{% url 'logout' %}">
             <i class="bi bi-box-arrow-in-right"></i>
@@ -231,7 +249,7 @@ body {
       <div class="row">
     {% if branch %}
     {% for database in branch %}
-        <div class="card" style="margin: 5px;">
+        <div class="card" style="margin: 8px; border-radius: 4px;">
           <p><strong>{{ database.name }}</strong></p>
           <div class="container-fluid" style="display: flex;">
             <a href="{% url 'home-page' pk=database.pk%}">

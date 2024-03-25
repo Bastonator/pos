@@ -1,0 +1,107 @@
+{% extends "posApp/bases.html" %}
+
+{% block title %}
+    Register to WriberPOS
+{% endblock %}
+
+{% block content %}
+<style>
+    .account-form input {
+        border: 2px solid #ccc;
+        height: calc(2em + .75rem + 2px);
+    }
+
+    .account-form input:focus {
+        border-color: #1497ff;
+        box-shadow: none;
+    }
+</style>
+
+{% if not created %}
+
+<div class="container-fluid">
+    <div class="row no-gutter">
+        <div class="col-md-12">
+            <div class="login d-flex align-items-center py-5">
+                <div class="container" style="width: 100%;">
+                    <div class="row">
+                        <div class="col-12 col-lg-7  mx-auto">
+                             <form class="account-form p-4 rounded col-lg-10 mx-auto" action="" method="POST">
+                                {% csrf_token %}
+                                <h3 class="mb-2 font-weight-bold">Create a Lab</h3>
+                                <p class="mb-4">It only takes a minute.</p>
+                                <div class="col-md-6">
+                                  <div class="card mb-4">
+                                    <h5 class="card-header">Start here</h5>
+                                    <div class="card-body demo-vertical-spacing demo-only-element">
+                                      <div>
+                                        <label for="defaultFormControlInput" class="form-label">Lab Name</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="defaultFormControlInput"
+                                          placeholder="Lab Name"
+                                          name="labname"
+                                          aria-describedby="defaultFormControlHelp" />
+                                      </div>
+                                      <div>
+                                        <label for="defaultFormControlInput" class="form-label">Lab User</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="defaultFormControlInput3"
+                                          placeholder="First controlling user"
+                                          name="user1"
+                                          list="userlist1"
+                                          aria-describedby="defaultFormControlHelp" />
+                                          <datalist id="userlist1">
+                                             {% for user in user %}
+                                             <option value="{{ user.id }}">-<strong>{{ user.email }}-{{ user.username }}</strong></option>
+                                             {% endfor %}
+                                          </datalist>
+                                      </div>
+                                        <label>{{ form.location.label }}<span class="text-muted small">
+                                        (Required)</span></label>
+                                        {{ form.location }}
+                                        <div>
+                                        <label for="defaultFormControlInput" class="form-label">Branch phone</label>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          id="defaultFormControlInput6"
+                                          placeholder="e.g. 7217688"
+                                          name="phone"
+                                          aria-describedby="defaultFormControlHelp" />
+                                        <div id="defaultFormControlHelp3" class="form-text">
+                                          We'll never share your details with anyone else.
+                                        </div>
+                                      </div>
+                                      <div class="input-group">
+                                        <span class="input-group-text" id="basic-addon14">https://wriberpos.com/</span>
+                                        <input
+                                          type="text"
+                                          class="form-control"
+                                          placeholder="URL"
+                                          id="basic-url1"
+                                          name="labid"
+                                          aria-describedby="basic-addon14" />
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                 <input class="btn btn-success btn-block py-2 mb-4 mt-5 fw500 w-100" type="submit" VALUE="Register lab">
+                            </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+
+<a href="{% url 'home-page-lab' labid.id %}">
+    click here to view your lab!!
+</a>
+
+{% endif %}
+{% endblock %}

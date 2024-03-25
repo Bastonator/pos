@@ -1,0 +1,212 @@
+{% extends "labApp/base.html" %} {% block pageContent %}
+{% if lab %}
+{% if patient %}
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card py-2">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="card-title mb-0">{{ patient.firstname }} {{ patient.lastname }}'s Details</h4>
+            <div class="text-start">
+                <a href="{% url 'test-list' lab.id patient.id %}">
+                <button class="btn btn-primary bg-gradient btn-sm rounded-0" id="create_new"><i class="mdi mdi-plus"></i><span> Request new test for {{ patient.firstname }} </span></button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card">
+    <div class="card" style="width: 960px;">
+    <div class="card-body">
+        <div style="display: flex;">
+            <h4.8 style="display: flex;">
+                First Name: {{ patient.firstname }} 
+            </h4.8>
+            &nbsp; &nbsp;
+            <h4.8 style="display: flex;">
+                Last Name: {{ patient.lastname }} 
+            </h4.8>
+            &nbsp; &nbsp;
+            <h4.8 style="display: flex;">
+                Gender: {{ patient.gender }} 
+            </h4.8>
+            &nbsp; &nbsp;
+            <h4.8 style="display: flex;">
+                Date of birth: {{ patient.dob }} 
+            </h4.8>
+        </div>
+        <hr>
+        <div style="display: flex;">
+            <h4.8 style="display: flex;">
+                Phone number: {{ patient.contact }} 
+            </h4.8>&nbsp; &nbsp;
+            <h4.8 style="display: flex;">
+                Address: {{ patient.address }} 
+            </h4.8>&nbsp; &nbsp;
+            <h4.8 style="display: flex;">
+                Email: {{ patient.email }} 
+            </h4.8>&nbsp; &nbsp;
+            <h4.8 style="display: flex;">
+                Registered by: {{ patient.created_by }} 
+            </h4.8>&nbsp; &nbsp;
+            <h4.8 style="display: flex;">
+                Date registered: {{ patient.date_added }} 
+            </h4.8>&nbsp; &nbsp;
+        </div>
+    </div>
+</div>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Liver Function test history
+                </h4>
+                <a href="{% url 'liver-patient' lab.id patient.id %}">
+                    View history
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Renal Function test history
+                </h4>
+                <a href="{% url 'renal-patient' lab.id patient.id %}">
+                    View history
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Pancreatic Enzymes test history
+                </h4>
+                <a href="{% url 'pancreas-patient' lab.id patient.id %}">
+                    View history
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Iron Profile test history
+                </h4>
+                <a href="{% url 'iron-patient' lab.id patient.id %}">
+                    View History
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Lipid Profile test history
+                </h4>
+                <a href="{% url 'lipid-patient' lab.id patient.id %}">
+                    View History
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Inflammatory mediators tests history
+                </h4>
+                <a href="{% url 'inflame-patient' lab.id patient.id %}">
+                    View History
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Ascetic Fluid tests history
+                </h4>
+                <a href="{% url 'ascetic-patient' lab.id patient.id %}">
+                    View History
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Electrolytes test history
+                </h4>
+                <a href="{% url 'ions-patient' lab.id patient.id %}">
+                    View History
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Sugar tests history
+                </h4>
+                <a href="{% url 'sugar-patient' lab.id patient.id %}">
+                    View History
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Cardiac Markers tests history
+                </h4>
+                <a href="{% url 'cardiac-patient' lab.id patient.id %}">
+                    View History
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Reproduction Hormones and tests hsitory
+                </h4>
+                <a href="{% url 'repro-patient' lab.id patient.id %}">
+                    View History
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Autoimmunity and Cancer tests history
+                </h4>
+                <a href="{% url 'aac-patient' lab.id patient.id %}">
+                    View History
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endif %}
+{% endblock pageContent %}

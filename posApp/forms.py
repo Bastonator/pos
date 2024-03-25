@@ -1,6 +1,6 @@
 from django import forms
 from django.forms.models import ModelForm
-from .models import Users, Branch, Category, Products, Sales, Move
+from .models import Users, Branch, Category, Products, Sales, Move, Lab, Patient, Pancreatic_enzymes_Test, Ironprofile_Test, LipidProfile_Test, Reproduction, Ascetic_Fluid_Test, Autoimmunity_and_cancer_Test, Inflammtory_Test, Diabetic_Test, Renal_Function_Test, Cardiac_Markers, Investigations, Liver_Function_Test, Elements_conc_Test
 from django_countries.fields import CountryField
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.forms import UserCreationForm, PasswordResetForm, SetPasswordForm
@@ -212,4 +212,352 @@ class MoveForm(forms.ModelForm):
             'branch_from': forms.Select(attrs={'class': 'form-control', 'placeholder': ''}),
             'branch_to': forms.Select(attrs={'class': 'form-control', 'placeholder': ''}),
             'qty': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'How much are you sending?'})
+        }
+
+
+class LiverForm(forms.ModelForm):
+    class Meta:
+        model = Liver_Function_Test
+        fields = (
+        'investigation_request', 'alanine_transferase', 'albumin', 'ALP', 'aspartate_transferase', 'Bilirubin_direct',
+        'Bilirubin_total', 'GGT', 'Globin', 'total_protein')
+
+        labels = {
+            'investigation_request': '',
+            'alanine_transferase': '',
+            'albumin': '',
+            'ALP': '',
+            'aspartate_transferase': '',
+            'Bilirubin_direct': '',
+            'Bilirubin_total': '',
+            'GGT': '',
+            'Globin': '',
+            'total_protein': '',
+        }
+
+        widgets = {
+            'investigation_request': forms.CheckboxSelectMultiple(),
+            'alanine_transferase': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'alanine_transferase'}),
+            'albumin': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'albumin'}),
+            'ALP': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ALP'}),
+            'aspartate_transferase': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'aspartate_transferase'}),
+            'Bilirubin_direct': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Bilirubin_direct'}),
+            'Bilirubin_total': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Bilirubin_total'}),
+            'GGT': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'GGT'}),
+            'Globin': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Globin'}),
+            'total_protein': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'total_protein'}),
+        }
+
+
+class InvestigationForm(forms.ModelForm):
+    class Meta:
+        model = Investigations
+        fields = ('name', 'cost', 'category')
+
+        TESTS = [
+            ('L', 'Liver Function Test'),
+            ('P', 'Pancreatic Enzymes Test'),
+        ]
+
+        labels = {
+            'name': '',
+            'cost': '',
+            'category': '',
+        }
+
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Name of investigation'}),
+            'cost': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Price of test'}),
+            'category': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+
+class RenalForm(forms.ModelForm):
+    class Meta:
+        model = Renal_Function_Test
+        fields = ('investigation_request', 'creatinine', 'urea', 'onedayGFR', 'onedayprotein', 'onedaycreatinine')
+
+        labels = {
+            'investigation_request': '',
+            'creatinine': '',
+            'urea': '',
+            'onedayGFR': '',
+            'onedayprotein': '',
+            'onedaycreatinine': ''
+        }
+
+        widgets = {
+            'investigation_request': forms.CheckboxSelectMultiple(),
+            'creatinine': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Creatinine conc.'}),
+            'urea': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Urea conc.'}),
+            'onedayGFR': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '24hr GFR'}),
+            'onedayprotein': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '24hr Protein'}),
+            'onedaycreatinine': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '24hr Creatinine'}),
+        }
+
+
+class PancreaticForm(forms.ModelForm):
+    class Meta:
+        model = Pancreatic_enzymes_Test
+        fields = ('investigation_request', 'Amylase', 'Lipase')
+
+        labels = {
+            'investigation_request': '',
+            'Amylase': '',
+            'Lipase': ''
+        }
+
+        widgets = {
+            'investigation_request': forms.CheckboxSelectMultiple(),
+            'Amylase': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Amylase conc.'}),
+            'Lipase': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Lipase conc.'}),
+
+        }
+
+
+class AsceticForm(forms.ModelForm):
+    class Meta:
+        model = Ascetic_Fluid_Test
+        fields = ('investigation_request', 'Total_protein', 'Albumin')
+
+        labels = {
+            'investigation_request': '',
+            'Total_protein': '',
+            'Albumin': ''
+        }
+
+        widgets = {
+            'investigation_request': forms.CheckboxSelectMultiple(),
+            'Total_protein': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Asctic Protein conc.'}),
+            'Albumin': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Asctic Albumin'})
+        }
+
+
+class InflammatoryForm(forms.ModelForm):
+    class Meta:
+        model = Inflammtory_Test
+        fields = ('investigation_request', 'AFP', 'CRP', 'Anti_ccp', 'RF_IgM', 'RA_or_F', 'Uric_acid')
+
+        labels = {
+            'investigation_request': '',
+            'AFP': '',
+            'CRP': '',
+            'Anti_ccp': '',
+            'RF_IgM': '',
+            'RA_or_F': '',
+            'Uric_acid': '',
+        }
+
+        widgets = {
+            'investigation_request': forms.CheckboxSelectMultiple(),
+            'AFP': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Alfa-fetoprotein conc.'}),
+            'CRP': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'C-Reactive Protein conc.'}),
+            'Anti_ccp': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Antibody for Cyclic Citrullinated Peptide(Anti CCP)'}),
+            'RF_IgM': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Rheumatoid factor Immunoglobulin M'}),
+            'RA_or_F': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Rheumatoid arthritis/Rheumatoid factor'}),
+            'Uric_acid': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Uric acid conc.'})
+        }
+
+
+class IronForm(forms.ModelForm):
+    class Meta:
+        model = Ironprofile_Test
+        fields = ('investigation_request', 'Ferritin', 'Iron', 'Total_IBC')
+
+        labels = {
+            'investigation_request': '',
+            'Ferritin': '',
+            'Iron': '',
+            'Total_IBC': '',
+        }
+
+        widgets = {
+            'investigation_request': forms.CheckboxSelectMultiple(),
+            'Ferritin': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ferritin conc.'}),
+            'Iron': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Iron conc.'}),
+            'Total_IBC': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Total Iron Bindin Capacity'}),
+        }
+
+
+class LipidForm(forms.ModelForm):
+    class Meta:
+        model = LipidProfile_Test
+        fields = ('investigation_request', 'HDL', 'LDL', 'Total_cholesterol', 'TG')
+
+        labels = {
+            'investigation_request': '',
+            'HDL': '',
+            'LDL': '',
+            'Total_cholesterol': '',
+            'TG': ''
+        }
+
+        widgets = {
+            'investigation_request': forms.CheckboxSelectMultiple(),
+            'HDL': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Cholesterol HDL'}),
+            'LDL': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Cholesterol LDL'}),
+            'Total_cholesterol': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Total Cholesterol'}),
+            'TG': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Triglyceride'}),
+        }
+
+
+class ElectrolytesForm(forms.ModelForm):
+    class Meta:
+        model = Elements_conc_Test
+        fields = (
+        'investigation_request', 'phosphorus', 'magnesium', 'calcium', 'sodium', 'potassium', 'bicarbonate', 'hydrogen')
+
+        labels = {
+            'investigation_request': '',
+            'phosphorus': '',
+            'magnesium': '',
+            'calcium': '',
+            'sodium': '',
+            'potassium': '',
+            'bicarbonate': '',
+            'hydrogen': '',
+        }
+
+        widgets = {
+            'investigation_request': forms.CheckboxSelectMultiple(),
+            'phosphorus': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phosphorus ion conc.'}),
+            'magnesium': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Magnesium ion conc.'}),
+            'calcium': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Calcium ion conc.'}),
+            'sodium': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Sodium ion conc.'}),
+            'potassium': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Potassium ion conc.'}),
+            'bicarbonate': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Bicarbonate ion conc.'}),
+            'hydrogen': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Hydorgen ion conc.'}),
+        }
+
+
+class DiabeticForm(forms.ModelForm):
+    class Meta:
+        model = Diabetic_Test
+        fields = (
+        'investigation_request', 'HBA1C', 'RBG', 'FBG', 'microalbumin', 'insulin', 'serum_glucose', 'oral_glucose',
+        'c_pepetide')
+
+        labels = {
+            'investigation_request': '',
+            'HBA1C': '',
+            'RBG': '',
+            'FBG': '',
+            'microalbumin': '',
+            'insulin': '',
+            'serum_glucose': '',
+            'oral_glucose': '',
+            'c_pepetide': '',
+        }
+
+        widgets = {
+            'investigation_request': forms.CheckboxSelectMultiple(),
+            'HBA1C': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Haemoglobin A1Cconc.'}),
+            'RBG': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Random blood glucose'}),
+            'FBG': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Fasting blood glucose'}),
+            'microalbumin': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Urine Microalbumin conc.'}),
+            'insulin': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Insulin conc.'}),
+            'serum_glucose': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Serum glucose'}),
+            'oral_glucose': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Serum Oral glucose'}),
+            'c_pepetide': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'C-Peptide conc.'}),
+        }
+
+
+class CardiacForm(forms.ModelForm):
+    class Meta:
+        model = Cardiac_Markers
+        fields = ('investigation_request', 'NT_pro_BNP', 'D_dimer', 'calcium', 'troponin_1', 'CK', 'LDH')
+
+        labels = {
+            'investigation_request': '',
+            'NT_pro_BNP': '',
+            'D_dimer': '',
+            'calcium': '',
+            'troponin_1': '',
+            'CK': '',
+            'LDH': ''
+        }
+
+        widgets = {
+            'investigation_request': forms.CheckboxSelectMultiple(),
+            'NT_pro_BNP': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Natriuretic peptide conc.'}),
+            'D_dimer': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'D-Dimer'}),
+            'calcium': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Calcium conc.'}),
+            'troponin_1': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Cardiac Troponin 1'}),
+            'CK': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Creatine Kinase '}),
+            'LDH': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Lactate Dehydrogenase conc.'}),
+        }
+
+
+class ReproductionForm(forms.ModelForm):
+    class Meta:
+        model = Reproduction
+        fields = (
+        'investigation_request', 'beta_HCG', 'urine_HCG', 'estradiol', 'FSH', 'Progesterone', 'LH', 'prolactin', 'AMH',
+        'Testosterone', 'total_T4', 'total_t3', 'TSH')
+
+        labels = {
+            'investigation_request': '',
+            'beta_HCG': '',
+            'urine_HCG': '',
+            'estradiol': '',
+            'FSH': '',
+            'Progesterone': '',
+            'LH': '',
+            'prolactin': '',
+            'AMH': '',
+            'Testosterone': '',
+            'total_T4': '',
+            'total_t3': '',
+            'TSH': '',
+        }
+
+        widgets = {
+            'investigation_request': forms.CheckboxSelectMultiple(),
+            'beta_HCG': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Serum beta HCG.'}),
+            'urine_HCG': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Urine HCG'}),
+            'estradiol': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Serum Estradiol'}),
+            'FSH': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Follicle stimulating hormone'}),
+            'Progesterone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Progesterone'}),
+            'LH': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Luteinizing hormone'}),
+            'prolactin': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Prolactin'}),
+            'AMH': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Anti-Mullerian Hormone'}),
+            'Testosterone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Testosterone'}),
+            'total_T4': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Total Thyroxine'}),
+            'total_t3': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Total Triiodothyronine'}),
+            'TSH': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Thyroid stimulating hormone'}),
+        }
+
+
+class AandCForm(forms.ModelForm):
+    class Meta:
+        model = Autoimmunity_and_cancer_Test
+        fields = ('investigation_request', 'ANA', 'CA_125', 'CA15_3', 'CA19_9', 'CEA', 'PSA')
+
+        labels = {
+            'investigation_request': '',
+            'ANA': '',
+            'CA_125': '',
+            'CA15_3': '',
+            'CA19_9': '',
+            'CEA': '',
+            'PSA': ''
+        }
+
+        widgets = {
+            'investigation_request': forms.CheckboxSelectMultiple(),
+            'ANA': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Serum Antinuclear Antibodies'}),
+            'CA_125': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Cancer antigen 125 for Ovarian cancer'}),
+            'CA15_3': forms.TextInput(attrs={'class': 'form-control',
+                                             'placeholder': 'Cancer antigen 15-3 for Breast cancer (increases in Non-cancerous conditions)'}),
+            'CA19_9': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Cancer antigen 19-9 for Pancreatic Cancer'}),
+            'CEA': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Carcinembryonic antigen for Colon cancer'}),
+            'PSA': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Prostatic specific antigen'}),
         }

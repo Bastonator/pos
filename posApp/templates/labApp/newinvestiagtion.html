@@ -1,0 +1,49 @@
+{% extends "labApp/base.html" %} {% block pageContent %}
+{% if lab %}
+
+
+
+<center>
+    <br>
+<div class="card product-add-home" style="background-color: white; width: 1290px; ">
+    <div class="card-add" style="border-color: slategray;">
+        <div class="card-header" style="height: 5rem" align="left">
+            <h1>Add a new Investigation</h1>
+        </div>
+        <div class="container">
+                <form action="" method="POST" enctype="multipart/form-data" style="width: 1260px;">
+                        {% csrf_token %}
+<br>
+<div style="display: flex;">
+                    <h5 align="left;">
+                        Name of Investigation
+                    </h5>
+                {{form.name}}
+</div>
+                <br>
+                <div style="display: flex;">
+                <h5 align="left;">
+                    Cost of Investigation
+                </h5>
+                {{form.cost}}
+                </div>
+                <br>
+                <div style="display: flex;">
+                <h5 align="left;">
+                    Investigation category
+                </h5>
+                {{form.category}}
+                </div>
+                <br>
+                <div align="center">
+                    <input type="submit" value="Save Investigation" class="btn btn-outline-dark" style="transition: 0.6s;">
+                 </div>
+                                    <br>
+            </form>
+    </div>
+</div>
+</div>
+</center>
+
+{% endif %}
+{% endblock %}

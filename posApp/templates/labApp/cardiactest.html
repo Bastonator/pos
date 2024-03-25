@@ -1,0 +1,51 @@
+{% extends "labApp/base.html" %} {% block pageContent %}
+{% if lab %}
+
+
+
+<center>
+    <br>
+<div class="card product-add-home" style="background-color: white; width: 1290px; ">
+    <div class="card-add" style="border-color: slategray;">
+        <div class="card-header" style="height: 5rem" align="left">
+            <h1>What are the results of the test?</h1>
+        </div>
+        <div class="container">
+                <form action="" method="POST" enctype="multipart/form-data" style="width: 1264px;">
+                        {% csrf_token %}
+<br>
+
+                {{form.investigation_request}}
+                <br>
+                
+                <div style="display: flex;">
+                    {{form.NT_pro_BNP}}            &nbsp; &nbsp;
+    
+                    {{form.D_dimer}}
+    </div>
+    <br>        
+<div style="display: flex;">
+                {{form.calcium}}            &nbsp; &nbsp;
+
+                {{form.troponin_1}}
+</div>
+
+<br>
+<div style="display: flex;">
+    {{form.CK}}            &nbsp; &nbsp;
+
+    {{form.LDH}}
+</div>
+<br>
+                <div align="center">
+                    <input type="submit" value="Save test results" class="btn btn-outline-dark">
+                 </div>
+                 <br>
+            </form>
+    </div>
+</div>
+</div>
+</center>
+
+{% endif %}
+{% endblock %}

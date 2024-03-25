@@ -1,0 +1,11 @@
+@login_required
+def liver_test_history(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    tests = Liver_Function_Test.objects.filter(patient_id=pk1)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'tests': tests,
+    }
+    return render(request, 'labApp/liverhistory.html', context)

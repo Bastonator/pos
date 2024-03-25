@@ -1,0 +1,26 @@
+{% extends "labApp/base.html" %} {% block pageContent %}
+{% if lab %}
+{% if patient %}
+{% if result %}
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card">
+    <div class="card" style="width: 100%;">
+    <div class="card-body">
+      <center>
+      <h4>
+        Pancreatic Enzymes test results successfully saved!!
+      </h4>
+        <a href="{% url 'pancreas-result' lab.id patient.id result.id %}">
+          <button style="width: 200px; height: 50px; border-radius: 10px; ">
+            click here to view print-out
+          </button>
+        </a>
+      </center>
+    </div>
+    </div>
+</div>
+</div>
+{% endif %}
+{% endif %}
+{% endif %}
+{% endblock pageContent %}

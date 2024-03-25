@@ -1,0 +1,182 @@
+{% extends "labApp/base.html" %} {% block pageContent %}
+{% if lab %}
+{% if patient %}
+<style>
+
+</style>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card py-2">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="card-title mb-0">{{ patient.firstname }} {{ patient.lastname }} Electrolytes concentration Tests results</h4>
+            <div class="text-start">
+                <a href="{% url 'ions-test' lab.id patient.id %}">
+                <button class="btn btn-primary bg-gradient btn-sm rounded-0" id="create_new"><i class="mdi mdi-plus"></i><span> Request new Electrolytes concentration Tests for {{ patient.firstname }}</span></button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card">
+    <center>
+        <h3>
+            {{ lab.name }}
+        </h3>
+    </center>
+        <div class="card" style="width: 100%;">
+        <div class="card-body" style="margin-left: 30px;">
+        <div style="display: flex; width: 100%;">
+            <h5.8 style="display: flex;">
+                First Name: {{ patient.firstname }}
+            </h5.8>
+            &nbsp; &nbsp;
+            <h5.8 style="display: flex;">
+                Last Name: {{ patient.lastname }}
+            </h5.8>
+            &nbsp; &nbsp;
+            <h5.8 style="display: flex;">
+                Gender: {{ patient.gender }}
+            </h5.8>
+            &nbsp; &nbsp;
+            <h5.8 style="display: flex;">
+                Date of birth: {{ patient.dob }}
+            </h5.8>
+        </div>
+        <hr>
+        <div style="display: flex;">
+            <h5.8 style="display: flex;">
+                Phone number: {{ patient.contact }}
+            </h5.8>&nbsp; &nbsp;
+            <h5.8 style="display: flex;">
+                Address: {{ patient.address }}
+            </h5.8>&nbsp; &nbsp;
+            <h5.8 style="display: flex;">
+                Registered by: {{ patient.created_by.username }}
+            </h5.8>&nbsp; &nbsp;
+            <h5.8 style="display: flex;">
+                Date registered: {{ patient.date_added }}
+            </h5.8>&nbsp; &nbsp;
+        </div>
+        </div>
+    </div>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <colgroup>
+                    <col width="20%">
+                    <col width="20%">
+                    <col width="15%">
+                    <col width="15%">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th class="text-center py-1">Investigations</th>
+                        <th class="text-center py-1">Results</th>
+                        <th class="text-center py-1">Normal range</th>
+                        <th class="text-center py-1">Lab technician</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if results %}
+                    <tr>
+                        <td class="px-2 py-1 text-center">Phosphorus</td>
+                        <td class="px-2 py-1 end">{% if results.phosphorus %}
+                            {{ results.phosphorus }}
+                            {% else %}
+                            <strong>
+                                NIL
+                            </strong>
+                            {% endif %}
+                        </td>
+                        <td class="px-2 py-1 text-end"><strong>24 - 336 ng/mL</strong></td>
+                        <td class="px-2 py-1 text-end">{{ results.created_by }}</td>
+                    </tr>
+                    <tr>
+                        <td class="px-2 py-1 text-center">Magnesium</td>
+                        <td class="px-2 py-1 end">{% if results.magnesium %}
+                            {{ results.magnesium }}
+                            {% else %}
+                            <strong>
+                                NIL
+                            </strong>
+                            {% endif %}
+                        </td>
+                        <td class="px-2 py-1 text-end"><strong>60 - 170 mcg/dl</strong></td>
+                        <td class="px-2 py-1 text-end">{{ results.created_by }}</td>
+                    </tr>
+                    <tr>
+                        <td class="px-2 py-1 text-center">Calcium</td>
+                        <td class="px-2 py-1 end">{% if results.calcium %}
+                            {{ results.calcium }}
+                            {% else %}
+                            <strong>
+                                NIL
+                            </strong>
+                            {% endif %}
+                        </td>
+                        <td class="px-2 py-1 text-end"><strong>250 - 450 mcg/dl</strong></td>
+                        <td class="px-2 py-1 text-end">{{ results.created_by }}</td>
+                    </tr>
+                    <tr>
+                        <td class="px-2 py-1 text-center">Sodium</td>
+                        <td class="px-2 py-1 end">{% if results.sodium %}
+                            {{ results.sodium }}
+                            {% else %}
+                            <strong>
+                                NIL
+                            </strong>
+                            {% endif %}
+                        </td>
+                        <td class="px-2 py-1 text-end"><strong>250 - 450 mcg/dl</strong></td>
+                        <td class="px-2 py-1 text-end">{{ results.created_by }}</td>
+                    </tr>
+                    <tr>
+                        <td class="px-2 py-1 text-center">Potassium</td>
+                        <td class="px-2 py-1 end">{% if results.potassium %}
+                            {{ results.potassium }}
+                            {% else %}
+                            <strong>
+                                NIL
+                            </strong>
+                            {% endif %}
+                        </td>
+                        <td class="px-2 py-1 text-end"><strong>250 - 450 mcg/dl</strong></td>
+                        <td class="px-2 py-1 text-end">{{ results.created_by }}</td>
+                    </tr>
+                    <tr>
+                        <td class="px-2 py-1 text-center">Bicarbonate</td>
+                        <td class="px-2 py-1 end">{% if results.bicarbonate %}
+                            {{ results.bicarbonate }}
+                            {% else %}
+                            <strong>
+                                NIL
+                            </strong>
+                            {% endif %}
+                        </td>
+                        <td class="px-2 py-1 text-end"><strong>250 - 450 mcg/dl</strong></td>
+                        <td class="px-2 py-1 text-end">{{ results.created_by }}</td>
+                    </tr>
+                    <tr>
+                        <td class="px-2 py-1 text-center">Hydrogen</td>
+                        <td class="px-2 py-1 end">{% if results.hydrogen %}
+                            {{ results.hydrogen }}
+                            {% else %}
+                            <strong>
+                                NIL
+                            </strong>
+                            {% endif %}
+                        </td>
+                        <td class="px-2 py-1 text-end"><strong>250 - 450 mcg/dl</strong></td>
+                        <td class="px-2 py-1 text-end">{{ results.created_by }}</td>
+                    </tr>
+                {% endif %}
+                </tbody>
+            </table>
+    </div>
+        <button onclick="window.print()" id="print">
+            Print Results
+        </button>
+</div>
+</div>
+{% endif %}
+{% endif %}
+{% endblock pageContent %}

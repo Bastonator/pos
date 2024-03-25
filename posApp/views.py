@@ -2,7 +2,8 @@ from pickle import FALSE
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from flask import jsonify
-from posApp.models import Category, Products, Sales, salesItems, Shifts, ProductChange, changeItems, Move
+from posApp.models import Category, Products, Sales, salesItems, Shifts, ProductChange, changeItems, Move, Lab, LipidProfile_Test, Liver_Function_Test, Renal_Function_Test, Ironprofile_Test, Inflammtory_Test
+from posApp.models import Ascetic_Fluid_Test, Elements_conc_Test, Pancreatic_enzymes_Test, Patient, Reproduction, Investigations, Diabetic_Test, Autoimmunity_and_cancer_Test, Cardiac_Markers
 from django.db.models import Count, Sum
 from posApp.models import Branch, Users
 from django.contrib import messages
@@ -13,7 +14,7 @@ from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 import json, sys
 from datetime import date, datetime
-from posApp.forms import RegistrationForm, BranchForm, CategoryForm, ProductForm, SaleForm, MoveForm
+from posApp.forms import RegistrationForm, BranchForm, CategoryForm, ProductForm, SaleForm, MoveForm, LipidForm, LiverForm, ElectrolytesForm, AsceticForm, AandCForm, ReproductionForm, RenalForm, DiabeticForm, CardiacForm, IronForm, InflammatoryForm, InvestigationForm, PancreaticForm
 from django.conf import settings
 from django.core.paginator import Paginator
 from django.contrib.admin.views.decorators import staff_member_required
@@ -828,3 +829,752 @@ def move_product(request, pk, pk1):
         form.fields["branch_to"].queryset = Branch.objects.filter(user=request.user)
         form.fields["branch_owner"].queryset = Branch.objects.filter(user=request.user)
     return render(request, 'posApp/moveproduct.html', context=context)
+
+
+@login_required
+def lab_register(request, pk):
+    users = Users.objects.get(email=pk)
+    # user = Branch.objects.filter(user=request.user)
+    user = Users.objects.all()
+    context = {'user': user, 'users': users}
+    if request.method == "POST":
+        # form = BranchForm(request.POST or None)
+        # branch = form
+        lab_id = request.POST.get('labid')
+        lab_name = request.POST.get('labname')
+        # branch.location = request.POST['branchlocation']
+        lab_phone = request.POST.get('phone')
+        lab_user = request.POST.get('user1')
+        lab = Lab.objects.create(id=lab_id, name=lab_name, location=None, phone=lab_phone)
+        lab.user.add(lab_user or None)
+        context['labid'] = lab
+        context['created'] = True
+    return render(request, 'labApp/labregister.html', context=context)
+
+
+def labs(request, pk):
+    user = Users.objects.get(email=pk)
+    branch = Lab.objects.filter(user=pk)
+    return render(request, 'labApp/labs.html', {'user': user, 'branch': branch})
+
+
+@login_required
+def homelab(request, pk):
+    if request.user.is_authenticated:
+        lab = Lab.objects.get(id=pk)
+        now = datetime.now()
+        current_year = now.strftime("%Y")
+        current_month = now.strftime("%m")
+        current_day = now.strftime("%d")
+        investigations = len(Investigations.objects.filter(lab_owner_id=pk))
+        context = {
+            'page_title': 'Home',
+            'investigations': investigations,
+            'lab': lab
+        }
+        return render(request, 'labApp/labhome.html', context)
+    else:
+        return redirect('login-me')
+
+
+@login_required
+def investigations_list(request, pk):
+    lab = Lab.objects.get(id=pk)
+    investigations = Investigations.objects.filter(lab_owner_id=pk)
+    context = {
+        'lab': lab,
+        'investigations': investigations,
+    }
+
+    return render(request, 'labApp/investigations.html', context)
+
+
+@login_required
+def new_investigation(request, pk):
+    lab = Lab.objects.get(id=pk)
+    form = InvestigationForm(request.POST or None, request.FILES or None)
+    context = {'lab': lab, 'form': form}
+    if request.method == "POST":
+        print(form)
+        if form.is_valid():
+            result = form.save(commit=False)
+            result.created_by = request.user
+            result.lab_owner = lab
+            # cat.user = request.user
+            result.save()
+            return render(request, 'labApp/confirmnewtest.html', {'lab': lab})
+    else:
+        return render(request, 'labApp/newinvestiagtion.html', context=context)
+
+
+@login_required
+def all_patients(request, pk):
+    lab = Lab.objects.get(id=pk)
+    patients = Patient.objects.filter(lab_owner_id=pk)
+    context = {
+        'lab': lab,
+        'patients': patients,
+    }
+    return render(request, 'labApp/patients.html', context)
+
+
+@login_required
+def register_patient(request, pk):
+    lab = Lab.objects.get(id=pk)
+    context = {
+        'lab': lab,
+    }
+    if request.method == "POST":
+        # form = BranchForm(request.POST or None)
+        # branch = form
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        # branch.location = request.POST['branchlocation']
+        gender = request.POST.get('gender')
+        dob = request.POST.get('dob')
+        contact = request.POST.get('contact')
+        address = request.POST.get('address')
+        email = request.POST.get('email')
+        patient = Patient.objects.create(firstname=first_name or None, middlename=None, lastname=last_name or None,
+                                         gender=gender or None, dob=dob or None, contact=contact or None,
+                                         address=address or None, email=email or None, created_by=request.user,
+                                         lab_owner=lab)
+        context['patientid'] = patient
+        context['created'] = True
+
+    return render(request, 'labApp/newpatient.html', context=context)
+
+
+@login_required
+def patient(request, pk, pk1):
+    if request.user.is_authenticated:
+        lab = Lab.objects.get(id=pk)
+        patient = Patient.objects.get(id=pk1)
+        context = {
+            'page_title': 'Home',
+            'lab': lab,
+            'patient': patient,
+        }
+        return render(request, 'labApp/patient_info.html', context)
+    else:
+        return redirect('login-me')
+
+
+@login_required
+def liver_patient(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    investigations = Liver_Function_Test.objects.filter(patient_id=pk1)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'investigations': investigations,
+    }
+    return render(request, 'labApp/patientliver_info.html', context)
+
+
+@login_required
+def renal_patient(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    investigations = Renal_Function_Test.objects.filter(patient_id=pk1)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'investigations': investigations,
+    }
+    return render(request, 'labApp/patientrenal_info.html', context)
+
+
+@login_required
+def pancreas_patient(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    investigations = Pancreatic_enzymes_Test.objects.filter(patient_id=pk1)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'investigations': investigations,
+    }
+    return render(request, 'labApp/patientpancreas_info.html', context)
+
+
+@login_required
+def iron_patient(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    investigations = Ironprofile_Test.objects.filter(patient_id=pk1)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'investigations': investigations,
+    }
+    return render(request, 'labApp/patientiron_info.html', context)
+
+
+@login_required
+def lipid_patient(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    investigations = LipidProfile_Test.objects.filter(patient_id=pk1)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'investigations': investigations,
+    }
+    return render(request, 'labApp/patientlipid_info.html', context)
+
+
+@login_required
+def inflammatory_patient(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    investigations = Inflammtory_Test.objects.filter(patient_id=pk1)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'investigations': investigations,
+    }
+    return render(request, 'labApp/patientinflame_info.html', context)
+
+
+@login_required
+def ascetic_patient(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    investigations = Ascetic_Fluid_Test.objects.filter(patient_id=pk1)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'investigations': investigations,
+    }
+    return render(request, 'labApp/patientascetic_info.html', context)
+
+
+@login_required
+def electrolytes_patient(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    investigations = Elements_conc_Test.objects.filter(patient_id=pk1)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'investigations': investigations,
+    }
+    return render(request, 'labApp/patientions_info.html', context)
+
+
+@login_required
+def sugar_patient(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    investigations = Diabetic_Test.objects.filter(patient_id=pk1)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'investigations': investigations,
+    }
+    return render(request, 'labApp/patientsugar_info.html', context)
+
+
+@login_required
+def cardiac_patient(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    investigations = Cardiac_Markers.objects.filter(patient_id=pk1)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'investigations': investigations,
+    }
+    return render(request, 'labApp/patientcardiac_info.html', context)
+
+
+@login_required
+def repro_patient(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    investigations = Reproduction.objects.filter(patient_id=pk1)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'investigations': investigations,
+    }
+    return render(request, 'labApp/patientrepro_info.html', context)
+
+
+@login_required
+def autoimmunity_and_cancer_patient(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    investigations = Autoimmunity_and_cancer_Test.objects.filter(patient_id=pk1)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'investigations': investigations,
+    }
+    return render(request, 'labApp/patientaac_info.html', context)
+
+
+@login_required
+def test_list(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    context = {'lab': lab, 'patient': patient}
+    return render(request, 'labApp/choosetest.html', context)
+
+
+@login_required
+def liver_test(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    form = LiverForm(request.POST or None, request.FILES or None)
+    context = {'lab': lab, 'patient': patient, 'form': form}
+    if request.method == "POST":
+        print(form)
+        if form.is_valid():
+            result = form.save(commit=False)
+            result.created_by = request.user
+            result.patient = patient
+            result.lab_owner = lab
+            # cat.user = request.user
+
+            result.save()
+
+            result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
+
+            return render(request, 'labApp/livertestalert.html', {'lab': lab, 'patient': patient, 'result': result})
+    else:
+        form.fields["investigation_request"].queryset = Investigations.objects.filter(category='L')
+        return render(request, 'labApp/livertest.html', context=context)
+
+
+@login_required
+def liver_info(request, pk, pk1, pk2):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    results = Liver_Function_Test.objects.get(id=pk2)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'results': results
+    }
+    return render(request, 'labApp/liverinfo.html', context)
+
+
+@login_required
+def renal_test(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    form = RenalForm(request.POST or None, request.FILES or None)
+    context = {'lab': lab, 'patient': patient, 'form': form}
+    if request.method == "POST":
+        print(form)
+        if form.is_valid():
+            result = form.save(commit=False)
+            result.created_by = request.user
+            result.patient = patient
+            result.lab_owner = lab
+            # cat.user = request.user
+
+            result.save()
+
+            result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
+
+            return render(request, 'labApp/renaltestalert.html', {'lab': lab, 'patient': patient, 'result': result})
+    else:
+        form.fields["investigation_request"].queryset = Investigations.objects.filter(category='R')
+        return render(request, 'labApp/renaltest.html', context=context)
+
+
+@login_required
+def renal_info(request, pk, pk1, pk2):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    results = Renal_Function_Test.objects.get(id=pk2)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'results': results
+    }
+    return render(request, 'labApp/renalinfo.html', context)
+
+
+@login_required
+def pancreatic_test(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    form = PancreaticForm(request.POST or None, request.FILES or None)
+    context = {'lab': lab, 'patient': patient, 'form': form}
+    if request.method == "POST":
+        print(form)
+        if form.is_valid():
+            result = form.save(commit=False)
+            result.created_by = request.user
+            result.patient = patient
+            result.lab_owner = lab
+            # cat.user = request.user
+
+            result.save()
+
+            result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
+
+            return render(request, 'labApp/pancreastestalert.html', {'lab': lab, 'patient': patient, 'result': result})
+    else:
+        form.fields["investigation_request"].queryset = Investigations.objects.filter(category='P')
+        return render(request, 'labApp/pancreastest.html', context=context)
+
+
+@login_required
+def pancreas_info(request, pk, pk1, pk2):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    results = Pancreatic_enzymes_Test.objects.get(id=pk2)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'results': results
+    }
+    return render(request, 'labApp/pancreasinfo.html', context)
+
+
+@login_required
+def ironprofile_test(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    form = IronForm(request.POST or None, request.FILES or None)
+    context = {'lab': lab, 'patient': patient, 'form': form}
+    if request.method == "POST":
+        print(form)
+        if form.is_valid():
+            result = form.save(commit=False)
+            result.created_by = request.user
+            result.patient = patient
+            result.lab_owner = lab
+            # cat.user = request.user
+
+            result.save()
+
+            result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
+
+            return render(request, 'labApp/irontestalert.html', {'lab': lab, 'patient': patient, 'result': result})
+    else:
+        form.fields["investigation_request"].queryset = Investigations.objects.filter(category='Iron')
+        return render(request, 'labApp/irontest.html', context=context)
+
+
+@login_required
+def iron_info(request, pk, pk1, pk2):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    results = Ironprofile_Test.objects.get(id=pk2)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'results': results
+    }
+    return render(request, 'labApp/ironinfo.html', context)
+
+
+@login_required
+def lipidprofile_test(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    form = LipidForm(request.POST or None, request.FILES or None)
+    context = {'lab': lab, 'patient': patient, 'form': form}
+    if request.method == "POST":
+        print(form)
+        if form.is_valid():
+            result = form.save(commit=False)
+            result.created_by = request.user
+            result.patient = patient
+            result.lab_owner = lab
+            # cat.user = request.user
+
+            result.save()
+
+            result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
+
+            return render(request, 'labApp/lipidtestalert.html', {'lab': lab, 'patient': patient, 'result': result})
+    else:
+        form.fields["investigation_request"].queryset = Investigations.objects.filter(category='Lipid')
+        return render(request, 'labApp/lipidtest.html', context=context)
+
+
+@login_required
+def lipid_info(request, pk, pk1, pk2):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    results = LipidProfile_Test.objects.get(id=pk2)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'results': results
+    }
+    return render(request, 'labApp/lipidinfo.html', context)
+
+
+@login_required
+def inflammatory_test(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    form = InflammatoryForm(request.POST or None, request.FILES or None)
+    context = {'lab': lab, 'patient': patient, 'form': form}
+    if request.method == "POST":
+        print(form)
+        if form.is_valid():
+            result = form.save(commit=False)
+            result.created_by = request.user
+            result.patient = patient
+            result.lab_owner = lab
+            # cat.user = request.user
+
+            result.save()
+
+            result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
+
+            return render(request, 'labApp/inflametestalert.html', {'lab': lab, 'patient': patient, 'result': result})
+    else:
+        form.fields["investigation_request"].queryset = Investigations.objects.filter(category='I')
+        return render(request, 'labApp/inflammationtest.html', context=context)
+
+
+@login_required
+def inflammatory_info(request, pk, pk1, pk2):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    results = Inflammtory_Test.objects.get(id=pk2)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'results': results
+    }
+    return render(request, 'labApp/inflameinfo.html', context)
+
+
+@login_required
+def ascetic_test(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    form = AsceticForm(request.POST or None, request.FILES or None)
+    context = {'lab': lab, 'patient': patient, 'form': form}
+    if request.method == "POST":
+        print(form)
+        if form.is_valid():
+            result = form.save(commit=False)
+            result.created_by = request.user
+            result.patient = patient
+            result.lab_owner = lab
+            # cat.user = request.user
+
+            result.save()
+
+            result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
+
+            return render(request, 'labApp/ascetictestalert.html', {'lab': lab, 'patient': patient, 'result': result})
+    else:
+        form.fields["investigation_request"].queryset = Investigations.objects.filter(category='A')
+        return render(request, 'labApp/ascetictest.html', context=context)
+
+
+@login_required
+def ascetic_info(request, pk, pk1, pk2):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    results = Ascetic_Fluid_Test.objects.get(id=pk2)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'results': results
+    }
+    return render(request, 'labApp/asceticinfo.html', context)
+
+
+@login_required
+def electrolytes_test(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    form = ElectrolytesForm(request.POST or None, request.FILES or None)
+    context = {'lab': lab, 'patient': patient, 'form': form}
+    if request.method == "POST":
+        print(form)
+        if form.is_valid():
+            result = form.save(commit=False)
+            result.created_by = request.user
+            result.patient = patient
+            result.lab_owner = lab
+            # cat.user = request.user
+
+            result.save()
+
+            result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
+
+            return render(request, 'labApp/ionstestalert.html', {'lab': lab, 'patient': patient, 'result': result})
+    else:
+        form.fields["investigation_request"].queryset = Investigations.objects.filter(category='E')
+        return render(request, 'labApp/electrolytestest.html', context=context)
+
+
+@login_required
+def ions_info(request, pk, pk1, pk2):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    results = Elements_conc_Test.objects.get(id=pk2)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'results': results
+    }
+    return render(request, 'labApp/ionsinfo.html', context)
+
+
+@login_required
+def sugar_test(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    form = DiabeticForm(request.POST or None, request.FILES or None)
+    context = {'lab': lab, 'patient': patient, 'form': form}
+    if request.method == "POST":
+        print(form)
+        if form.is_valid():
+            result = form.save(commit=False)
+            result.created_by = request.user
+            result.patient = patient
+            result.lab_owner = lab
+            # cat.user = request.user
+
+            result.save()
+
+            result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
+
+            return render(request, 'labApp/sugartestalert.html', {'lab': lab, 'patient': patient, 'result': result})
+    else:
+        form.fields["investigation_request"].queryset = Investigations.objects.filter(category='D')
+        return render(request, 'labApp/sugartest.html', context=context)
+
+
+@login_required
+def sugar_info(request, pk, pk1, pk2):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    results = Diabetic_Test.objects.get(id=pk2)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'results': results
+    }
+    return render(request, 'labApp/sugarinfo.html', context)
+
+
+@login_required
+def cardiac_test(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    form = CardiacForm(request.POST or None, request.FILES or None)
+    context = {'lab': lab, 'patient': patient, 'form': form}
+    if request.method == "POST":
+        print(form)
+        if form.is_valid():
+            result = form.save(commit=False)
+            result.created_by = request.user
+            result.patient = patient
+            result.lab_owner = lab
+            # cat.user = request.user
+
+            result.save()
+
+            result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
+
+            return render(request, 'labApp/cardiactestalert.html', {'lab': lab, 'patient': patient, 'result': result})
+    else:
+        form.fields["investigation_request"].queryset = Investigations.objects.filter(category='C')
+        return render(request, 'labApp/cardiactest.html', context=context)
+
+
+@login_required
+def cardiac_info(request, pk, pk1, pk2):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    results = Cardiac_Markers.objects.get(id=pk2)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'results': results
+    }
+    return render(request, 'labApp/cardiacinfo.html', context)
+
+
+@login_required
+def reproductive_test(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    form = ReproductionForm(request.POST or None, request.FILES or None)
+    context = {'lab': lab, 'patient': patient, 'form': form}
+    if request.method == "POST":
+        print(form)
+        if form.is_valid():
+            result = form.save(commit=False)
+            result.created_by = request.user
+            result.patient = patient
+            result.lab_owner = lab
+            # cat.user = request.user
+
+            result.save()
+
+            result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
+
+            return render(request, 'labApp/reprotestalert.html', {'lab': lab, 'patient': patient, 'result': result})
+    else:
+        form.fields["investigation_request"].queryset = Investigations.objects.filter(category='RP')
+        return render(request, 'labApp/reprotest.html', context=context)
+
+
+@login_required
+def repro_info(request, pk, pk1, pk2):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    results = Reproduction.objects.get(id=pk2)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'results': results
+    }
+    return render(request, 'labApp/reproinfo.html', context)
+
+
+@login_required
+def auto_and_ca_test(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    form = AandCForm(request.POST or None, request.FILES or None)
+    context = {'lab': lab, 'patient': patient, 'form': form}
+    if request.method == "POST":
+        print(form)
+        if form.is_valid():
+            result = form.save(commit=False)
+            result.created_by = request.user
+            result.patient = patient
+            result.lab_owner = lab
+            # cat.user = request.user
+
+            result.save()
+
+            result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
+
+            return render(request, 'labApp/aactestalert.html', {'lab': lab, 'patient': patient, 'result': result})
+    else:
+        form.fields["investigation_request"].queryset = Investigations.objects.filter(category='AaC')
+        return render(request, 'labApp/aactest.html', context=context)
+
+
+@login_required
+def aac_info(request, pk, pk1, pk2):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    results = Autoimmunity_and_cancer_Test.objects.get(id=pk2)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'results': results
+    }
+    return render(request, 'labApp/aacinfo.html', context)

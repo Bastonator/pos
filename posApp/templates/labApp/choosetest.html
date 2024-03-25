@@ -1,0 +1,205 @@
+{% extends "labApp/base.html" %} {% block pageContent %}
+{% if lab %}
+{% if patient %}
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card py-2">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="card-title mb-0">Which test result are you saving, for {{ patient.firstname }}</h4>
+            
+        </div>
+    </div>
+</div>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Liver Function test
+                </h4>
+                <a href="{% url 'liver-test' lab.id patient.id %}">
+                    Save results 
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Renal Function test
+                </h4>
+                <a href="{% url 'renal-test' lab.id patient.id %}">
+                    Save results 
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Pancreatic Enzymes test
+                </h4>
+                <a href="{% url 'pancreas-test' lab.id patient.id %}">
+                    Save results 
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Iron Profile
+                </h4>
+                <a href="{% url 'iron-test' lab.id patient.id %}">
+                    Save results 
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Lipid Profile
+                </h4>
+                <a href="{% url 'lipid-test' lab.id patient.id %}">
+                    Save results 
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Inflammatory mediators
+                </h4>
+                <a href="{% url 'inflame-test' lab.id patient.id %}">
+                    Save results 
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Ascetic Fluid Tests
+                </h4>
+                <a href="{% url 'ascetic-test' lab.id patient.id %}">
+                    Save results 
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Electroltyes Concentration Test
+                </h4>
+                <a href="{% url 'ions-test' lab.id patient.id %}">
+                    Save results 
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Sugar / Diabetic Tests
+                </h4>
+                <a href="{% url 'sugar-test' lab.id patient.id %}">
+                    Save results 
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Cardiac Markers
+                </h4>
+                <a href="{% url 'cardiac-test' lab.id patient.id %}">
+                    Save results 
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Reprodutive Funtion Tests
+                </h4>
+                <a href="{% url 'repro-test' lab.id patient.id %}">
+                    Save results 
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Ungrouped / Misc Tests
+                </h4>
+                <a href="">
+                    Save results - coming soon..
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Autoimmunity and Cancer Test
+                </h4>
+                <a href="{% url 'aac-test' lab.id patient.id %}">
+                    Save results 
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Infections Testing
+                </h4>
+                <a href="">
+                    Save results - coming soon..
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="mdc-card">
+        <div class="card" style="width: 310px;">
+            <div class="card-body">
+                <h4>
+                    Coagulation Profile
+                </h4>
+                <a href="">
+                    Save results - coming soon..
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endif %}
+
+{% endblock pageContent %}
