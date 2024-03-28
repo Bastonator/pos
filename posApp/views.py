@@ -799,29 +799,42 @@ def move_product(request, pk, pk1):
     branch = Branch.objects.get(id=pk)
     branch1 = Branch.objects.get(id=pk)
     branches = Branch.objects.all()
-    products = Products.objects.get(id=pk1)
+    product_s = Products.objects.get(id=pk1)
     form = MoveForm(request.POST or None, request.FILES or None)
-    context = {'branch': branch, 'branch1': branch1, 'products': products, 'branches': branches, 'form': form}
+    context = {'branch': branch, 'branch1': branch1, 'products': product_s, 'branches': branches, 'form': form}
     if request.method == "POST":
         print(form)
         if form.is_valid():
             move = form.save(commit=False)
             move.user = request.user
-            move.product = products
+            move.product = product_s
             move.branch_owner = branch
             move.save()
 
             quantity_moved = move.qty
 
-            products.stock = int(products.stock) - float(quantity_moved)
-            products.save()
+            product_s.stock = int(product_s.stock) - float(quantity_moved)
+            product_s.save()
 
-            product = Products.objects.create(code=products.code, category_id=products.category_id, name=products.name,
-                                              description=products.description,
-                                              price=products.price, status=products.status, branch_owner=move.branch_to,
-                                              stock=move.qty,
-                                              expiry_date=products.expiry_date, image=products.image)
-            product.save()
+            updated_product = Products.objects.filter(branch_owner_id=move.branch_to)
+            updated_product.filter(code=product_s.code).exists()
+            print(updated_product)
+
+            if updated_product:
+                print('it exist in this branch too')
+                stuff = Products.objects.filter(branch_owner_id=move.branch_to).get(code=product_s.code)
+                print(stuff)
+                updated = updated_product.filter(code=product_s.code).update(stock=move.qty + int(stuff.stock))
+
+            else:
+                product = Products.objects.create(code=product_s.code, category_id=product_s.category_id,
+                                                  name=product_s.name,
+                                                  description=product_s.description,
+                                                  price=product_s.price, status=product_s.status,
+                                                  branch_owner=move.branch_to,
+                                                  stock=move.qty,
+                                                  expiry_date=product_s.expiry_date, image=product_s.image)
+                product.save()
 
             return render(request, 'posApp/movecomplete.html', {'branch': branch})
     else:

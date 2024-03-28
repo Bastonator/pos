@@ -249,7 +249,7 @@ body {
       <div class="row">
     {% if branch %}
     {% for database in branch %}
-        <div class="card" style="margin: 8px; border-radius: 4px;">
+        <div class="card" style="margin: 6px; border-radius: 4px;">
           <p><strong>{{ database.name }}</strong></p>
           <div class="container-fluid" style="display: flex;">
             <a href="{% url 'home-page-lab' pk=database.pk%}">
