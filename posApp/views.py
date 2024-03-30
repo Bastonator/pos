@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from flask import jsonify
 from posApp.models import Category, Products, Sales, salesItems, Shifts, ProductChange, changeItems, Move, Lab, LipidProfile_Test, Liver_Function_Test, Renal_Function_Test, Ironprofile_Test, Inflammtory_Test
-from posApp.models import Ascetic_Fluid_Test, Elements_conc_Test, Pancreatic_enzymes_Test, Patient, Reproduction, Investigations, Diabetic_Test, Autoimmunity_and_cancer_Test, Cardiac_Markers
+from posApp.models import Ascetic_Fluid_Test, Elements_conc_Test, Pancreatic_enzymes_Test, Patient, Reproduction, Investigations, Diabetic_Test, Autoimmunity_and_cancer_Test, Cardiac_Markers, Complaint
 from django.db.models import Count, Sum
 from posApp.models import Branch, Users
 from django.contrib import messages
@@ -14,7 +14,7 @@ from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 import json, sys
 from datetime import date, datetime
-from posApp.forms import RegistrationForm, BranchForm, CategoryForm, ProductForm, SaleForm, MoveForm, LipidForm, LiverForm, ElectrolytesForm, AsceticForm, AandCForm, ReproductionForm, RenalForm, DiabeticForm, CardiacForm, IronForm, InflammatoryForm, InvestigationForm, PancreaticForm
+from posApp.forms import RegistrationForm, BranchForm, CategoryForm, ProductForm, SaleForm, MoveForm, LipidForm, LiverForm, ElectrolytesForm, AsceticForm, AandCForm, ReproductionForm, RenalForm, DiabeticForm, CardiacForm, IronForm, InflammatoryForm, InvestigationForm, PancreaticForm, ComplaintForm
 from django.conf import settings
 from django.core.paginator import Paginator
 from django.contrib.admin.views.decorators import staff_member_required
@@ -114,19 +114,9 @@ def branch_register(request, pk):
         branch_address = request.POST.get('branchaddress')
         branch_phone = request.POST.get('phone')
         branch_user = request.POST.get('user1')
-        branch_user2 = request.POST.get('user2')
-        branch_user3 = request.POST.get('user3')
-        branch_user4 = request.POST.get('user4')
-        branch_user5 = request.POST.get('user5')
-        branch_user6 = request.POST.get('user6')
         branch = Branch.objects.create(id=branch_id, name=branch_name, location=None, address=branch_address, phone=branch_phone)
         branch.user.add(branch_user or None)
         # it is branch.user.add because user is how the many to many field is designated in the models.py
-        branch.user.add(branch_user2 or None)
-        branch.user.add(branch_user3 or None)
-        branch.user.add(branch_user4 or None)
-        branch.user.add(branch_user5 or None)
-        branch.user.add(branch_user6 or None)
         context['branchid'] = branch
         context['created'] = True
     return render(request, 'posApp/tables-general.html', context=context)
@@ -840,7 +830,6 @@ def move_product(request, pk, pk1):
     else:
         form.fields["branch_from"].queryset = Branch.objects.filter(user=request.user)
         form.fields["branch_to"].queryset = Branch.objects.filter(user=request.user)
-        form.fields["branch_owner"].queryset = Branch.objects.filter(user=request.user)
     return render(request, 'posApp/moveproduct.html', context=context)
 
 
@@ -963,10 +952,12 @@ def patient(request, pk, pk1):
     if request.user.is_authenticated:
         lab = Lab.objects.get(id=pk)
         patient = Patient.objects.get(id=pk1)
+        complaint = Complaint.objects.filter(patient_id=pk1).first()
         context = {
             'page_title': 'Home',
             'lab': lab,
             'patient': patient,
+            'complaint': complaint
         }
         return render(request, 'labApp/patient_info.html', context)
     else:
@@ -1591,3 +1582,25 @@ def aac_info(request, pk, pk1, pk2):
         'results': results
     }
     return render(request, 'labApp/aacinfo.html', context)
+
+
+@login_required
+def new_complaint(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    form = ComplaintForm(request.POST or None, request.FILES or None)
+    context = {'lab': lab, 'patient': patient, 'form': form}
+    if request.method == "POST":
+        print(form)
+        if form.is_valid():
+            complaint = form.save(commit=False)
+            complaint.created_by = request.user
+            complaint.patient = patient
+            complaint.lab_owner = lab
+            # cat.user = request.user
+
+            complaint.save()
+
+            return render(request, 'labApp/complaintaddedalert.html', {'lab': lab, 'patient': patient, 'complaint': complaint})
+    else:
+        return render(request, 'labApp/complaintform.html', context=context)

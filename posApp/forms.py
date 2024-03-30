@@ -1,6 +1,6 @@
 from django import forms
 from django.forms.models import ModelForm
-from .models import Users, Branch, Category, Products, Sales, Move, Lab, Patient, Pancreatic_enzymes_Test, Ironprofile_Test, LipidProfile_Test, Reproduction, Ascetic_Fluid_Test, Autoimmunity_and_cancer_Test, Inflammtory_Test, Diabetic_Test, Renal_Function_Test, Cardiac_Markers, Investigations, Liver_Function_Test, Elements_conc_Test
+from .models import Users, Branch, Category, Products, Sales, Move, Lab, Patient, Pancreatic_enzymes_Test, Ironprofile_Test, LipidProfile_Test, Reproduction, Ascetic_Fluid_Test, Autoimmunity_and_cancer_Test, Inflammtory_Test, Diabetic_Test, Renal_Function_Test, Cardiac_Markers, Investigations, Liver_Function_Test, Elements_conc_Test, Complaint
 from django_countries.fields import CountryField
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.forms import UserCreationForm, PasswordResetForm, SetPasswordForm
@@ -220,7 +220,7 @@ class LiverForm(forms.ModelForm):
         model = Liver_Function_Test
         fields = (
         'investigation_request', 'alanine_transferase', 'albumin', 'ALP', 'aspartate_transferase', 'Bilirubin_direct',
-        'Bilirubin_total', 'GGT', 'Globin', 'total_protein')
+        'Bilirubin_total', 'GGT', 'Globin', 'total_protein', 'confirmed_diagnosis')
 
         labels = {
             'investigation_request': '',
@@ -233,6 +233,7 @@ class LiverForm(forms.ModelForm):
             'GGT': '',
             'Globin': '',
             'total_protein': '',
+            'confirmed_diagnosis': ''
         }
 
         widgets = {
@@ -248,6 +249,8 @@ class LiverForm(forms.ModelForm):
             'GGT': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'GGT'}),
             'Globin': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Globin'}),
             'total_protein': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'total_protein'}),
+            'confirmed_diagnosis': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Querying Diagnosis'}),
         }
 
 
@@ -277,7 +280,7 @@ class InvestigationForm(forms.ModelForm):
 class RenalForm(forms.ModelForm):
     class Meta:
         model = Renal_Function_Test
-        fields = ('investigation_request', 'creatinine', 'urea', 'onedayGFR', 'onedayprotein', 'onedaycreatinine')
+        fields = ('investigation_request', 'creatinine', 'urea', 'onedayGFR', 'onedayprotein', 'onedaycreatinine', 'confirmed_diagnosis')
 
         labels = {
             'investigation_request': '',
@@ -285,7 +288,8 @@ class RenalForm(forms.ModelForm):
             'urea': '',
             'onedayGFR': '',
             'onedayprotein': '',
-            'onedaycreatinine': ''
+            'onedaycreatinine': '',
+            'confirmed_diagnosis': ''
         }
 
         widgets = {
@@ -295,24 +299,29 @@ class RenalForm(forms.ModelForm):
             'onedayGFR': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '24hr GFR'}),
             'onedayprotein': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '24hr Protein'}),
             'onedaycreatinine': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '24hr Creatinine'}),
+            'confirmed_diagnosis': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Querying Diagnosis'}),
         }
 
 
 class PancreaticForm(forms.ModelForm):
     class Meta:
         model = Pancreatic_enzymes_Test
-        fields = ('investigation_request', 'Amylase', 'Lipase')
+        fields = ('investigation_request', 'Amylase', 'Lipase', 'confirmed_diagnosis')
 
         labels = {
             'investigation_request': '',
             'Amylase': '',
-            'Lipase': ''
+            'Lipase': '',
+            'confirmed_diagnosis': ''
         }
 
         widgets = {
             'investigation_request': forms.CheckboxSelectMultiple(),
             'Amylase': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Amylase conc.'}),
             'Lipase': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Lipase conc.'}),
+            'confirmed_diagnosis': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Querying Diagnosis'}),
 
         }
 
@@ -320,25 +329,28 @@ class PancreaticForm(forms.ModelForm):
 class AsceticForm(forms.ModelForm):
     class Meta:
         model = Ascetic_Fluid_Test
-        fields = ('investigation_request', 'Total_protein', 'Albumin')
+        fields = ('investigation_request', 'Total_protein', 'Albumin', 'confirmed_diagnosis')
 
         labels = {
             'investigation_request': '',
             'Total_protein': '',
-            'Albumin': ''
+            'Albumin': '',
+            'confirmed_diagnosis': ''
         }
 
         widgets = {
             'investigation_request': forms.CheckboxSelectMultiple(),
             'Total_protein': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Asctic Protein conc.'}),
-            'Albumin': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Asctic Albumin'})
+            'Albumin': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Asctic Albumin'}),
+            'confirmed_diagnosis': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Querying Diagnosis'}),
         }
 
 
 class InflammatoryForm(forms.ModelForm):
     class Meta:
         model = Inflammtory_Test
-        fields = ('investigation_request', 'AFP', 'CRP', 'Anti_ccp', 'RF_IgM', 'RA_or_F', 'Uric_acid')
+        fields = ('investigation_request', 'AFP', 'CRP', 'Anti_ccp', 'RF_IgM', 'RA_or_F', 'Uric_acid', 'confirmed_diagnosis')
 
         labels = {
             'investigation_request': '',
@@ -348,6 +360,7 @@ class InflammatoryForm(forms.ModelForm):
             'RF_IgM': '',
             'RA_or_F': '',
             'Uric_acid': '',
+            'confirmed_diagnosis': ''
         }
 
         widgets = {
@@ -360,20 +373,23 @@ class InflammatoryForm(forms.ModelForm):
                 attrs={'class': 'form-control', 'placeholder': 'Rheumatoid factor Immunoglobulin M'}),
             'RA_or_F': forms.TextInput(
                 attrs={'class': 'form-control', 'placeholder': 'Rheumatoid arthritis/Rheumatoid factor'}),
-            'Uric_acid': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Uric acid conc.'})
+            'Uric_acid': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Uric acid conc.'}),
+            'confirmed_diagnosis': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Querying Diagnosis'}),
         }
 
 
 class IronForm(forms.ModelForm):
     class Meta:
         model = Ironprofile_Test
-        fields = ('investigation_request', 'Ferritin', 'Iron', 'Total_IBC')
+        fields = ('investigation_request', 'Ferritin', 'Iron', 'Total_IBC', 'confirmed_diagnosis')
 
         labels = {
             'investigation_request': '',
             'Ferritin': '',
             'Iron': '',
             'Total_IBC': '',
+            'confirmed_diagnosis': ''
         }
 
         widgets = {
@@ -381,20 +397,23 @@ class IronForm(forms.ModelForm):
             'Ferritin': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ferritin conc.'}),
             'Iron': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Iron conc.'}),
             'Total_IBC': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Total Iron Bindin Capacity'}),
+            'confirmed_diagnosis': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Querying Diagnosis'}),
         }
 
 
 class LipidForm(forms.ModelForm):
     class Meta:
         model = LipidProfile_Test
-        fields = ('investigation_request', 'HDL', 'LDL', 'Total_cholesterol', 'TG')
+        fields = ('investigation_request', 'HDL', 'LDL', 'Total_cholesterol', 'TG', 'confirmed_diagnosis')
 
         labels = {
             'investigation_request': '',
             'HDL': '',
             'LDL': '',
             'Total_cholesterol': '',
-            'TG': ''
+            'TG': '',
+            'confirmed_diagnosis': ''
         }
 
         widgets = {
@@ -403,6 +422,8 @@ class LipidForm(forms.ModelForm):
             'LDL': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Cholesterol LDL'}),
             'Total_cholesterol': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Total Cholesterol'}),
             'TG': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Triglyceride'}),
+            'confirmed_diagnosis': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Querying Diagnosis'}),
         }
 
 
@@ -410,7 +431,8 @@ class ElectrolytesForm(forms.ModelForm):
     class Meta:
         model = Elements_conc_Test
         fields = (
-        'investigation_request', 'phosphorus', 'magnesium', 'calcium', 'sodium', 'potassium', 'bicarbonate', 'hydrogen')
+        'investigation_request', 'phosphorus', 'magnesium', 'calcium', 'sodium', 'potassium', 'bicarbonate', 'hydrogen',
+        'confirmed_diagnosis')
 
         labels = {
             'investigation_request': '',
@@ -421,6 +443,7 @@ class ElectrolytesForm(forms.ModelForm):
             'potassium': '',
             'bicarbonate': '',
             'hydrogen': '',
+            'confirmed_diagnosis': ''
         }
 
         widgets = {
@@ -432,6 +455,8 @@ class ElectrolytesForm(forms.ModelForm):
             'potassium': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Potassium ion conc.'}),
             'bicarbonate': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Bicarbonate ion conc.'}),
             'hydrogen': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Hydorgen ion conc.'}),
+            'confirmed_diagnosis': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Querying Diagnosis'}),
         }
 
 
@@ -440,7 +465,7 @@ class DiabeticForm(forms.ModelForm):
         model = Diabetic_Test
         fields = (
         'investigation_request', 'HBA1C', 'RBG', 'FBG', 'microalbumin', 'insulin', 'serum_glucose', 'oral_glucose',
-        'c_pepetide')
+        'c_pepetide', 'confirmed_diagnosis')
 
         labels = {
             'investigation_request': '',
@@ -452,6 +477,7 @@ class DiabeticForm(forms.ModelForm):
             'serum_glucose': '',
             'oral_glucose': '',
             'c_pepetide': '',
+            'confirmed_diagnosis': ''
         }
 
         widgets = {
@@ -464,13 +490,15 @@ class DiabeticForm(forms.ModelForm):
             'serum_glucose': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Serum glucose'}),
             'oral_glucose': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Serum Oral glucose'}),
             'c_pepetide': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'C-Peptide conc.'}),
+            'confirmed_diagnosis': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Querying Diagnosis'}),
         }
 
 
 class CardiacForm(forms.ModelForm):
     class Meta:
         model = Cardiac_Markers
-        fields = ('investigation_request', 'NT_pro_BNP', 'D_dimer', 'calcium', 'troponin_1', 'CK', 'LDH')
+        fields = ('investigation_request', 'NT_pro_BNP', 'D_dimer', 'calcium', 'troponin_1', 'CK', 'LDH', 'confirmed_diagnosis')
 
         labels = {
             'investigation_request': '',
@@ -479,7 +507,8 @@ class CardiacForm(forms.ModelForm):
             'calcium': '',
             'troponin_1': '',
             'CK': '',
-            'LDH': ''
+            'LDH': '',
+            'confirmed_diagnosis': ''
         }
 
         widgets = {
@@ -490,6 +519,8 @@ class CardiacForm(forms.ModelForm):
             'troponin_1': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Cardiac Troponin 1'}),
             'CK': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Creatine Kinase '}),
             'LDH': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Lactate Dehydrogenase conc.'}),
+            'confirmed_diagnosis': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Querying Diagnosis'}),
         }
 
 
@@ -498,7 +529,7 @@ class ReproductionForm(forms.ModelForm):
         model = Reproduction
         fields = (
         'investigation_request', 'beta_HCG', 'urine_HCG', 'estradiol', 'FSH', 'Progesterone', 'LH', 'prolactin', 'AMH',
-        'Testosterone', 'total_T4', 'total_t3', 'TSH')
+        'Testosterone', 'total_T4', 'total_t3', 'TSH', 'confirmed_diagnosis')
 
         labels = {
             'investigation_request': '',
@@ -514,6 +545,7 @@ class ReproductionForm(forms.ModelForm):
             'total_T4': '',
             'total_t3': '',
             'TSH': '',
+            'confirmed_diagnosis': ''
         }
 
         widgets = {
@@ -530,13 +562,15 @@ class ReproductionForm(forms.ModelForm):
             'total_T4': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Total Thyroxine'}),
             'total_t3': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Total Triiodothyronine'}),
             'TSH': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Thyroid stimulating hormone'}),
+            'confirmed_diagnosis': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Querying Diagnosis'}),
         }
 
 
 class AandCForm(forms.ModelForm):
     class Meta:
         model = Autoimmunity_and_cancer_Test
-        fields = ('investigation_request', 'ANA', 'CA_125', 'CA15_3', 'CA19_9', 'CEA', 'PSA')
+        fields = ('investigation_request', 'ANA', 'CA_125', 'CA15_3', 'CA19_9', 'CEA', 'PSA', 'confirmed_diagnosis')
 
         labels = {
             'investigation_request': '',
@@ -545,7 +579,8 @@ class AandCForm(forms.ModelForm):
             'CA15_3': '',
             'CA19_9': '',
             'CEA': '',
-            'PSA': ''
+            'PSA': '',
+            'confirmed_diagnosis': ''
         }
 
         widgets = {
@@ -560,4 +595,32 @@ class AandCForm(forms.ModelForm):
             'CEA': forms.TextInput(
                 attrs={'class': 'form-control', 'placeholder': 'Carcinembryonic antigen for Colon cancer'}),
             'PSA': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Prostatic specific antigen'}),
+            'confirmed_diagnosis': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Querying Diagnosis'}),
+        }
+
+
+class ComplaintForm(forms.ModelForm):
+    class Meta:
+        model = Complaint
+        fields = ('complaint1', 'complaint2', 'complaint3', 'complaint4', 'query_diagnosis')
+
+        labels = {
+            'complaint1': '',
+            'complaint2': '',
+            'complaint3': '',
+            'complaint4': '',
+            'query_diagnosis': ''
+        }
+
+        widgets = {
+            'complaint1': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Patients Complaints, and Symptoms'}),
+            'complaint2': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Patients Complaints, and Symptoms'}),
+            'complaint3': forms.TextInput(attrs={'class': 'form-control',
+                                             'placeholder': 'Patients Complaints, and Symptoms'}),
+            'complaint4': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Patients Complaints, and Symptoms'}),
+            'query_diagnosis': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Differential Diagnosis'}),
         }

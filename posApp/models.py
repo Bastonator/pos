@@ -236,6 +236,7 @@ class Patient(models.Model):
     contact = models.TextField(blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
+    confirmed_diagnosis = models.TextField(max_length=450, null=True, blank=True)
     created_by = models.ForeignKey(Users, related_name="patients", on_delete=models.DO_NOTHING, null=True)
     date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
@@ -243,6 +244,37 @@ class Patient(models.Model):
 
     def __str__(self):
         return self.firstname
+
+
+class Complaint(models.Model):
+    complaint1 = models.TextField(blank=True, null=True)
+    complaint2 = models.TextField(blank=True, null=True)
+    complaint3 = models.TextField(blank=True, null=True)
+    complaint4 = models.TextField(blank=True, null=True)
+    query_diagnosis = models.TextField(max_length=4500, blank=True, null=True)
+    patient = models.ForeignKey(Patient, null=True, on_delete=models.CASCADE, related_name="patientcomplaint")
+    created_by = models.ForeignKey(Users, related_name="complaint", on_delete=models.DO_NOTHING, null=True)
+    date_added = models.DateTimeField(default=timezone.now)
+    date_updated = models.DateTimeField(auto_now=True)
+    lab_owner = models.ForeignKey(Lab, null=True, related_name='labcomplaint', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.query_diagnosis
+
+
+class Prescription(models.Model):
+    drug = models.TextField(blank=True, null=True)
+    dosage = models.TextField(blank=True, null=True)
+    patient = models.ForeignKey(Patient, null=True, on_delete=models.CASCADE, related_name="patientprescription")
+    is_taking = models.BooleanField(default=True)
+    created_by = models.ForeignKey(Users, related_name="prescription", on_delete=models.DO_NOTHING, null=True)
+    date_added = models.DateTimeField(default=timezone.now)
+    date_updated = models.DateTimeField(auto_now=True)
+    lab_owner = models.ForeignKey(Lab, null=True, related_name='labprescription', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.drug
+
 
 
 class Liver_Function_Test(models.Model):
@@ -256,6 +288,7 @@ class Liver_Function_Test(models.Model):
     GGT = models.TextField(max_length=450, null=True, blank=True)
     Globin = models.TextField(max_length=450, null=True, blank=True)
     total_protein = models.TextField(max_length=450, null=True, blank=True)
+    confirmed_diagnosis = models.TextField(max_length=450, null=True, blank=True)
     date_created = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(Users, related_name="liverlab", on_delete=models.DO_NOTHING, null=True)
     patient = models.ForeignKey(Patient, null=True, on_delete=models.CASCADE, related_name="patientliver")
@@ -269,6 +302,7 @@ class Renal_Function_Test(models.Model):
     onedayGFR = models.TextField(max_length=450, null=True, blank=True)
     onedayprotein = models.TextField(max_length=450, null=True, blank=True)
     onedaycreatinine = models.TextField(max_length=450, null=True, blank=True)
+    confirmed_diagnosis = models.TextField(max_length=450, null=True, blank=True)
     date_created = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(Users, related_name="renallab", on_delete=models.DO_NOTHING, null=True)
     patient = models.ForeignKey(Patient, null=True, on_delete=models.CASCADE, related_name="patientrenal")
@@ -279,6 +313,7 @@ class Pancreatic_enzymes_Test(models.Model):
     investigation_request = models.ManyToManyField(Investigations, related_name="pancreasetest")
     Amylase = models.TextField(max_length=450, null=True, blank=True)
     Lipase = models.TextField(max_length=450, null=True, blank=True)
+    confirmed_diagnosis = models.TextField(max_length=450, null=True, blank=True)
     date_created = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(Users, related_name="pancreaselab", on_delete=models.DO_NOTHING, null=True)
     patient = models.ForeignKey(Patient, null=True, on_delete=models.CASCADE, related_name="patientpancreas")
@@ -289,6 +324,7 @@ class Ascetic_Fluid_Test(models.Model):
     investigation_request = models.ManyToManyField(Investigations, related_name="ascetictest")
     Total_protein = models.TextField(max_length=450, null=True, blank=True)
     Albumin = models.TextField(max_length=450, null=True, blank=True)
+    confirmed_diagnosis = models.TextField(max_length=450, null=True, blank=True)
     date_created = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(Users, related_name="asceticlab", on_delete=models.DO_NOTHING, null=True)
     patient = models.ForeignKey(Patient, null=True, on_delete=models.CASCADE, related_name="patientascetic")
@@ -303,6 +339,7 @@ class Inflammtory_Test(models.Model):
     RF_IgM = models.TextField(max_length=450, null=True, blank=True)
     RA_or_F = models.TextField(max_length=450, null=True, blank=True)
     Uric_acid = models.TextField(max_length=450, null=True, blank=True)
+    confirmed_diagnosis = models.TextField(max_length=450, null=True, blank=True)
     date_created = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(Users, related_name="inflammationlab", on_delete=models.DO_NOTHING, null=True)
     patient = models.ForeignKey(Patient, null=True, on_delete=models.CASCADE, related_name="patientinflammation")
@@ -314,6 +351,7 @@ class Ironprofile_Test(models.Model):
     Ferritin = models.TextField(max_length=450, null=True, blank=True)
     Iron = models.TextField(max_length=450, null=True, blank=True)
     Total_IBC = models.TextField(max_length=450, null=True, blank=True)
+    confirmed_diagnosis = models.TextField(max_length=450, null=True, blank=True)
     date_created = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(Users, related_name="ironlab", on_delete=models.DO_NOTHING, null=True)
     patient = models.ForeignKey(Patient, null=True, on_delete=models.CASCADE, related_name="patientiron")
@@ -326,6 +364,7 @@ class LipidProfile_Test(models.Model):
     LDL = models.TextField(max_length=450, null=True, blank=True)
     Total_cholesterol = models.TextField(max_length=450, null=True, blank=True)
     TG = models.TextField(max_length=450, null=True, blank=True)
+    confirmed_diagnosis = models.TextField(max_length=450, null=True, blank=True)
     date_created = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(Users, related_name="lipidlab", on_delete=models.DO_NOTHING, null=True)
     patient = models.ForeignKey(Patient, null=True, on_delete=models.CASCADE, related_name="patientlipid")
@@ -341,6 +380,7 @@ class Elements_conc_Test(models.Model):
     potassium = models.TextField(max_length=450, null=True, blank=True)
     bicarbonate = models.TextField(max_length=450, null=True, blank=True)
     hydrogen = models.TextField(max_length=450, null=True, blank=True)
+    confirmed_diagnosis = models.TextField(max_length=450, null=True, blank=True)
     date_created = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(Users, related_name="elementslab", on_delete=models.DO_NOTHING, null=True)
     patient = models.ForeignKey(Patient, null=True, on_delete=models.CASCADE, related_name="patientelements")
@@ -357,6 +397,7 @@ class Diabetic_Test(models.Model):
     serum_glucose = models.TextField(max_length=450, null=True, blank=True)
     oral_glucose = models.TextField(max_length=450, null=True, blank=True)
     c_pepetide = models.TextField(max_length=450, null=True, blank=True)
+    confirmed_diagnosis = models.TextField(max_length=450, null=True, blank=True)
     date_created = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(Users, related_name="diabeticslab", on_delete=models.DO_NOTHING, null=True)
     patient = models.ForeignKey(Patient, null=True, on_delete=models.CASCADE, related_name="patientdiabetic")
@@ -371,6 +412,7 @@ class Cardiac_Markers(models.Model):
     troponin_1 = models.TextField(max_length=450, null=True, blank=True)
     CK = models.TextField(max_length=450, null=True, blank=True)
     LDH = models.TextField(max_length=450, null=True, blank=True)
+    confirmed_diagnosis = models.TextField(max_length=450, null=True, blank=True)
     date_created = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(Users, related_name="cardiaclab", on_delete=models.DO_NOTHING, null=True)
     patient = models.ForeignKey(Patient, null=True, on_delete=models.CASCADE, related_name="patientcardiac")
@@ -391,6 +433,7 @@ class Reproduction(models.Model):
     total_T4 = models.TextField(max_length=450, null=True, blank=True)
     total_t3 = models.TextField(max_length=450, null=True, blank=True)
     TSH = models.TextField(max_length=450, null=True, blank=True)
+    confirmed_diagnosis = models.TextField(max_length=450, null=True, blank=True)
     date_created = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(Users, related_name="reprolab", on_delete=models.DO_NOTHING, null=True)
     patient = models.ForeignKey(Patient, null=True, on_delete=models.CASCADE, related_name="patientrepro")
@@ -405,6 +448,7 @@ class Autoimmunity_and_cancer_Test(models.Model):
     CA19_9 = models.TextField(max_length=450, null=True, blank=True)
     CEA = models.TextField(max_length=450, null=True, blank=True)
     PSA = models.TextField(max_length=450, null=True, blank=True)
+    confirmed_diagnosis = models.TextField(max_length=450, null=True, blank=True)
     date_created = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(Users, related_name="aaclab", on_delete=models.DO_NOTHING, null=True)
     patient = models.ForeignKey(Patient, null=True, on_delete=models.CASCADE, related_name="patientaac")

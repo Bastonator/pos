@@ -125,4 +125,6 @@ urlpatterns = [
     path('cardiac_result/<str:pk>/<str:pk1>/<str:pk2>', views.cardiac_info, name="cardiac-result"),
     path('repro_result/<str:pk>/<str:pk1>/<str:pk2>', views.repro_info, name="repro-result"),
     path('autoimmunity_and_cancer_Test_result/<str:pk>/<str:pk1>/<str:pk2>', views.repro_info, name="aac-result"),
+
+    path('complaints/<str:pk>/<str:pk1>', views.new_complaint, name="complaint"),
 ]

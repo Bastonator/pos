@@ -1,10 +1,21 @@
 {% extends "labApp/base.html" %} {% block pageContent %}
+<style>
+    .btn-complaint:hover{
+        background-color: blue;
+        color: white;
+    }
+</style>
 {% if lab %}
 {% if patient %}
 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
     <div class="mdc-card py-2">
         <div class="d-flex justify-content-between align-items-center">
             <h4 class="card-title mb-0">{{ patient.firstname }} {{ patient.lastname }}'s Details</h4>
+            <div class="text-start">
+                <a href="">
+                <button style="background-color: green;" class="btn btn-primary bg-gradient btn-sm rounded-0" ><i class="mdi mdi-plus"></i><span> View {{ patient.firstname }}'s Prescription </span></button>
+                </a>
+            </div>
             <div class="text-start">
                 <a href="{% url 'test-list' lab.id patient.id %}">
                 <button class="btn btn-primary bg-gradient btn-sm rounded-0" id="create_new"><i class="mdi mdi-plus"></i><span> Request new test for {{ patient.firstname }} </span></button>
@@ -15,44 +26,89 @@
 </div>
 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
     <div class="mdc-card">
-    <div class="card" style="width: 960px;">
-    <div class="card-body">
-        <div style="display: flex;">
-            <h4.8 style="display: flex;">
-                First Name: {{ patient.firstname }} 
-            </h4.8>
-            &nbsp; &nbsp;
-            <h4.8 style="display: flex;">
-                Last Name: {{ patient.lastname }} 
-            </h4.8>
-            &nbsp; &nbsp;
-            <h4.8 style="display: flex;">
-                Gender: {{ patient.gender }} 
-            </h4.8>
-            &nbsp; &nbsp;
-            <h4.8 style="display: flex;">
-                Date of birth: {{ patient.dob }} 
-            </h4.8>
+        <div class="card" style="width: 960px;">
+        <div class="card-body">
+            <div style="display: flex;">
+                <h4.8 style="display: flex;">
+                    First Name: {{ patient.firstname }}
+                </h4.8>
+                &nbsp; &nbsp;
+                <h4.8 style="display: flex;">
+                    Last Name: {{ patient.lastname }}
+                </h4.8>
+                &nbsp; &nbsp;
+                <h4.8 style="display: flex;">
+                    Gender: {{ patient.gender }}
+                </h4.8>
+                &nbsp; &nbsp;
+                <h4.8 style="display: flex;">
+                    Date of birth: {{ patient.dob }}
+                </h4.8>
+            </div>
+            <hr>
+            <div style="display: flex;">
+                <h4.8 style="display: flex;">
+                    Phone number: {{ patient.contact }}
+                </h4.8>&nbsp; &nbsp;
+                <h4.8 style="display: flex;">
+                    Address: {{ patient.address }}
+                </h4.8>&nbsp; &nbsp;
+                <h4.8 style="display: flex;">
+                    Email: {{ patient.email }}
+                </h4.8>&nbsp; &nbsp;
+                <h4.8 style="display: flex;">
+                    Registered by: {{ patient.created_by }}
+                </h4.8>&nbsp; &nbsp;
+                <h4.8 style="display: flex;">
+                    Date registered: {{ patient.date_added }}
+                </h4.8>&nbsp; &nbsp;
+            </div>
         </div>
-        <hr>
-        <div style="display: flex;">
-            <h4.8 style="display: flex;">
-                Phone number: {{ patient.contact }} 
-            </h4.8>&nbsp; &nbsp;
-            <h4.8 style="display: flex;">
-                Address: {{ patient.address }} 
-            </h4.8>&nbsp; &nbsp;
-            <h4.8 style="display: flex;">
-                Email: {{ patient.email }} 
-            </h4.8>&nbsp; &nbsp;
-            <h4.8 style="display: flex;">
-                Registered by: {{ patient.created_by }} 
-            </h4.8>&nbsp; &nbsp;
-            <h4.8 style="display: flex;">
-                Date registered: {{ patient.date_added }} 
-            </h4.8>&nbsp; &nbsp;
         </div>
     </div>
+</div>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+        {% if complaint %}
+        <div class="mdc-card">
+            <div class="card" style="width: 960px;">
+                <div class="card-body">
+                    <div style="display: flex;">
+                        <h4.8 style="display: flex;">
+                            First complaint: <strong>{{ complaint.complaint1 }}</strong>
+                        </h4.8>
+                        &nbsp; &nbsp;
+                        <h4.8 style="display: flex;">
+                            Second complaint: <strong>{{ complaint.complaint2 }}</strong>
+                        </h4.8>
+                        &nbsp; &nbsp;<h4.8 style="display: flex;">
+                            Third complaint: <strong>{{ complaint.complaint3 }}</strong>
+                        </h4.8>
+                        &nbsp; &nbsp;<h4.8 style="display: flex;">
+                            Fourth complaint: <strong>{{ complaint.complaint4 }}</strong>
+                        </h4.8>
+                        &nbsp; &nbsp;
+                        <h4>
+                        Querying Diagnosis : {% if complaint.query_diagnosis %}
+                        {{ complaint.query_diagnosis }}
+                        {% else %}
+                        <strong>
+                            No Queried Diagnosis
+                        </strong>
+                        {% endif %}
+                    </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <center>
+        <a href="{% url 'complaint' pk=lab.pk pk1=patient.pk %}">
+            <button class="btn-complaint" style="width: 380px; height: 60px; border-radius: 15px; border-width: 2px; border-color: blue; transition: 0.5s;">
+                What are the patients Complaints?
+            </button>
+        </a>
+        </center>
+        {% endif %}
 </div>
 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
     <div class="mdc-card">
