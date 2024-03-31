@@ -1,0 +1,44 @@
+{% extends "labApp/base.html" %} {% block pageContent %}
+{% if lab %}
+
+
+
+<center>
+    <br>
+<div class="card product-add-home" style="background-color: white; width: 1000%;">
+    <div class="card-add" style="border-color: slategray;">
+        <div class="card-header" style="height: 5rem" align="left">
+            <h1>Editing Prescription?</h1>
+        </div>
+        <div class="container">
+                <form action="" method="POST" enctype="multipart/form-data" style="width: 100%;">
+                        {% csrf_token %}
+<br>
+
+                <div style="display: flex;">
+                    {{form.drug}}            &nbsp; &nbsp;
+    
+                    {{form.dosage}}
+                </div>
+                  <hr>
+<div>
+    Is patient on prescription
+    {{form.is_taking}}
+    <br>
+    <strong style="color: green;">
+        Tick if patient should be on prescription, Untick patient shouldn't be on Prescription
+    </strong>
+</div>
+<br>
+                <div align="center">
+                    <input type="submit" value="Save Prescription" class="btn btn-outline-dark">
+                 </div>
+                 <br>
+            </form>
+    </div>
+</div>
+</div>
+</center>
+
+{% endif %}
+{% endblock %}

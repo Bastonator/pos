@@ -1,6 +1,6 @@
 from django import forms
 from django.forms.models import ModelForm
-from .models import Users, Branch, Category, Products, Sales, Move, Lab, Patient, Pancreatic_enzymes_Test, Ironprofile_Test, LipidProfile_Test, Reproduction, Ascetic_Fluid_Test, Autoimmunity_and_cancer_Test, Inflammtory_Test, Diabetic_Test, Renal_Function_Test, Cardiac_Markers, Investigations, Liver_Function_Test, Elements_conc_Test, Complaint
+from .models import Users, Branch, Category, Products, Prescription, Sales, Move, Lab, Patient, Pancreatic_enzymes_Test, Ironprofile_Test, LipidProfile_Test, Reproduction, Ascetic_Fluid_Test, Autoimmunity_and_cancer_Test, Inflammtory_Test, Diabetic_Test, Renal_Function_Test, Cardiac_Markers, Investigations, Liver_Function_Test, Elements_conc_Test, Complaint
 from django_countries.fields import CountryField
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.forms import UserCreationForm, PasswordResetForm, SetPasswordForm
@@ -623,4 +623,24 @@ class ComplaintForm(forms.ModelForm):
                 attrs={'class': 'form-control', 'placeholder': 'Patients Complaints, and Symptoms'}),
             'query_diagnosis': forms.TextInput(
                 attrs={'class': 'form-control', 'placeholder': 'Differential Diagnosis'}),
+        }
+
+
+class PrescriptionForm(forms.ModelForm):
+    is_taking: forms.BooleanField()
+    class Meta:
+        model = Prescription
+        fields = ('drug', 'dosage', 'is_taking')
+
+        labels = {
+            'drug': '',
+            'dosage': '',
+            'is_taking': ''
+        }
+
+        widgets = {
+            'drug': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Drug prescribed'}),
+            'dosage': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Dosage'}),
         }

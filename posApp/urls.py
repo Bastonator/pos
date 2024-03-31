@@ -127,4 +127,8 @@ urlpatterns = [
     path('autoimmunity_and_cancer_Test_result/<str:pk>/<str:pk1>/<str:pk2>', views.repro_info, name="aac-result"),
 
     path('complaints/<str:pk>/<str:pk1>', views.new_complaint, name="complaint"),
+    path('prescriptions/<str:pk>/<str:pk1>', views.patient_prescriptions, name="prescription"),
+    path('prescribe/<str:pk>/<str:pk1>', views.new_prescription, name="add-prescription"),
+    path('edit_prescription/<str:pk>/<str:pk1>/<str:pk2>', views.update_prescription, name="edit-prescription"),
+
 ]

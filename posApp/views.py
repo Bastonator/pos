@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from flask import jsonify
 from posApp.models import Category, Products, Sales, salesItems, Shifts, ProductChange, changeItems, Move, Lab, LipidProfile_Test, Liver_Function_Test, Renal_Function_Test, Ironprofile_Test, Inflammtory_Test
-from posApp.models import Ascetic_Fluid_Test, Elements_conc_Test, Pancreatic_enzymes_Test, Patient, Reproduction, Investigations, Diabetic_Test, Autoimmunity_and_cancer_Test, Cardiac_Markers, Complaint
+from posApp.models import Ascetic_Fluid_Test, Elements_conc_Test, Pancreatic_enzymes_Test, Patient, Reproduction, Investigations, Diabetic_Test, Autoimmunity_and_cancer_Test, Cardiac_Markers, Complaint, Prescription
 from django.db.models import Count, Sum
 from posApp.models import Branch, Users
 from django.contrib import messages
@@ -14,7 +14,7 @@ from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 import json, sys
 from datetime import date, datetime
-from posApp.forms import RegistrationForm, BranchForm, CategoryForm, ProductForm, SaleForm, MoveForm, LipidForm, LiverForm, ElectrolytesForm, AsceticForm, AandCForm, ReproductionForm, RenalForm, DiabeticForm, CardiacForm, IronForm, InflammatoryForm, InvestigationForm, PancreaticForm, ComplaintForm
+from posApp.forms import RegistrationForm, BranchForm, CategoryForm, ProductForm, SaleForm, MoveForm, LipidForm, LiverForm, ElectrolytesForm, AsceticForm, AandCForm, ReproductionForm, RenalForm, DiabeticForm, CardiacForm, IronForm, InflammatoryForm, InvestigationForm, PancreaticForm, ComplaintForm, PrescriptionForm
 from django.conf import settings
 from django.core.paginator import Paginator
 from django.contrib.admin.views.decorators import staff_member_required
@@ -1604,3 +1604,61 @@ def new_complaint(request, pk, pk1):
             return render(request, 'labApp/complaintaddedalert.html', {'lab': lab, 'patient': patient, 'complaint': complaint})
     else:
         return render(request, 'labApp/complaintform.html', context=context)
+
+
+@login_required
+def patient_prescriptions(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    prescriptions = Prescription.objects.filter(patient_id=pk1)
+    context = {
+        'lab': lab,
+        'patient': patient,
+        'prescriptions': prescriptions
+    }
+    return render(request, 'labApp/prescription.html', context=context)
+
+
+@login_required
+def new_prescription(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    form = PrescriptionForm(request.POST or None, request.FILES or None)
+    context = {'lab': lab, 'patient': patient, 'form': form}
+    if request.method == "POST":
+        print(form)
+        if form.is_valid():
+            prescription = form.save(commit=False)
+            prescription.created_by = request.user
+            prescription.patient = patient
+            prescription.lab_owner = lab
+            # cat.user = request.user
+
+            prescription.save()
+
+            return render(request, 'labApp/prescriptionaddedalert.html',
+                          {'lab': lab, 'patient': patient, 'prescription': prescription})
+    else:
+        return render(request, 'labApp/prescriptionform.html', context=context)
+
+
+@login_required
+def update_prescription(request, pk, pk1, pk2):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    show_prescription = Prescription.objects.get(id=pk2)
+    form = PrescriptionForm(request.POST or None, request.FILES or None, instance=show_prescription)
+    context = {'lab': lab, 'patient': patient, 'form': form, 'show_prescription': show_prescription}
+    if form.is_valid():
+        prescription = form.save(commit=False)
+        prescription.created_by = request.user
+        prescription.patient = patient
+        prescription.lab_owner = lab
+        # cat.user = request.user
+
+        prescription.save()
+
+        return render(request, 'labApp/prescriptionaddedalert.html',
+                      {'lab': lab, 'patient': patient, 'prescription': prescription})
+
+    return render(request, 'labApp/prescriptionupdateform.html', context=context)
