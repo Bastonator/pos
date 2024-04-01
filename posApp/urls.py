@@ -130,5 +130,6 @@ urlpatterns = [
     path('prescriptions/<str:pk>/<str:pk1>', views.patient_prescriptions, name="prescription"),
     path('prescribe/<str:pk>/<str:pk1>', views.new_prescription, name="add-prescription"),
     path('edit_prescription/<str:pk>/<str:pk1>/<str:pk2>', views.update_prescription, name="edit-prescription"),
+    path('test_sales/<str:pk>', views.all_testperformed, name="all-testperformed"),
 
 ]

@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from flask import jsonify
 from posApp.models import Category, Products, Sales, salesItems, Shifts, ProductChange, changeItems, Move, Lab, LipidProfile_Test, Liver_Function_Test, Renal_Function_Test, Ironprofile_Test, Inflammtory_Test
-from posApp.models import Ascetic_Fluid_Test, Elements_conc_Test, Pancreatic_enzymes_Test, Patient, Reproduction, Investigations, Diabetic_Test, Autoimmunity_and_cancer_Test, Cardiac_Markers, Complaint, Prescription
+from posApp.models import Ascetic_Fluid_Test, Elements_conc_Test, Pancreatic_enzymes_Test, Test_performed, Patient, Reproduction, Investigations, Diabetic_Test, Autoimmunity_and_cancer_Test, Cardiac_Markers, Complaint, Prescription
 from django.db.models import Count, Sum
 from posApp.models import Branch, Users
 from django.contrib import messages
@@ -1147,6 +1147,11 @@ def liver_test(request, pk, pk1):
 
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
 
+            for test in result.investigation_request.all():
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+
+                saved_test.save()
+
             return render(request, 'labApp/livertestalert.html', {'lab': lab, 'patient': patient, 'result': result})
     else:
         form.fields["investigation_request"].queryset = Investigations.objects.filter(category='L')
@@ -1184,6 +1189,11 @@ def renal_test(request, pk, pk1):
             result.save()
 
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
+
+            for test in result.investigation_request.all():
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+
+                saved_test.save()
 
             return render(request, 'labApp/renaltestalert.html', {'lab': lab, 'patient': patient, 'result': result})
     else:
@@ -1223,6 +1233,11 @@ def pancreatic_test(request, pk, pk1):
 
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
 
+            for test in result.investigation_request.all():
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+
+                saved_test.save()
+
             return render(request, 'labApp/pancreastestalert.html', {'lab': lab, 'patient': patient, 'result': result})
     else:
         form.fields["investigation_request"].queryset = Investigations.objects.filter(category='P')
@@ -1260,6 +1275,11 @@ def ironprofile_test(request, pk, pk1):
             result.save()
 
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
+
+            for test in result.investigation_request.all():
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+
+                saved_test.save()
 
             return render(request, 'labApp/irontestalert.html', {'lab': lab, 'patient': patient, 'result': result})
     else:
@@ -1299,6 +1319,11 @@ def lipidprofile_test(request, pk, pk1):
 
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
 
+            for test in result.investigation_request.all():
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+
+                saved_test.save()
+
             return render(request, 'labApp/lipidtestalert.html', {'lab': lab, 'patient': patient, 'result': result})
     else:
         form.fields["investigation_request"].queryset = Investigations.objects.filter(category='Lipid')
@@ -1336,6 +1361,11 @@ def inflammatory_test(request, pk, pk1):
             result.save()
 
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
+
+            for test in result.investigation_request.all():
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+
+                saved_test.save()
 
             return render(request, 'labApp/inflametestalert.html', {'lab': lab, 'patient': patient, 'result': result})
     else:
@@ -1375,6 +1405,11 @@ def ascetic_test(request, pk, pk1):
 
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
 
+            for test in result.investigation_request.all():
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+
+                saved_test.save()
+
             return render(request, 'labApp/ascetictestalert.html', {'lab': lab, 'patient': patient, 'result': result})
     else:
         form.fields["investigation_request"].queryset = Investigations.objects.filter(category='A')
@@ -1412,6 +1447,11 @@ def electrolytes_test(request, pk, pk1):
             result.save()
 
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
+
+            for test in result.investigation_request.all():
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+
+                saved_test.save()
 
             return render(request, 'labApp/ionstestalert.html', {'lab': lab, 'patient': patient, 'result': result})
     else:
@@ -1451,6 +1491,11 @@ def sugar_test(request, pk, pk1):
 
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
 
+            for test in result.investigation_request.all():
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+
+                saved_test.save()
+
             return render(request, 'labApp/sugartestalert.html', {'lab': lab, 'patient': patient, 'result': result})
     else:
         form.fields["investigation_request"].queryset = Investigations.objects.filter(category='D')
@@ -1488,6 +1533,11 @@ def cardiac_test(request, pk, pk1):
             result.save()
 
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
+
+            for test in result.investigation_request.all():
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+
+                saved_test.save()
 
             return render(request, 'labApp/cardiactestalert.html', {'lab': lab, 'patient': patient, 'result': result})
     else:
@@ -1527,6 +1577,11 @@ def reproductive_test(request, pk, pk1):
 
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
 
+            for test in result.investigation_request.all():
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+
+                saved_test.save()
+
             return render(request, 'labApp/reprotestalert.html', {'lab': lab, 'patient': patient, 'result': result})
     else:
         form.fields["investigation_request"].queryset = Investigations.objects.filter(category='RP')
@@ -1564,6 +1619,11 @@ def auto_and_ca_test(request, pk, pk1):
             result.save()
 
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
+
+            for test in result.investigation_request.all():
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+
+                saved_test.save()
 
             return render(request, 'labApp/aactestalert.html', {'lab': lab, 'patient': patient, 'result': result})
     else:
@@ -1662,3 +1722,14 @@ def update_prescription(request, pk, pk1, pk2):
                       {'lab': lab, 'patient': patient, 'prescription': prescription})
 
     return render(request, 'labApp/prescriptionupdateform.html', context=context)
+
+
+@login_required
+def all_testperformed(request, pk):
+    lab = Lab.objects.get(id=pk)
+    tests = Test_performed.objects.filter(lab_owner_id=pk)
+    context = {
+        'lab': lab,
+        'tests': tests
+    }
+    return render(request, 'labApp/alltestperformed.html', context)

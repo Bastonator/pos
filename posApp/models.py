@@ -227,6 +227,17 @@ class Investigations(models.Model):
         return self.name
 
 
+class Test_performed(models.Model):
+    name = models.TextField(blank=True, null=True)
+    price = models.TextField(blank=True, null=True)
+    date_added = models.DateTimeField(default=timezone.now)
+    created_by = models.ForeignKey(Users, related_name="testsperformer", on_delete=models.DO_NOTHING, null=True)
+    lab_owner = models.ForeignKey(Lab, null=True, related_name='labtestperformed', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+
 class Patient(models.Model):
     firstname = models.TextField(blank=True, null=True)
     middlename = models.TextField(blank=True, null=True)
