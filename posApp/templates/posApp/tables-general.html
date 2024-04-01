@@ -28,6 +28,11 @@
 
   <!-- Template Main CSS File -->
   <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+
 
   <!-- =======================================================
   * Template Name: NiceAdmin
@@ -206,7 +211,7 @@
 
 {% if not created %}
 
-                    <div class="constainer-fluid row">
+                    <div class="constainer-fluid row" style="width: 100%;">
                              <form class="account-form p-4 rounded col-lg-10 mx-auto" action="" method="POST">
                                 {% csrf_token %}
                                 <h3 class="mb-2 font-weight-bold">Create a Branch</h3>
@@ -230,103 +235,15 @@
                                       </div>
                                       <div>
                                         <label for="defaultFormControlInput" class="form-label">Branch  Master User</label>
-                                        <input
-                                          type="text"
-                                          class="form-control"
-                                          id="defaultFormControlInput3"
-                                          placeholder="Master User"
-                                          name="user1"
-                                          list="userlist1"
-                                          aria-describedby="defaultFormControlHelp" />
-                                          <datalist id="userlist1">
-                                             {% for user in user %}
-                                             <option value="{{ user.id }}">-<strong>{{ user.email }}-{{ user.username }}</strong></option>
-                                             {% endfor %}
-                                          </datalist>
+                                        <select id="select_page" name="user1" style="width: 100%;" placeholder="elect your email address..."  class="operator">
+                                          <br>
+                                            <option value="" name="user1">Select your email address</option>
+                                            {% for user in userrrs %}
+                                             <option name="user1" value="{{ user.email }}" ><strong>{{ user.email }}-{{ user.username }}</strong></option>
+                                            {% endfor %}
+                                        </select>
                                       </div>
-                                      <div>
-                                        <label for="defaultFormControlInput" class="form-label">Branch User 2</label>
-                                        <input
-                                          type="text"
-                                          class="form-control"
-                                          id="defaultFormControlInput4"
-                                          placeholder="Second controlling user"
-                                          name="user2"
-                                          list="userlist2"
-                                          aria-describedby="defaultFormControlHelp" />
-                                          <datalist id="userlist2">
-                                             {% for user in user %}
-                                             <option value="{{ user.id }}">-<strong>{{ user.email }}-{{ user.username }}</strong></option>
-                                             {% endfor %}
-                                          </datalist>
-                                      </div>
-                                      <div>
-                                        <label for="defaultFormControlInput" class="form-label">Branch User 3</label>
-                                        <input
-                                          type="text"
-                                          class="form-control"
-                                          id="defaultFormControlInput8"
-                                          placeholder="Third controlling user"
-                                          name="user3"
-                                          list="userlist3"
-                                          aria-describedby="defaultFormControlHelp" />
-                                          <datalist id="userlist3">
-                                             {% for user in user %}
-                                             <option value="{{ user.id }}">-<strong>{{ user.email }}-{{ user.username }}</strong></option>
-                                             {% endfor %}
-                                          </datalist>
-                                      </div>
-                                        <div>
-                                        <label for="defaultFormControlInput" class="form-label">Branch User 4 </label>
-                                        <input
-                                          type="text"
-                                          class="form-control"
-                                          id="defaultFormControlInput7"
-                                          placeholder="Fourth controlling user"
-                                          name="user4"
-                                          list="userlist4"
-                                          aria-describedby="defaultFormControlHelp" />
-                                          <datalist id="userlist4">
-                                             {% for user in user %}
-                                             <option value="{{ user.id }}">-<strong>{{ user.email }}-{{ user.username }}</strong></option>
-                                             {% endfor %}
-                                          </datalist>
-                                      </div>
-                                        <div>
-                                        <label for="defaultFormControlInput" class="form-label">Branch User 5</label>
-                                        <input
-                                          type="text"
-                                          class="form-control"
-                                          id="defaultFormControlInput5"
-                                          placeholder="Fifth controlling user"
-                                          name="user5"
-                                          list="userlist5"
-                                          aria-describedby="defaultFormControlHelp" />
-                                          <datalist id="userlist5">
-                                             {% for user in user %}
-                                             <option value="{{ user.id }}">-<strong>{{ user.email }}-{{ user.username }}</strong></option>
-                                             {% endfor %}
-                                          </datalist>
-                                      </div>
-                                        <div>
-                                        <label for="defaultFormControlInput" class="form-label">Branch User 6</label>
-                                        <input
-                                          type="text"
-                                          class="form-control"
-                                          id="defaultFormControlInput10"
-                                          placeholder="Sixth controlling user"
-                                          name="user6"
-                                          list="userlist6"
-                                          aria-describedby="defaultFormControlHelp" />
-                                          <datalist id="userlist6">
-                                             {% for user in user %}
-                                             <option value="{{ user.id }}">-<strong>{{ user.email }}-{{ user.username }}</strong></option>
-                                             {% endfor %}
-                                          </datalist>
-                                      </div>
-                                        <label>{{ form.location.label }}<span class="text-muted small">
-                                        (Required)</span></label>
-                                        {{ form.location }}
+                                      <br>
                                         <div>
                                         <label for="defaultFormControlInput" class="form-label">Branch phone</label>
                                         <input
@@ -366,10 +283,10 @@
                                     </div>
                                   </div>
                                 </div>
-
+</div>
                                  <input class="btn btn-success btn-block py-2 mb-4 mt-5 fw500 w-100" type="submit" VALUE="Register branch">
                             </form>
-                </div>
+
 {% else %}
 
 <a href="{% url 'home-page' branchid.id %}">
@@ -378,6 +295,15 @@
 
 {% endif %}
 {% endblock %}
+      {% block ScriptBlock %}
+        <script>
+          $(document).ready(function () {
+          //change selectboxes to selectize mode to be searchable
+             $("select").select2();
+          });
+        </script>
+      {% endblock ScriptBlock %}
+
 
       <div class="row">
       </div>

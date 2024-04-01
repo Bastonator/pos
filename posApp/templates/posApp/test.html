@@ -130,3 +130,28 @@ def home(request, pk):
         return render(request, 'posApp/home.html', context)
     else:
         return redirect('login-me')
+
+
+
+
+@login_required
+def branch_register(request, pk):
+    users = Users.objects.get(email=pk)
+    # user = Branch.objects.filter(user=request.user)
+    user = Users.objects.all()
+    context = {'user': user, 'users': users}
+    if request.method == "POST":
+        # form = BranchForm(request.POST or None)
+        # branch = form
+        branch_id = request.POST.get('branchid')
+        branch_name = request.POST.get('branchname')
+        # branch.location = request.POST['branchlocation']
+        branch_address = request.POST.get('branchaddress')
+        branch_phone = request.POST.get('phone')
+        branch_user = request.POST.get('user1')
+        branch = Branch.objects.create(id=branch_id, name=branch_name, location=None, address=branch_address, phone=branch_phone)
+        branch.user.add(branch_user or None)
+        # it is branch.user.add because user is how the many to many field is designated in the models.py
+        context['branchid'] = branch
+        context['created'] = True
+    return render(request, 'posApp/tables-general.html', context=context)

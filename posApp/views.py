@@ -103,8 +103,8 @@ def account_register(request):
 def branch_register(request, pk):
     users = Users.objects.get(email=pk)
     # user = Branch.objects.filter(user=request.user)
-    user = Users.objects.all()
-    context = {'user': user, 'users': users}
+    userrrs = Users.objects.all()
+    context = {'userrrs': userrrs, 'users': users}
     if request.method == "POST":
         # form = BranchForm(request.POST or None)
         # branch = form

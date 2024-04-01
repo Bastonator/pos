@@ -65,25 +65,25 @@ class RegistrationForm(UserCreationForm):
             {'class': 'form-control', 'placeholder': 'Repeat Password'})
 
 
-class CustomMMCF(forms.ModelMultipleChoiceField):
-    def label_from_instance(self, user):
-        return '%s' % user.name
+##class CustomMMCF(forms.ModelMultipleChoiceField):
+    ###def label_from_instance(self, user):
+        ###return '%s' % user.name
+    ###
 
 
 class BranchForm(forms.ModelForm):
     class Meta:
         model = Branch
-        fields = ('id', 'name', 'location', 'phone', 'user')
-        user = CustomMMCF(queryset=Users.objects.all(), widget=forms.CheckboxSelectMultiple(
+        fields = ('id', 'name', 'location', 'phone')
+        #user = CustomMMCF(queryset=Users.objects.all(), widget=forms.CheckboxSelectMultiple(
             # attrs={'class': 'form-check-input'}
-        ))
+        #))
 
         labels = {
             'id': 'Branch ID',
             'name': 'Branch Name',
             'location': 'Branch Country',
             'phone': 'Branch Phone number',
-            'user': 'Which user will operate this branch.'
         }
 
         widgets = {
@@ -92,7 +92,7 @@ class BranchForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Branch name'}),
             'location': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Choose your country'}),
             'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone number.'}),
-            'user': forms.CheckboxSelectMultiple(attrs={'class': 'form-control'}), }
+        }
 
 
 class CategoryForm(forms.ModelForm):
