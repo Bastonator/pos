@@ -10,12 +10,12 @@
                 <button class="mdc-button mdc-menu-button">
                     <span class="d-flex align-items-center">
                     <span class="figure">
-                        <img src="{% static 'posApp/assets/material-admin/images/faces/ava.jpg' %}" alt="user" class="user">
+                        {{ request.user.email }}
                     </span>
                     <span class="user-name">{{ user.first_name }}</span>
                     </span>
                 </button>
-                <div class="mdc-menu mdc-menu-surface" tabindex="-1">
+                <div class="mdc-menu mdc-menu-surface" tabindex="-1" style="transition: 0.6s;">
                     <ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical">
                         <li class="mdc-list-item" role="menuitem">
                             <a class="text-dark" href="{% url 'user-dash' request.user %}">

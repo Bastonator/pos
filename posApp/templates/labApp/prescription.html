@@ -50,7 +50,8 @@
                         <td class="px-2 py-1 text-start"><{{ prescription.dosage }}/td>
                         <td class="px-2 py-1 text-start">{% if prescription.is_taking %}
                             <p style="color: green;">Boarded on Meds</p>
-                            {% else%}
+                            {% else %}
+                            <p style="color: red;">Not Boarded</p>
                             {% endif %}
                         </td>
                         <td class="px-2 py-1 text-start">{{ prescription.created_by }}</td>
