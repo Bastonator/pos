@@ -75,7 +75,30 @@ def index(request):
 def user_account(request, pk):
     user = Users.objects.get(email=pk)
     branch = Branch.objects.filter(user=pk)
-    return render(request, 'posApp/index.html', {'user': user, 'branch': branch})
+
+    now = datetime.now()
+    current_year = now.strftime("%Y")
+    current_month = now.strftime("%m")
+    current_day = now.strftime("%d")
+
+    for sale in branch:
+        total_sales = Sales.objects.filter(
+            date_added__year=current_year,
+            date_added__month=current_month,
+            date_added__day=current_day
+        ).filter(branch_owner_id=sale)
+        print(total_sales)
+
+        sold = len(total_sales)
+
+        branch_num = len(branch)
+
+        for total in total_sales:
+            Total = 0
+            Total = Total + total.grand_total
+            print(Total)
+
+    return render(request, 'posApp/index.html', {'user': user, 'branch': branch, 'Total_for_day': Total, 'sold': sold, 'branch_num': branch_num})
 
 
 def branches(request, pk):

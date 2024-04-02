@@ -169,7 +169,7 @@
             <a href="{% url 'lab-dash' pk=users.pk %}" class="">
               <i class="bi bi-circle"></i><span>View Labs</span>
             </a>
-            {% if user.is_superuser %}
+            {% if users.is_superuser %}
             <a href="{% url 'labregister' pk=users.pk %}" class="active">
               <i class="bi bi-circle"></i><span>Create Lab</span>
             </a>
