@@ -14,10 +14,13 @@
 </div>
 <button onclick="window.print()" id="print"> Print Sales
 </button>
+<button id="copy-to-clipboard">
+    Copy sales
+</button>
 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
     <div class="mdc-card">
         <div class="table-responsive">
-            <table class="table table-striped table-bordered">
+            <table class="table table-striped table-bordered" id="content-to-copy">
                 <colgroup>
                     <col width="5%">
                     <col width="20%">
@@ -50,4 +53,17 @@
     </div>
 </div>
 {% endif %}
-{% endblock pageContent %}
+{% endblock pageContent %}{% block ScriptBlock %}
+<script>
+    const copyToClipBoard = () => {
+        const copyContent = document.getElementById('content-to-copy');
+        navigator.clipboard.writeText(copyContent.innerText);
+    };
+
+    const button = document.getElementById('copy-to-clipboard');
+    button.addEventListener('click', () => {
+        copyToClipBoard();
+    });
+</script>
+
+{% endblock ScriptBlock %}
