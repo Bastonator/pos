@@ -663,6 +663,7 @@ def products(request, pk):
 @login_required
 def manage_products(request, pk):
     branch = Branch.objects.get(id=pk)
+    suppliers = Supplier.objects.filter(branch_owner=pk)
     product = {}
     categories = Category.objects.filter(branch_owner_id=pk, status=1).all()
     if request.method == 'GET':
@@ -676,7 +677,8 @@ def manage_products(request, pk):
     context = {
         'product': product,
         'categories': categories,
-        'branch': branch
+        'branch': branch,
+        'suppliers': suppliers
     }
     return render(request, 'posApp/manage_product.html', context)
 
@@ -715,13 +717,13 @@ def save_product(request, pk):
                                                                              status=data['status'],
                                                                              stock=int(data['stock']),
                                                                              expiry_date=request.POST.get('date'),
-                                                                             image=request.FILES['img'])
+                                                                             image=request.FILES['img'], suppliers=data['suppliers'])
             else:
                 save_product = Products(code=data['code'], category_id=category, name=data['name'],
                                         description=data['description'], price=float(data['price']),
                                         cost_price=float(data['cost_price']),
                                         status=data['status'], stock=int(data['stock']), branch_owner=branch,
-                                        expiry_date=request.POST.get('date'), image=request.FILES['img'])
+                                        expiry_date=request.POST.get('date'), image=request.FILES['img'], suppliers=data['suppliers'])
                 save_product.save()
             resp['status'] = 'success'
             messages.success(request, 'Product Successfully saved.')
