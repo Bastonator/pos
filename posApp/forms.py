@@ -1,6 +1,6 @@
 from django import forms
 from django.forms.models import ModelForm
-from .models import Users, Branch, Category, Products, Prescription, Sales, Move, Lab, Patient, Pancreatic_enzymes_Test, Ironprofile_Test, LipidProfile_Test, Reproduction, Ascetic_Fluid_Test, Autoimmunity_and_cancer_Test, Inflammtory_Test, Diabetic_Test, Renal_Function_Test, Cardiac_Markers, Investigations, Liver_Function_Test, Elements_conc_Test, Complaint
+from .models import Users, Branch, Category, Products, Prescription, Sales, Move, Lab, Patient, Pancreatic_enzymes_Test, Ironprofile_Test, LipidProfile_Test, Reproduction, Ascetic_Fluid_Test, Autoimmunity_and_cancer_Test, Inflammtory_Test, Diabetic_Test, Renal_Function_Test, Cardiac_Markers, Investigations, Liver_Function_Test, Elements_conc_Test, Complaint, Customer, Supplier
 from django_countries.fields import CountryField
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.forms import UserCreationForm, PasswordResetForm, SetPasswordForm
@@ -165,6 +165,51 @@ class SaleForm(forms.ModelForm):
             'branch_owner': forms.Select(attrs={'class': 'form-control', 'placeholder': ''}),
             'tendered_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'in stock'}),
             'amount_change': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'in stock'}),
+        }
+
+
+
+class CustomerForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = ('name', 'address', 'phone', 'email', 'branch_owner')
+
+        labels = {
+            'name': '',
+            'address': '',
+            'phone': '',
+            'email': '',
+            'branch_owner': '',
+        }
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Company/Customer name'}),
+            'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Customers address'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone number'}),
+            'email': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Customers Email'}),
+            'branch_owner': forms.CheckboxSelectMultiple()
+        }
+
+
+class SupplierForm(forms.ModelForm):
+    class Meta:
+        model = Supplier
+        fields = ('id', 'name', 'address', 'phone', 'email', 'branch_owner')
+
+        labels = {
+            'id': '',
+            'name': '',
+            'address': '',
+            'phone': '',
+            'email': '',
+            'branch_owner': '',
+        }
+        widgets = {
+            'id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Supplier unique Id'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Company/Supplier name'}),
+            'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Customers address'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone number'}),
+            'email': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Customers Email'}),
+            'branch_owner': forms.CheckboxSelectMultiple()
         }
 
 

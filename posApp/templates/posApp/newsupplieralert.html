@@ -1,0 +1,18 @@
+{% extends 'posApp/index.html' %}
+
+{% block content %}
+{% if user %}
+<br>
+<br>
+<br>
+<br>
+<center>
+  <a href="{% url 'suppliers' pk=user.pk %}">
+    <h5>
+      Connection created
+    </h5>
+  </a>
+</center>
+
+{% endif %}
+{% endblock %}

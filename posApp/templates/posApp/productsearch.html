@@ -31,7 +31,7 @@
     <form action="{% url 'search-products' branch.pk %}" method="POST" style="width: 1000%; border-radius: -5px;">
                                     {% csrf_token %}
         <div style="display: flex;">
-        <input type="search" class="form-control" name="search_str" aria-label="Search" placeholder="Search a product name, price, expiry date, and supplier" style="margin: 3px;">
+        <input type="search" class="form-control" name="search_str" placeholder="Search a product name, price, expiry date, and supplier" style="margin: 3px;">
         <button class="btn btn-outline-success">
             Search
         </button>
@@ -39,9 +39,11 @@
     </form>
 
 </div>
-<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12 just-a-list" >
     <div class="mdc-card">
         <div class="table-responsive">
+            {% if search_str %}
+            {% if products %}
             <table class="table table-striped table-bordered">
                 <colgroup>
                     <col width="5%">
@@ -106,26 +108,40 @@
                     {% endfor %}
                 </tbody>
             </table>
+            {% else %}
+                <center>
+                    <h4>
+                        NO RESULTS FOUND FOR YOUR SEARCH, PLEASE TRY AGAIN!!
+                    </h4>
+                </center>
+            {% endif %}
+            {% endif %}
+
         </div>
     </div>
 </div>
 
-{% if products.has_previous %}
+
+
+<div class="pagination">
+{% if product_list.has_previous %}
     <div class="" style="position: absolute; bottom: 55px; right: 175px;">
-        <a href="{% url 'product-page' pk=branch.pk  %}?page={{products.previous_page_number}}">
+        <a href="{% url 'product-page' pk=branch.pk  %}?page={{product_list.previous_page_number}}">
         <button class="btn btn-primary bg-gradient btn-sm rounded-0" style="width: auto;"><i class="mdi mdi-plus"></i><span>Previous Product List</span></button>
         </a>
     </div>
 {% endif %}
-{% if products.has_next %}
+{% if product_list.has_next %}
     <div class="" style="position: absolute; bottom: 55px; right: 40px;">
-        <a href="{% url 'product-page' pk=branch.pk  %}?page={{products.next_page_number}}">
+        <a href="{% url 'product-page' pk=branch.pk  %}?page={{product_list.next_page_number}}">
         <button class="btn btn-primary bg-gradient btn-sm rounded-0"><i class="mdi mdi-plus"></i><span>Next Product List</span></button>
         </a>
     </div>
 {% endif %}
+</div>
 {% endblock pageContent %} {% block ScriptBlock %}
 <script>
+
     $(function() {
         $('#create_new').click(function() {
             uni_modal("Add New Product", "{% url 'manage_products-page' branch.pk %}")

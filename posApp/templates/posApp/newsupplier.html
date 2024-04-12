@@ -1,0 +1,48 @@
+{% extends 'posApp/index.html' %}
+
+{% block content %}
+
+<center>
+    <br>
+    <br>
+<div class="card" style="background-color: white; width: 61%;">
+    <div class="" style="border-color: slategray;">
+        <div class="card-header" style="height: 5rem" align="left">
+            <h1>Create new supplier connection</h1>
+        </div>
+        <div class="container">
+                <form action="" method="POST" enctype="multipart/form-data" style="width: 100%;">
+                        {% csrf_token %}
+<br>
+{{ form.errors }}
+                  {{form.id}}
+                <div style="display: flex;">
+                    {{form.name}}            &nbsp; &nbsp;
+
+                    {{form.address}}
+                </div>
+
+    <br>
+<div style="display: flex;">
+                {{form.phone}}            &nbsp; &nbsp;
+
+                {{form.email}}
+</div>
+<br>
+<div>
+    <p style="color: green;">
+    Which Branch/es will this supplier be interacting with?
+    </p>
+    {{form.branch_owner}}
+</div>
+<br>
+                <div align="center">
+                    <input type="submit" value="Add new supplier connection" class="btn btn-outline-success">
+                 </div>
+                 <br>
+            </form>
+    </div>
+</div>
+</div>
+</center>
+{% endblock %}

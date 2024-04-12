@@ -8,6 +8,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import path
 from django.views.generic.base import RedirectView
 from .forms import PwdResetForm, PwdResetConfirmForm
+from django.views.decorators.csrf import csrf_exempt
 
 
 urlpatterns = [
@@ -36,6 +37,7 @@ urlpatterns = [
     path('test', views.test, name="test-page"),
     path('save_product/<str:pk>', views.save_product, name="save-product-page"),
     path('delete_product/<str:pk>', views.delete_product, name="delete-product"),
+    path('search_product/<str:pk>', csrf_exempt(views.search_products), name="search-products"),
     path('pos/<str:pk>', views.pos, name="pos-page"),
     path('checkout-modal/<str:pk>', views.checkout_modal, name="checkout-modal"),
     path('add_sale/<str:pk>', views.addnew_sale, name="sale-add"),
@@ -131,5 +133,23 @@ urlpatterns = [
     path('prescribe/<str:pk>/<str:pk1>', views.new_prescription, name="add-prescription"),
     path('edit_prescription/<str:pk>/<str:pk1>/<str:pk2>', views.update_prescription, name="edit-prescription"),
     path('test_sales/<str:pk>', views.all_testperformed, name="all-testperformed"),
+
+
+    path('customers/<str:pk>', views.all_customer, name="customers"),
+    path('create_customers/<str:pk>', views.new_customer, name="add-customers"),
+    path('select_customer/<str:pk>', views.choose_customer, name="select-customer"),
+    path('customer_pos/<str:pk>/<str:pk1>', views.customer_pos, name="pos-customer"),
+    path('customer_checkout-modal/<str:pk>/<str:pk1>', views.customer_checkout_modal, name="customer-checkout-modal"),
+    path('save_customer_pos/<str:pk>/<str:pk1>', views.save_customer_pos, name="save-customer-pos"),
+    path('customer_receipt/<str:pk>/<str:pk1>', views.customer_receipt, name="customer-receipt-modal"),
+    path('customer_sales/<str:pk>/<str:pk1>', views.Customer_salesList, name="customer-sales-page"),
+    path('delete_customer_sale/<str:pk>/<str:pk1>', views.delete_customer_sale, name="delete-customer-sale"),
+
+
+    path('suppliers/<str:pk>', views.all_suppliers, name="suppliers"),
+    path('create_supplier/<str:pk>', views.new_suppliers, name="add-supplier"),
+    path('manage_sales/<str:pk>/<str:pk1>', views.manage_customer_sales, name="manage-sales-page"),
+    path('save_sale_changes/<str:pk>/<str:pk1>', views.save_sale_changes, name="save-sale-changes-page"),
+
 
 ]

@@ -1,14 +1,15 @@
 {% extends "posApp/base.html" %} {% block pageContent %}
 {% if branch %}
+{% if customers %}
 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
     <div class="mdc-card py-2">
         <div class="d-flex justify-content-between align-items-center">
-            <h4 class="card-title mb-0">Add Stock</h4>
+            <h4 class="card-title mb-0">Wholesale Point of Sales</h4>
             <div class="text-start">
-                <a href="{% url 'product-page' pk=branch.pk %}">
-                <button class="btn btn-primary bg-gradient btn-sm rounded-0"><i class="mdi"></i><span>Go to product list</span></button>
-                </a>
-            </div>
+            <a href="{% url 'customer-sales-page' branch.pk customers.pk %}">
+                <button class="btn btn-primary bg-gradient btn-sm rounded-0" style="background-color: green;" id="create_new"><i class="mdi"></i><span>All {{ customers.name }} transactions</span></button>
+            </a>
+        </div>
         </div>
     </div>
 </div>
@@ -16,7 +17,7 @@
     <div class="mdc-card">
         <form action="" id="pos-form">
             <fieldset>
-                <legend>Add New Stock</legend>
+                <legend>Sell to {{ customers.name }}</legend>
                 <div class="row align-items-end">
                     <div class="col-lg-5 col-md-5 col-sm-12">
                         <div class="form-group mb-3">
@@ -40,7 +41,12 @@
                             <button class="btn btn-light btn-sm bg-gradient border rounded-0 text-start" type="button" id="add_item"><i class="mdi mdi-plus"></i> Add Item</button>
                         </div>
                     </div>
-
+                    <div class="col-lg-3 col-md-5 col-md-12">
+                        <div class="form-group mb-3">
+                            <label for="invoice"><strong>Is Not Invoice(Customer pays now)</strong></label>
+                            <input type="checkbox" class="text-center" name="invoice">
+                        </div>
+                    </div>
                 </div>
             </fieldset>
             <fieldset>
@@ -49,31 +55,25 @@
                         <table class="table table-bordered">
                             <colgroup>
                                 <col width="5%">
-                                <col width="9%">
-                                <col width="25%">
-                                <col width="12%">
-                                <col width="10%">
-                                <col width="18%">
                                 <col width="15%">
-                                <col width="5%">
+                                <col width="40%">
+                                <col width="20%">
+                                <col width="20%">
                             </colgroup>
                             <thead>
                                 <tr class="bg-dark bg-gradient bg-opacity-50 text-light">
                                     <th class="py-1 px-2 text-center  text-light"></th>
-                                    <th class="py-1 px-2 text-center  text-light">Qty added</th>
+                                    <th class="py-1 px-2 text-center  text-light">QTY</th>
                                     <th class="py-1 px-2 text-center  text-light">Product</th>
-                                    <th class="py-1 px-2 text-center  text-light">Cost Price</th>
+                                    <th class="py-1 px-2 text-center  text-light">Price</th>
                                     <th class="py-1 px-2 text-center  text-light">Total</th>
-                                    <th class="py-1 px-2 text-center  text-light">Supplier</th>
-                                    <th class="py-1 px-2 text-center  text-light">New Cost Price</th>
-                                    <th class="py-1 px-2 text-center  text-light">Stock</th>
                                 </tr>
                             </thead>
                             <tbody>
                             </tbody>
                         </table>
                     </div>
-                    <div class="col-4 bg-gradient bg-dark bg-opacity-50 border h-100">
+                    <div class="col-4 bg-gradient bg-dark bg-opacity-50 border h-100" style="border-radius: 18px;">
                         <div class="col-12 py-4 px-2">
                             <dl>
                                 <dt class="h4 fw-bold text-light">Sub Total</dt>
@@ -101,14 +101,14 @@
                                 </dd>
                             </dl>
                         </div>
+                        <div class="row" style="border-radius: 18px; margin-top: -25px;">
+                            <div class="col-md-12 text-end" style="border-radius: 18px;">
+                                <button class="btn btn-primary btn-sm rounded-0" type="button" id="check_out" style="width: 100%; height: 44px; border-radius: 18px;"><i class="mdi mdi-save" style="border-radius: 18px;"></i> Checkout</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </fieldset>
-            <div class="row">
-                <div class="col-md-12 text-end">
-                    <button class="btn btn-primary btn-sm rounded-0" type="button" id="check_out"><i class="mdi mdi-save"></i> Add new stock</button>
-                </div>
-            </div>
         </form>
     </div>
 </div>
@@ -119,27 +119,18 @@
         </td>
         <td class="px-2 py-1">
             <input type="hidden" name="product_id[]">
+            <input type="hidden" name="price[]">
             <input type="number" name="qty[]" min="0" class="form-control form-control-sm rounded-0 text-center">
         </td>
         <td class="px-2 py-1 product_name text-start"></td>
         <td class="px-2 py-1 product_price text-end"></td>
         <td class="px-2 py-1 product_total text-end"></td>
-        <td class="px-2 py-1">
-                <select name="suppliers" id="suppliers" class="form-select form-select-sm">
-                    <option value="" disabled selected></option>
-                    {% for supplier in suppliers %}
-                        <option name="suppliers" value="{{ supplier }}">{{ supplier.name }}</option>
-                    {% endfor %}
-                </select>
-            <!--<input type="text" name="supplier" id="supplier" class="form-control form-control-sm rounded-0 text-center">-->
-        </td>
-        <td class="px-2 py-1">
-            <input type="number" name="cost_price[]" id="cost_price[]" class="form-control form-control-sm rounded-0 text-center">
-        </td>
-        <td class="px-2 py-1 product_stock text-end"></td>
     </tr>
 </noscript>
-{% endif %} {% endblock pageContent %} {% block ScriptBlock %}
+{% endif %}
+{% endif %}
+
+{% endblock pageContent %} {% block ScriptBlock %}
 <script>
     var product_json = '{{ product_json }}'
     if (product_json == "" || product_json == "{}") {
@@ -159,10 +150,10 @@
         var sub_total = 0;
         var grand_total = 0;
         $('#POS-field table tbody tr').each(function() {
-            cost_price = $(this).find('[name="cost_price[]"]').val()
+            price = $(this).find('[name="price[]"]').val()
             qty = $(this).find('[name="qty[]"]').val()
             qty = qty > 0 ? qty : 0
-            total = parseFloat(cost_price) * parseFloat(qty);
+            total = parseFloat(price) * parseFloat(qty)
             $(this).find('.product_total').text(parseFloat(total).toLocaleString('en-US'))
             sub_total += parseFloat(total)
         })
@@ -199,11 +190,10 @@
                 var tr = $($('noscript#item-clone').html()).clone()
                 tr.find('[name="qty[]"]').val(qty)
                 tr.find('[name="product_id[]"]').val(id)
-                tr.find('[name="cost_price[]"]').val(data.cost_price)
+                tr.find('[name="price[]"]').val(data.price)
                 tr.find('.product_name').text(data.name)
-                tr.find('.product_price').text(parseFloat(data.cost_price).toLocaleString('en-US'))
-                tr.find('.product_total').text(parseFloat(data.cost_price * qty).toLocaleString('en-US'))
-                tr.find('.product_stock').text(parseFloat(data.stock).toLocaleString('en-US'))
+                tr.find('.product_price').text(parseFloat(data.price).toLocaleString('en-US'))
+                tr.find('.product_total').text(parseFloat(data.price * qty).toLocaleString('en-US'))
                 $('#POS-field table tbody').append(tr)
                 $('#product-id').val('').trigger('change')
                 $('#product-qty').val(1)
@@ -229,7 +219,7 @@
                 alert("Add atleast 1 product first!")
                 return false;
             }
-            uni_modal("Checkout", "{% url 'checkout-modal-change' branch.pk %}?grand_total=" + $('[name="grand_total"]').val())
+            uni_modal("Checkout", "{% url 'customer-checkout-modal' branch.pk customers.pk %}?grand_total=" + $('[name="grand_total"]').val())
         })
         $('#pos-form').submit(function(e) {
             e.preventDefault();
@@ -247,7 +237,7 @@
                 headers: {
                     "X-CSRFToken": '{{csrf_token}}'
                 },
-                url: "{% url 'save-change' branch.pk %}",
+                url: "{% url 'save-customer-pos' branch.pk customers.pk %}",
                 data: new FormData($(this)[0]),
                 cache: false,
                 contentType: false,
@@ -263,7 +253,7 @@
                     if (typeof resp == 'object' && resp.status == 'success') {
                         el.removeClass("alert alert-danger err-msg")
                             // location.reload()
-                        uni_modal("Receipt", "{% url 'receipt-modal-change' branch.pk %}?id=" + resp.change_id)
+                        uni_modal("Receipt", "{% url 'customer-receipt-modal' branch.pk customers.pk %}?id=" + resp.sale_id)
                         $('#uni_modal').on('hide.bs.modal', function() {
                             location.reload()
                         })
@@ -275,7 +265,7 @@
                         console.err(resp)
                     }
                     _this.prepend(el)
-                    el.show('fast')
+                    el.show('slow')
                     $("html, body, .modal").scrollTop(0);
                     end_loader()
                 }

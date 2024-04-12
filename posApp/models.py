@@ -100,6 +100,37 @@ class Branch(models.Model):
 
     # def __str__(self):
     #     return self.firstname + ' ' +self.middlename + ' '+self.lastname + ' '
+
+class Customer(models.Model):
+    name = models.TextField()
+    address = models.CharField(max_length=555, null=True, blank=True)
+    phone = models.IntegerField(null=True, blank=True)
+    email = models.EmailField(unique=True, blank=True, null=True)
+    date_added = models.DateTimeField(default=timezone.now)
+    date_updated = models.DateTimeField(auto_now=True)
+    branch_owner = models.ManyToManyField(Branch, related_name='branchcustomers', null=True)
+    created_by = models.ForeignKey(Users, null=True, related_name='customercreator', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+
+class Supplier(models.Model):
+    id = models.CharField(max_length=100, unique=True, primary_key=True, auto_created=False)
+    name = models.TextField(null=True, blank=True)
+    location = CountryField(null=True, blank=True)
+    address = models.CharField(max_length=555, null=True, blank=True)
+    phone = models.IntegerField(null=True, blank=True)
+    email = models.EmailField(unique=True, blank=True, null=True)
+    date_added = models.DateTimeField(default=timezone.now)
+    date_updated = models.DateTimeField(auto_now=True)
+    branch_owner = models.ManyToManyField(Branch, null=True, related_name='branchsuppliers')
+    created_by = models.ForeignKey(Users, null=True, related_name='suppliercreator', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.id
+
+
 class Category(models.Model):
     name = models.TextField()
     description = models.TextField()
@@ -128,6 +159,7 @@ class Products(models.Model):
     expiry_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
     image = models.ImageField(null=True, blank=True)
     supplier = models.TextField(null=True, max_length=188, blank=True)
+    suppliers = models.ForeignKey(Supplier, null=True, related_name='supplierbranch', on_delete=models.DO_NOTHING, blank=True)
     #user = models.ForeignKey(Users, related_name="products", on_delete=models.DO_NOTHING, default=1)
 
     def __str__(self):
@@ -500,3 +532,46 @@ class salesItems(models.Model):
     date_added = models.DateTimeField(default=timezone.now, null=True)
     branch_owner = models.ForeignKey(Branch, null=True, related_name='saleitembranch', on_delete=models.CASCADE)
     user = models.ForeignKey(Users, related_name='saleitemuser', on_delete=models.DO_NOTHING, null=True)
+
+
+class CustomerSales(models.Model):
+    code = models.CharField(max_length=100)
+    sub_total = models.FloatField(default=0)
+    grand_total = models.FloatField(default=0)
+    tax_amount = models.FloatField(default=0)
+    tax = models.FloatField(default=0)
+    tendered_amount = models.FloatField(default=0)
+    amount_change = models.FloatField(default=0)
+    is_paid = models.BooleanField(default=False)
+    due_date = models.DateField(auto_created=False, null=True, blank=True)
+    date_added = models.DateTimeField(default=timezone.now)
+    date_updated = models.DateTimeField(auto_now=True)
+    branch_owner = models.ForeignKey(Branch, null=True, related_name='branchforcustomersales', on_delete=models.CASCADE)
+    user = models.ForeignKey(Users, related_name='customersalesuser', on_delete=models.DO_NOTHING, null=True, default="wriberpos@gmail.com")
+    shift_sold = models.ForeignKey(Shifts, null=True, related_name='customershiftsold', on_delete=models.DO_NOTHING)
+    customer = models.ForeignKey(Customer, null=True, related_name='customershiftselling', on_delete=models.DO_NOTHING)
+
+    def __str__(self):
+        return self.code
+
+    def sold_by(self):
+        return self.user.email
+
+    def branch(self):
+        return self.branch_owner
+
+    def code_again(self):
+        return self.code
+
+
+class CustomerSalesItems(models.Model):
+    sale_id = models.ForeignKey(CustomerSales,on_delete=models.CASCADE)
+    product_id = models.ForeignKey(Products,on_delete=models.CASCADE)
+    price = models.FloatField(default=0)
+    qty = models.FloatField(default=0)
+    total = models.FloatField(default=0)
+    date_added = models.DateTimeField(default=timezone.now, null=True)
+    branch_owner = models.ForeignKey(Branch, null=True, related_name='forcustomersaleitembranch', on_delete=models.CASCADE)
+    user = models.ForeignKey(Users, related_name='customersaleitemuser', on_delete=models.DO_NOTHING, null=True)
+    shift_sold = models.ForeignKey(Shifts, null=True, related_name='customershiftitemsold', on_delete=models.DO_NOTHING)
+    customer = models.ForeignKey(Customer, null=True, related_name='customershiftsellingitem', on_delete=models.DO_NOTHING)

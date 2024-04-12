@@ -2,7 +2,7 @@ from pickle import FALSE
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from flask import jsonify
-from posApp.models import Category, Products, Sales, salesItems, Shifts, ProductChange, changeItems, Move, Lab, LipidProfile_Test, Liver_Function_Test, Renal_Function_Test, Ironprofile_Test, Inflammtory_Test
+from posApp.models import Category, Products, CustomerSales, Customer, Supplier, CustomerSalesItems, Sales, salesItems, Shifts, ProductChange, changeItems, Move, Lab, LipidProfile_Test, Liver_Function_Test, Renal_Function_Test, Ironprofile_Test, Inflammtory_Test
 from posApp.models import Ascetic_Fluid_Test, Elements_conc_Test, Pancreatic_enzymes_Test, Test_performed, Patient, Reproduction, Investigations, Diabetic_Test, Autoimmunity_and_cancer_Test, Cardiac_Markers, Complaint, Prescription
 from django.db.models import Count, Sum
 from posApp.models import Branch, Users
@@ -14,7 +14,7 @@ from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 import json, sys
 from datetime import date, datetime
-from posApp.forms import RegistrationForm, BranchForm, CategoryForm, ProductForm, SaleForm, MoveForm, LipidForm, LiverForm, ElectrolytesForm, AsceticForm, AandCForm, ReproductionForm, RenalForm, DiabeticForm, CardiacForm, IronForm, InflammatoryForm, InvestigationForm, PancreaticForm, ComplaintForm, PrescriptionForm
+from posApp.forms import RegistrationForm, BranchForm, CustomerForm, SupplierForm, CategoryForm, ProductForm, SaleForm, MoveForm, LipidForm, LiverForm, ElectrolytesForm, AsceticForm, AandCForm, ReproductionForm, RenalForm, DiabeticForm, CardiacForm, IronForm, InflammatoryForm, InvestigationForm, PancreaticForm, ComplaintForm, PrescriptionForm
 from django.conf import settings
 from django.core.paginator import Paginator
 from django.contrib.admin.views.decorators import staff_member_required
@@ -64,7 +64,7 @@ def login_account(request):
 # Logout
 def logoutuser(request):
     logout(request)
-    return redirect('home')
+    return redirect('login-me')
 
 
 # Create your views here.
@@ -81,24 +81,33 @@ def user_account(request, pk):
     current_month = now.strftime("%m")
     current_day = now.strftime("%d")
 
+    Final_total = int()
+
+    sold = int()
+
     for sale in branch:
         total_sales = Sales.objects.filter(
             date_added__year=current_year,
             date_added__month=current_month,
             date_added__day=current_day
-        ).filter(branch_owner_id=sale)
+        ).filter(branch_owner_id=sale.id)
         print(total_sales)
 
-        sold = len(total_sales)
+        selling = len(total_sales)
 
-        branch_num = len(branch)
+        sold = sold + selling
 
         for total in total_sales:
             Total = 0
             Total = Total + total.grand_total
             print(Total)
 
-    return render(request, 'posApp/index.html', {'user': user, 'branch': branch, 'Total_for_day': Total, 'sold': sold, 'branch_num': branch_num})
+            Final_total = Final_total + Total
+
+    branch_num = len(branch)
+
+    return render(request, 'posApp/index.html',
+                  {'user': user, 'branch': branch, 'Total_for_day': Final_total, 'sold': sold, 'branch_num': branch_num})
 
 
 def branches(request, pk):
@@ -219,6 +228,278 @@ def about(request):
     return render(request, 'posApp/about.html', context)
 
 
+@login_required
+def all_customer(request, pk):
+    user = Users.objects.get(email=pk)
+    customer = Customer.objects.filter(created_by_id=pk)
+    context = {
+        'user': user,
+        'customer': customer
+    }
+    return render(request, 'posApp/customers.html', context=context)
+
+
+@login_required
+def new_customer(request, pk):
+    user = Users.objects.get(email=pk)
+    form = CustomerForm(request.POST or None, request.FILES or None)
+    context = {'user': user, 'form': form}
+    if request.method == "POST":
+        print(form)
+        if form.is_valid():
+            customer = form.save(commit=False)
+            customer.created_by = request.user
+            customer.save()
+
+            customer.branch_owner.set(form.cleaned_data['branch_owner'] or None)
+            return render(request, 'posApp/newcustomeralert.html', {'user': user, 'form': form})
+    else:
+        form.fields["branch_owner"].queryset = Branch.objects.filter(user=request.user)
+    return render(request, 'posApp/newcustomer.html', context=context)
+
+
+@login_required
+def choose_customer(request, pk):
+    branch = Branch.objects.get(id=pk)
+    customers = Customer.objects.filter(branch_owner=pk).order_by('-id')
+    context = {'branch': branch, 'customers': customers}
+    return render(request, 'posApp/branch_customers.html', context)
+
+
+@login_required
+def customer_pos(request, pk, pk1):
+    branch = Branch.objects.get(id=pk)
+    branch1 = Branch.objects.get(id=pk)
+    customers = Customer.objects.get(id=pk1)
+    products = Products.objects.filter(branch_owner_id=pk, status=1)
+    product_json = []
+    for product in products:
+        product_json.append({'id': product.id, 'name': product.name, 'price': float(product.price)})
+    context = {
+        'page_title': "Point of Sale",
+        'products': products,
+        'product_json': json.dumps(product_json),
+        'branch': branch,
+        'branch1': branch1,
+        'customers': customers
+    }
+    # return HttpResponse('')
+    return render(request, 'posApp/customerpos.html', context)
+
+
+@login_required
+def customer_checkout_modal(request, pk, pk1):
+    branch = Branch.objects.get(id=pk)
+    customers = Customer.objects.get(id=pk1)
+    grand_total = 0
+    if 'grand_total' in request.GET:
+        grand_total = request.GET['grand_total']
+    context = {
+        'grand_total': grand_total,
+        'branch': branch,
+        'customers': customers
+    }
+    return render(request, 'posApp/customercheckout.html', context)
+
+
+@login_required
+def save_customer_pos(request, pk, pk1):
+    resp = {'status': 'failed', 'msg': ''}
+    branch = Branch.objects.get(id=pk)
+    customers = Customer.objects.get(id=pk1)
+    shift = Shifts.objects.filter(branch_owner_id=pk).last()
+    data = request.POST
+    seller = Users.objects.get(email=request.user)
+    pref = datetime.now().year + datetime.now().year
+    i = 1
+    while True:
+        code = '{:0>5}'.format(i)
+        i += int(1)
+        check = CustomerSales.objects.filter(code=str(pref) + str(code)).all()
+        if len(check) <= 0:
+            break
+    code = str(pref) + str(code)
+
+    try:
+        sales = CustomerSales(code=code, sub_total=data['sub_total'], tax=data['tax'], tax_amount=data['tax_amount'],
+                      grand_total=data['grand_total'], tendered_amount=data['tendered_amount'],
+                      amount_change=data['amount_change'], branch_owner=branch, user=seller, shift_sold=shift, customer=customers,
+                              is_paid= True if request.POST.getlist('invoice', False) else False).save()
+        print(request.POST.getlist('invoice'))
+        sale_id = CustomerSales.objects.last().pk
+        i = 0
+        for prod in data.getlist('product_id[]'):
+            product_id = prod
+            sale = CustomerSales.objects.filter(id=sale_id).first()
+            product = Products.objects.filter(id=product_id).first()
+            qty = data.getlist('qty[]')[i]
+            price = data.getlist('price[]')[i]
+            total = float(qty) * float(price)
+            product.stock = product.stock - float(qty)
+            product.save()
+            print(customers)
+            print({'sale_id': sale, 'product_id': product, 'qty': qty, 'price': price, 'total': total, 'shift_sold': shift, 'customer': customers})
+            CustomerSalesItems(sale_id=sale, product_id=product, qty=qty, price=price, total=total, branch_owner=branch,
+                       user=seller, shift_sold=shift, customer=customers).save()
+            i += int(1)
+        resp['status'] = 'success'
+        resp['sale_id']  = sale_id
+        messages.success(request, "Sale Record has been saved.")
+    except:
+        resp['msg'] = "An error occured"
+        print("Unexpected error:", sys.exc_info()[0])
+        raise ValueError()
+    return HttpResponse(json.dumps(resp), content_type="application/json")
+
+
+@login_required
+def customer_receipt(request, pk, pk1):
+    branch = Branch.objects.get(id=pk)
+    customers = Customer.objects.get(id=pk1)
+    id = request.GET.get('id')
+    sales = CustomerSales.objects.filter(branch_owner_id=pk, id=id).first()
+    transaction = {}
+    for field in CustomerSales._meta.get_fields():
+        if field.related_model is None:
+            transaction[field.name] = getattr(sales, field.name)
+    if 'tax_amount' in transaction:
+        transaction['tax_amount'] = format(float(transaction['tax_amount']))
+    ItemList = CustomerSalesItems.objects.filter(sale_id=sales).all()
+    context = {
+        "transaction": transaction,
+        "salesItems": ItemList,
+        'branch': branch,
+        'customers': customers
+    }
+
+    return render(request, 'posApp/receipt.html', context)
+
+
+@login_required
+def Customer_salesList(request, pk, pk1):
+    branch = Branch.objects.get(id=pk)
+    branch1 = Branch.objects.get(id=pk)
+    customers = Customer.objects.get(id=pk1)
+    sales = CustomerSales.objects.filter(customer_id=pk1).order_by('-id')
+    sale_data = []
+    for sale in sales:
+        data = {}
+        for field in sale._meta.get_fields(include_parents=False):
+            if field.related_model is None:
+                data[field.name] = getattr(sale, field.name)
+        data['items'] = CustomerSalesItems.objects.filter(sale_id=sale).all()
+        data['item_count'] = len(data['items'])
+        if 'tax_amount' in data:
+            data['tax_amount'] = format(float(data['tax_amount']), '.2f')
+        # print(data)
+        sale_data.append(data)
+    # print(sale_data)
+
+    p = Paginator(sales, 40)
+
+    page_num = request.GET.get('page', 1)
+    try:
+        page = p.page(page_num)
+    except EmptyPage:
+        page = p.page(1)
+
+    context = {
+        'page_title': 'Sales Transactions',
+        'sale_data': sale_data,
+        'branch': branch,
+        'branch1': branch1,
+        'sales': sales,
+        'list': page,
+        'customers': customers
+    }
+    # return HttpResponse('')
+    return render(request, 'posApp/customersales.html', context)
+
+
+@login_required
+def manage_customer_sales(request, pk, pk1):
+    branch = Branch.objects.get(id=pk)
+    customers = Customer.objects.get(id=pk1)
+
+    sales = {}
+    if request.method == 'GET':
+        data = request.GET
+        id = ''
+        if 'id' in data:
+            id = data['id']
+        if id.isnumeric() and int(id) > 0:
+            sales = CustomerSales.objects.filter(branch_owner_id=pk, id=id).first()
+
+    context = {
+        'sales': sales,
+        'branch': branch,
+        'customers': customers
+    }
+    return render(request, 'posApp/manage_sales.html', context)
+
+@login_required
+def save_sale_changes(request, pk, pk1):
+    branch = Branch.objects.get(id=pk)
+    customers = Customer.objects.get(id=pk1)
+    data = request.POST
+    resp = {'status': 'failed'}
+    id = ''
+    try:
+        if (data['id']).isnumeric() and int(data['id']) > 0:
+            save_customersale = CustomerSales.objects.filter(id=data['id']).update(is_paid=True if request.POST.getlist('invoice', False) else False)
+        resp['status'] = 'success'
+        messages.success(request, 'Paid status change Successfully saved.')
+    except:
+        resp['status'] = 'failed'
+    return HttpResponse(json.dumps(resp), content_type="application/json")
+
+
+@login_required
+def delete_customer_sale(request, pk, pk1):
+    branch = Branch.objects.get(id=pk)
+    customers = Customer.objects.get(id=pk1)
+    resp = {'status': 'failed', 'msg': ''}
+    id = request.POST.get('id')
+    try:
+        delete = CustomerSales.objects.filter(id=id).delete()
+        resp['status'] = 'success'
+        messages.success(request, 'Sale Record has been deleted.')
+    except:
+        resp['msg'] = "An error occured"
+        print("Unexpected error:", sys.exc_info()[0])
+    return HttpResponse(json.dumps(resp), content_type='application/json')
+
+
+@login_required
+def all_suppliers(request, pk):
+    user = Users.objects.get(email=pk)
+    suppliers = Supplier.objects.filter(created_by_id=pk)
+    context = {
+        'user': user,
+        'suppliers': suppliers
+    }
+    return render(request, 'posApp/suppliers.html', context=context)
+
+
+@login_required
+def new_suppliers(request, pk):
+    user = Users.objects.get(email=pk)
+    form = SupplierForm(request.POST or None, request.FILES or None)
+    context = {'user': user, 'form': form}
+    if request.method == "POST":
+        print(form)
+        if form.is_valid():
+            customer = form.save(commit=False)
+            customer.created_by = request.user
+            customer.save()
+
+            customer.branch_owner.set(form.cleaned_data['branch_owner'] or None)
+            return render(request, 'posApp/newsupplieralert.html', {'user': user, 'form': form})
+    else:
+        form.fields["branch_owner"].queryset = Branch.objects.filter(user=request.user)
+    return render(request, 'posApp/newsupplier.html', context=context)
+
+
 # Categories
 @login_required
 def addnew_cat(request, pk):
@@ -327,6 +608,32 @@ def addnew_prod(request, pk):
     else:
         form.fields["branch_owner"].queryset = Branch.objects.filter(user=request.user)
     return render(request, 'posApp/prodadd.html', context=context)
+
+
+@login_required
+def search_products(request, pk):
+    branch = Branch.objects.get(id=pk)
+    if request.method == "POST":
+        search_str = request.POST['search_str']
+        products = Products.objects.filter(
+            name__icontains=search_str, branch_owner=branch) | Products.objects.filter(
+            description__icontains=search_str, branch_owner=branch) | Products.objects.filter(
+            price__icontains=search_str, branch_owner=branch) | Products.objects.filter(
+            supplier__icontains=search_str, branch_owner=branch) | Products.objects.filter(
+            expiry_date__icontains=search_str, branch_owner=branch) | Products.objects.filter(category_id__name__icontains=search_str, branch_owner=branch)
+        p = Paginator(products, 40)
+
+        page_num = request.GET.get('page', 1)
+        try:
+            page = p.page(page_num)
+        except EmptyPage:
+            page = p.page(1)
+
+        return render(request, 'posApp/productsearch.html',
+                      {'branch': branch, 'search_str': search_str, 'products': products, 'product_list': page})
+    else:
+            return render(request, 'posApp/productsearch.html', {'branch': branch})
+
 
 
 @login_required
@@ -618,12 +925,22 @@ def salesList(request, pk):
         # print(data)
         sale_data.append(data)
     # print(sale_data)
+
+    p = Paginator(sales, 40)
+
+    page_num = request.GET.get('page', 1)
+    try:
+        page = p.page(page_num)
+    except EmptyPage:
+        page = p.page(1)
+
     context = {
         'page_title': 'Sales Transactions',
         'sale_data': sale_data,
         'branch': branch,
         'branch1': branch1,
-        'sales': sales
+        'sales': sales,
+        'list': page,
     }
     # return HttpResponse('')
     return render(request, 'posApp/sales.html', context)
@@ -752,8 +1069,8 @@ def save_change(request, pk):
 
     try:
         change = ProductChange(code=code, sub_total=data['sub_total'], tax=data['tax'], tax_amount=data['tax_amount'],
-                      grand_total=data['grand_total'], tendered_amount=data['tendered_amount'],
-                      amount_change=data['amount_change'], branch_owner=branch, user=request.user).save()
+                               grand_total=data['grand_total'], tendered_amount=data['tendered_amount'],
+                               amount_change=data['amount_change'], branch_owner=branch, user=request.user).save()
         change_id = ProductChange.objects.last().pk
         i = 0
         for prod in data.getlist('product_id[]'):
@@ -762,15 +1079,18 @@ def save_change(request, pk):
             product = Products.objects.filter(id=product_id).first()
             qty = data.getlist('qty[]')[i]
             price = data.getlist('cost_price[]')[i]
-            supplier = data.getlist('supplier')[i]
-            new_costprice = data.getlist('new_cost')[i]
+            supplier = data['suppliers']
+            print(supplier)
+            supplier_id = Supplier.objects.get(id=supplier)
+            new_costprice = data.getlist('cost_price[]')[i]
             total = float(qty) * float(price)
             product.stock = product.stock + float(qty)
-            product.supplier = supplier
+            product.suppliers = supplier_id
             product.cost_price = new_costprice
             product.save()
             print({'change_id': change, 'product_id': product, 'qty': qty, 'price': price, 'total': total})
-            changeItems(change_id=change, product_id=product, qty=qty, price=price, total=total, branch_owner=branch).save()
+            changeItems(change_id=change, product_id=product, qty=qty, price=new_costprice, total=total,
+                        branch_owner=branch).save()
             i += int(1)
         resp['status'] = 'success'
         resp['change_id'] = change_id
@@ -778,6 +1098,7 @@ def save_change(request, pk):
     except:
         resp['msg'] = "An error occured"
         print("Unexpected error:", sys.exc_info()[0])
+        raise ValueError()
     return HttpResponse(json.dumps(resp), content_type="application/json")
 
 
