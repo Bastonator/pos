@@ -1024,6 +1024,7 @@ def todays_sale_items(request, pk):
 def product_change(request, pk):
     branch = Branch.objects.get(id=pk)
     branch1 = Branch.objects.get(id=pk)
+    suppliers = Supplier.objects.filter(branch_owner=pk)
     products = Products.objects.filter(branch_owner_id=pk, status=1)
     product_json = []
     for product in products:
@@ -1034,9 +1035,11 @@ def product_change(request, pk):
         'product_json': json.dumps(product_json),
         'branch': branch,
         'branch1': branch1,
+        'suppliers': suppliers
     }
     # return HttpResponse('')
     return render(request, 'posApp/productchange.html', context)
+
 
 
 @login_required
