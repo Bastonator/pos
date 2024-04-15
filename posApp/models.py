@@ -544,6 +544,7 @@ class CustomerSales(models.Model):
     amount_change = models.FloatField(default=0)
     is_paid = models.BooleanField(default=False)
     due_date = models.DateField(auto_created=False, null=True, blank=True)
+    terms_conditions = models.TextField(max_length=1000)
     date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
     branch_owner = models.ForeignKey(Branch, null=True, related_name='branchforcustomersales', on_delete=models.CASCADE)

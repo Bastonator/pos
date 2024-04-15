@@ -15,7 +15,7 @@
                 <div class="row align-items-end">
                     <div class="col-lg-5 col-md-5 col-sm-12">
                         <div class="form-group mb-3">
-                            <label for="product-id">Select Product</label>
+                            <label for="product-id">Select Product<strong>(If product isn't seen its because the stock is 0 or inactive)</strong></label>
                             <select id="product-id" class="form-select form-select-sm">
                                 <option value="" disabled selected></option>
                                 {% for product in products %}

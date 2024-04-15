@@ -42,6 +42,7 @@
                         <th class="text-center py-1">Total</th>
                         <th class="text-center py-1">Date Sold</th>
                         <th class="text-center py-1">Sold by</th>
+                        <th class="text-center py-1">Remaining stock</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,6 +57,7 @@
                         <td class="px-2 py-1 text-center">D{{ sold.total }}</td>
                         <td class="px-2 py-1 text-center">{{ sold.date_added|date:'Y-m-d H:i' }}</td>
                         <td class="px-2 py-1 text-center">{{ sold.user }}</td>
+                        <td class="px-2 py-1 text-start">{{ sold.product_id.stock }}</td>
                     </tr>
                     {% endfor %}
                 {% endif %}

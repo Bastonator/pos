@@ -324,7 +324,7 @@ def save_customer_pos(request, pk, pk1):
         sales = CustomerSales(code=code, sub_total=data['sub_total'], tax=data['tax'], tax_amount=data['tax_amount'],
                       grand_total=data['grand_total'], tendered_amount=data['tendered_amount'],
                       amount_change=data['amount_change'], branch_owner=branch, user=seller, shift_sold=shift, customer=customers,
-                              is_paid= True if request.POST.getlist('invoice', False) else False).save()
+                              is_paid= True if request.POST.getlist('invoice', False) else False, due_date=request.POST.get('due-date'), terms_conditons=request.POST.get('terms')).save()
         print(request.POST.getlist('invoice'))
         sale_id = CustomerSales.objects.last().pk
         i = 0
@@ -380,7 +380,7 @@ def Customer_salesList(request, pk, pk1):
     branch = Branch.objects.get(id=pk)
     branch1 = Branch.objects.get(id=pk)
     customers = Customer.objects.get(id=pk1)
-    sales = CustomerSales.objects.filter(customer_id=pk1).order_by('-id')
+    sales = CustomerSales.objects.filter(customer=pk1).order_by('-id')
     sale_data = []
     for sale in sales:
         data = {}
@@ -395,13 +395,13 @@ def Customer_salesList(request, pk, pk1):
         sale_data.append(data)
     # print(sale_data)
 
-    p = Paginator(sales, 40)
+    p = Paginator(sales, 25)
 
-    page_num = request.GET.get('page', 1)
+    page_num = request.GET.get('page_sale', 1)
     try:
-        page = p.page(page_num)
+        page_sale = p.page(page_num)
     except EmptyPage:
-        page = p.page(1)
+        page_sale = p.page(1)
 
     context = {
         'page_title': 'Sales Transactions',
@@ -409,7 +409,7 @@ def Customer_salesList(request, pk, pk1):
         'branch': branch,
         'branch1': branch1,
         'sales': sales,
-        'list': page,
+        'list': page_sale,
         'customers': customers
     }
     # return HttpResponse('')
@@ -498,6 +498,23 @@ def new_suppliers(request, pk):
     else:
         form.fields["branch_owner"].queryset = Branch.objects.filter(user=request.user)
     return render(request, 'posApp/newsupplier.html', context=context)
+
+
+@login_required
+def view_invoice(request, pk, pk1, pk2):
+    branch = Branch.objects.get(id=pk)
+    customers = Customer.objects.get(id=pk1)
+    customer_sales = CustomerSales.objects.get(id=pk2)
+    customer_sales_items = CustomerSalesItems.objects.filter(sale_id=pk2)
+    grand_total = customer_sales.grand_total + customer_sales.tax_amount
+    context = {
+        'branch': branch,
+        'customers': customers,
+        'customer_sales': customer_sales,
+        'customer_sales_items': customer_sales_items,
+        'grand_total': grand_total
+    }
+    return render(request, 'docs/index.html', context)
 
 
 # Categories
@@ -613,6 +630,7 @@ def addnew_prod(request, pk):
 @login_required
 def search_products(request, pk):
     branch = Branch.objects.get(id=pk)
+
     if request.method == "POST":
         search_str = request.POST['search_str']
         products = Products.objects.filter(
@@ -621,7 +639,8 @@ def search_products(request, pk):
             price__icontains=search_str, branch_owner=branch) | Products.objects.filter(
             supplier__icontains=search_str, branch_owner=branch) | Products.objects.filter(
             expiry_date__icontains=search_str, branch_owner=branch) | Products.objects.filter(category_id__name__icontains=search_str, branch_owner=branch)
-        p = Paginator(products, 40)
+
+        p = Paginator(products, 50)
 
         page_num = request.GET.get('page', 1)
         try:
@@ -629,10 +648,9 @@ def search_products(request, pk):
         except EmptyPage:
             page = p.page(1)
 
-        return render(request, 'posApp/productsearch.html',
-                      {'branch': branch, 'search_str': search_str, 'products': products, 'product_list': page})
+        return render(request, 'posApp/productsearch.html', {'branch': branch, 'search_str': search_str, 'products': products, 'product_list': page})
     else:
-            return render(request, 'posApp/productsearch.html', {'branch': branch})
+        return render(request, 'posApp/productsearch.html', {'branch': branch})
 
 
 
@@ -723,7 +741,7 @@ def save_product(request, pk):
                                         description=data['description'], price=float(data['price']),
                                         cost_price=float(data['cost_price']),
                                         status=data['status'], stock=int(data['stock']), branch_owner=branch,
-                                        expiry_date=request.POST.get('date'), image=request.FILES['img'], suppliers=data['suppliers'])
+                                        expiry_date=request.POST.get('date'), image=request.FILES['img'])
                 save_product.save()
             resp['status'] = 'success'
             messages.success(request, 'Product Successfully saved.')
@@ -818,7 +836,7 @@ def shift_sale_items(request, pk, pk1):
 def pos(request, pk):
     branch = Branch.objects.get(id=pk)
     branch1 = Branch.objects.get(id=pk)
-    products = Products.objects.filter(branch_owner_id=pk, status=1)
+    products = Products.objects.filter(branch_owner_id=pk, status=1, stock__gt=0)
     product_json = []
     for product in products:
         product_json.append({'id': product.id, 'name': product.name, 'price': float(product.price)})
@@ -928,7 +946,7 @@ def salesList(request, pk):
         sale_data.append(data)
     # print(sale_data)
 
-    p = Paginator(sales, 40)
+    p = Paginator(sales, 35)
 
     page_num = request.GET.get('page', 1)
     try:

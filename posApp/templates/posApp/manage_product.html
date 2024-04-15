@@ -30,10 +30,6 @@
                 <label for="description" class="control-label">Description</label>
                 <textarea rows="5" name="description" id="description" class="form-control form-control-sm rounded-0" required>{% if product.description %}{{product.description}}{% endif %}</textarea>
             </div>
-            <div class="form-group mb-3">
-                <label for="Supplier" class="control-label">Supplier</label>
-                <input type="text" name="Supplier" id="Supplier" class="form-control form-control-sm rounded-0" value="{% if product.supplier %}{{product.supplier}}{% endif %}" required>
-            </div>
             <label for="suppliers">Supplier</label>
                 <select name="suppliers" id="suppliers" class="form-select form-select-sm">
                     <option value="" disabled selected></option>
@@ -54,11 +50,11 @@
                 <input type="text" name="stock" id="stock" class="form-control form-control-sm rounded-0" value="{% if product.stock %}{{product.stock}}{% endif %}" required>
             </div>
             <div class="form-group mb-3">
-                <label for="expiry-date" class="control-label">Expiry date</label>
+                <label for="date" class="control-label">Expiry date</label>
                 <input type="date" name="date" id="date" class="form-control form-control-sm rounded-0" value="{% if product.expiry_date %}{{product.expiry_date |date:'Y-m-d'}}{% endif %}" required>{% if product.expiry_date %}{{product.expiry_date}}{% endif %}
             </div>
             <div class="form-group mb-3">
-                <label for="img" class="control-label">Product image</label>
+                <label for="formFile" class="control-label">Product image</label>
                 <input type="file" name="img" id="formFile"  class="form-control form-control-sm rounded-0" value="{% if product.image %}{{product.image}}{% endif %}">{% if product.image %}{{product.image.url}}{% else %} NO IMAGE {% endif %}
             </div>
             <div class="form-group mb-3">

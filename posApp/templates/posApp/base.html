@@ -136,12 +136,31 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-sm btn-flat btn-primary rounded-0" id='confirm' onclick="">Continue</button>
-                    <button type="button" class="btn btn-sm btn-flat btn-secondary rounded-0" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-sm btn-flat btn-secondary rounded-0" data-bs-dismiss="modal" id="close">Close</button>
                 </div>
             </div>
         </div>
     </div>
     <script>
+        $("#submit").click(function() {
+            $(this).attr("disabled", true);
+            setTimeout(function() {
+                $('#submit').removeAttr("disabled");
+            }, 10000);
+        });
+        $("#confirm").click(function() {
+            $(this).attr("disabled", true);
+            setTimeout(function() {
+                $('#confirm').removeAttr("disabled");
+            }, 10000);
+        });
+        $("#close").click(function() {
+            $(this).attr("disabled", true);
+            setTimeout(function() {
+                $('#close').removeAttr("disabled");
+            }, 10000);
+        });
+
         window.start_loader = function() {
             $('body').removeClass('loaded')
         }

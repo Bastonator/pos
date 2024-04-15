@@ -150,6 +150,6 @@ urlpatterns = [
     path('create_supplier/<str:pk>', views.new_suppliers, name="add-supplier"),
     path('manage_sales/<str:pk>/<str:pk1>', views.manage_customer_sales, name="manage-sales-page"),
     path('save_sale_changes/<str:pk>/<str:pk1>', views.save_sale_changes, name="save-sale-changes-page"),
-
+    path('invoice/<str:pk>/<str:pk1>/<str:pk2>', views.view_invoice, name="sale-invoice"),
 
 ]

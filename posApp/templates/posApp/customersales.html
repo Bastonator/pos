@@ -32,12 +32,12 @@
                         <th class="text-center py-1" width="10%">Tax Inclusive</th>
                         <th class="text-center py-1" width="13%">Action</th>
                         <th class="text-center py-1" width="13%">Status</th>
-
+                        <th class="text-center py-1" width="13%">Invoice</th>
                     </tr>
                 </thead>
                 <tbody>
-                {% if sales %}
-                    {% for sale in sales %}
+                {% if list %}
+                    {% for sale in list %}
                     <tr>
                         <td class="px-2 py-1 text-center" width="5%">{{ sale.id }}</td>
                         <td class="px-2 py-1 text-start" width="15%">{{ sale.date_added|date:'Y-m-d H:i' }}</td>
@@ -63,6 +63,13 @@
                             <span class="badge bg-primary rounded-pill px-3">Paid</span> {% else %}
                             <span class="badge bg-secondary rounded-pill px-3">Not Paid</span> {% endif %}
                         </td>
+                        <td class="px-2 py-1 text-center">
+                            <a href="{% url 'sale-invoice' branch.id customers.id sale.id %}">
+                                <button class="btn btn-outline-primary" data-id="{{ sale.id }}" title="View Invoice">
+                                    Invoice
+                                </button>
+                            </a>
+                        </td>
                     </tr>
                     {% endfor %}
                 {% endif %}
@@ -74,14 +81,14 @@
 <div class="pagination">
 {% if list.has_previous %}
     <div class="" style="position: absolute; bottom: 55px; right: 175px;">
-        <a href="{% url 'product-page' pk=branch.pk  %}?page={{list.previous_page_number}}">
+        <a href="{% url 'customer-sales-page' pk=branch.pk pk1=customers.pk %}?page_sale={{list.previous_page_number}}">
         <button class="btn btn-primary bg-gradient btn-sm rounded-0" style="width: auto;"><i class="mdi mdi-plus"></i><span>Previous Sale List</span></button>
         </a>
     </div>
 {% endif %}
 {% if list.has_next %}
     <div class="" style="position: absolute; bottom: 55px; right: 40px;">
-        <a href="{% url 'product-page' pk=branch.pk  %}?page={{list.next_page_number}}">
+        <a href="{% url 'customer-sales-page' pk=branch.pk pk1=customers.pk %}?page_sale={{list.next_page_number}}">
         <button class="btn btn-primary bg-gradient btn-sm rounded-0"><i class="mdi mdi-plus"></i><span>Next Sale List</span></button>
         </a>
     </div>
