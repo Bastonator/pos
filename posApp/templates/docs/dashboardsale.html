@@ -1,0 +1,175 @@
+{% extends 'posApp/index.html' %}
+
+{% block content %}
+<style>
+
+@media print {
+    #print, #print *{
+            display: none;
+        }
+    #begone, #begone *{
+            display: none;
+        }
+}
+</style>
+{% if user %}
+
+{% if customers %}
+{% if customer_sales %}
+  <main id="main" class="main">
+
+    <div class="pagetitle" id="begone">
+      <h1>Connections</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'user-dash' request.user %}">Home</a></li>
+          <li class="breadcrumb-item ">Customer Connections</li>
+          <li class="breadcrumb-item ">Customer sales</li>
+            <li class="breadcrumb-item active">sale Invocie</li>
+
+
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+<section class="section dashboard">
+    <button onclick="window.print()" id="print"> Print invoice
+        </button>
+        <br>
+        <div class="container" id="invoice">
+            <div class="text-center">
+                <img src="images/logo_dark.png" alt="">
+                <h1>
+                  Sales Invoice
+                </h1>
+            </div>
+            <div class="text-center border-top border-bottom my-5 py-3">
+                <p style="color: coral;" class="m-0"><strong>Wriber Invoicing Service V1</strong></p>
+                <p class="m-0">Invoice No: {{ customer_sales.code }}</p>
+                <p class="m-0">Invoice Date: <strong>{{ customer_sales.date_added |date:'Y/m/d'}}</strong></p>
+                <p class="m-0">Due Date: <strong>{{ customer_sales.due_date |date:'Y/m/d'}}</strong></p>
+            </div>
+
+            <div class="d-md-flex justify-content-between">
+                <div>
+                    <p class="text-primary">Invoice To</p>
+                    <h4></h4>
+                    <ul class="list-unstyled">
+                        <li>{{ customer_sales.customer }}</li>
+                        <li>{{ customer_sales.customer.email }} Phone: {{ customer_sales.customer.phone }}</li>
+                        <li>{{ customer_sales.customer.address }}</li>
+                    </ul>
+                </div>
+                <div class="mt-5 mt-md-0">
+                    <p class="text-primary">Invoice From</p>
+                    <h4>{{ customers_sales.user }}</h4>
+                    <ul class="list-unstyled">
+                        <li>{{ branch.name }}</li>
+                        <li>Phone: {{ branch.phone }}</li>
+                        <li>{{ branch.address }}</li>
+                    </ul>
+                </div>
+            </div>
+<p>
+    <strong style="color: black;">Notice: Printed from dashboard!!</strong>
+</p>
+            <table class="table border my-5 table-bordered" id="table">
+                <thead>
+                    <tr class="bg-primary-subtle">
+                        <th scope="col">No.</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for items in customer_sales_items %}
+                    <tr>
+                        <th scope="row">{{ items.id }}</th>
+                        <td>{{ items.product_id.name }}</td>
+                        <td>{{ items.product_id.price }}</td>
+                        <td>{{ items.qty }}</td>
+                        <td>{{ items.total }}</td>
+                    </tr>
+                {% endfor %}
+                    <tr>
+                        <th></th>
+                        <td></td>
+                        <td></td>
+                        <td class="">Sub-Total</td>
+                        <td>GMD{{ customer_sales.grand_total }}</td>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <td></td>
+                        <td></td>
+                        <td class="">TAX {{ customer_sales.tax }}</td>
+                        <td>GMD{{ customer_sales.tax_amount }}</td>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <td></td>
+                        <td></td>
+                        <td class="text-success fw-bold">Grand-Total</td>
+                        <td class="text-success fw-bold">GMD{{ grand_total }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="d-md-flex justify-content-between my-5">
+                <div>
+                    <h5 class="fw-bold my-4">Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li><iconify-icon class="social-icon text-primary fs-5 me-2" icon="mdi:location"
+                                style="vertical-align:text-bottom"></iconify-icon> {{ branch.address }}</li>
+                        <li><iconify-icon class="social-icon text-primary fs-5 me-2" icon="solar:phone-bold"
+                                style="vertical-align:text-bottom"></iconify-icon> (+220) {{ branch.phone }}</li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="fw-bold my-4">Payment Info</h5>
+                    <ul class="list-unstyled">
+                        <!--<li><span class="fw-semibold">Account No: </span> 102 3345 56938</li>
+                        <li><span class="fw-semibold">Account Name: </span> William Peter</li>-->
+                        <li><span class="fw-semibold">Branch Name: </span> {{ branch.name }} </li>
+
+                    </ul>
+                </div>
+
+            <div class="text-center my-5">
+                <p class="text-muted" style="color: black;"><span class="fw-semibold">Terms & Conditions of invoice: </span>{{ customer_sales.terms_conditons }}.</p>
+            </div>
+
+            </div>
+
+            <div id="footer-bottom">
+                <div class="container border-top">
+                    <div class="row mt-3">
+                        <div class="col-md-6 copyright">
+                            <div>
+                                Sellers Signature: _____________
+                            </div>
+                            <p>© 2024 Invoice, by Wriber. <a href="#" target="_blank"
+                                    class="text-decoration-none text-black-50">Terms & Conditions apply</a> </p>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <div>
+                                Buyers signature: _______________
+                            </div>
+                            <strong>
+                                <p>Invoice composed using<strong style="color: coral;"> Wriber</strong> services </p>
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+</section>
+
+  </main><!-- End #main -->
+{% endif %}
+{% endif %}
+{% endif %}
+{% endblock %}

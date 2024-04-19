@@ -39,16 +39,29 @@
                 </div>
 
               </div>-->
-          <h6>{{ person }} - {{ person.phone }} - {{ person.email }} </h6>
+    <div class="card" style="margin: 8px; border-radius: 4px;">
+          <p><strong>{{ person.name }}</strong></p>
+            <p>+220 {{ person.phone }}</p>
+          <div class="container-fluid" style="display: flex;">
+            <a href="{% url 'dashboard-customer-sale' pk=user.pk pk1=person.pk %}">
+            <button class="goto" style="margin: 4px; border-width: 0px; border-radius: 5px; border-color: none; color: green; transition: 0.7s;">
+              View products bought
+            </button>
+            </a>
+          </div>
+        </div>
           {% endfor %}
 {% endif %}
-            <!-- End Sales Card -->
-            <a class="login-me" href="{% url 'add-customers' pk=user.pk %}">
-            <button class="login-me" style="border-radius: 10px; width: 300px; height: 50px;
-                        border-color: blue; border-width: 1px; transition: 0.7s;">
+          <div class="card" style="margin: 8px; border-radius: 4px;">
+          <p><strong>Click button below to add new customers</strong></p>
+          <div class="container-fluid" style="display: flex;">
+            <a href="{% url 'add-customers' pk=user.pk %}">
+            <button class="goto-supply" style="margin: 4px; border-width: 0px; border-radius: 5px; border-color: none; color: black; transition: 0.7s;">
                         Add new customer connection
             </button>
-          </a>
+            </a>
+          </div>
+        </div>
           </div>
 </section>
 

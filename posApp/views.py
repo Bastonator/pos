@@ -1091,9 +1091,12 @@ def save_change(request, pk):
     code = str(pref) + str(code)
 
     try:
+        suppliers = request.POST.get('supply-from')
+        supplier_forchange = Supplier.objects.get(id=suppliers)
+
         change = ProductChange(code=code, sub_total=data['sub_total'], tax=data['tax'], tax_amount=data['tax_amount'],
                                grand_total=data['grand_total'], tendered_amount=data['tendered_amount'],
-                               amount_change=data['amount_change'], branch_owner=branch, user=request.user).save()
+                               amount_change=data['amount_change'], branch_owner=branch, user=request.user, suppliers=supplier_forchange).save()
         change_id = ProductChange.objects.last().pk
         i = 0
         for prod in data.getlist('product_id[]'):
@@ -1149,6 +1152,199 @@ def receipt_forstock(request, pk):
     }
 
     return render(request, 'posApp/stockchange_receipt.html', context)
+
+
+@login_required
+def view_newstocklist(request, pk):
+    branch = Branch.objects.get(id=pk)
+    stock = ProductChange.objects.filter(branch_owner=pk).order_by('-id')
+    sale_data = []
+    for sale in stock:
+        data = {}
+        for field in sale._meta.get_fields(include_parents=False):
+            if field.related_model is None:
+                data[field.name] = getattr(sale, field.name)
+        data['items'] = changeItems.objects.filter(change_id=sale).all()
+        data['item_count'] = len(data['items'])
+        if 'tax_amount' in data:
+            data['tax_amount'] = format(float(data['tax_amount']), '.2f')
+        # print(data)
+        sale_data.append(data)
+    # print(sale_data)
+
+    p = Paginator(stock, 20)
+
+    page_num = request.GET.get('page', 1)
+    try:
+        page = p.page(page_num)
+    except EmptyPage:
+        page = p.page(1)
+
+    context = {
+        'page_title': 'Sales Transactions',
+        'sale_data': sale_data,
+        'branch': branch,
+        'sales': stock,
+        'list': page
+    }
+    # return HttpResponse('')
+    return render(request, 'posApp/branch_newstock.html', context)
+
+@login_required
+def delete_newstock(request, pk):
+    branch = Branch.objects.get(id=pk)
+    resp = {'status': 'failed', 'msg': ''}
+    id = request.POST.get('id')
+    try:
+        delete = ProductChange.objects.filter(id=id).delete()
+        resp['status'] = 'success'
+        messages.success(request, 'Stock Record has been deleted.')
+    except:
+        resp['msg'] = "An error occured"
+        print("Unexpected error:", sys.exc_info()[0])
+    return HttpResponse(json.dumps(resp), content_type='application/json')
+
+
+@login_required
+def view_supplierlist(request, pk):
+    branch = Branch.objects.get(id=pk)
+    supplier = Supplier.objects.filter(branch_owner=pk)
+    context = {
+        'branch': branch,
+        'supplier': supplier
+    }
+    return render(request, 'posApp/branch_suppliers.html', context)
+
+
+@login_required
+def view_suppliernewstock(request, pk, pk1):
+    branch = Branch.objects.get(id=pk)
+    supplier = Supplier.objects.get(id=pk1)
+    stock = ProductChange.objects.filter(branch_owner=pk, suppliers=pk1).order_by('-id')
+    sale_data = []
+    for sale in stock:
+        data = {}
+        for field in sale._meta.get_fields(include_parents=False):
+            if field.related_model is None:
+                data[field.name] = getattr(sale, field.name)
+        data['items'] = changeItems.objects.filter(change_id=sale).all()
+        data['item_count'] = len(data['items'])
+        if 'tax_amount' in data:
+            data['tax_amount'] = format(float(data['tax_amount']), '.2f')
+        # print(data)
+        sale_data.append(data)
+    # print(sale_data)
+
+    p = Paginator(stock, 20)
+
+    page_num = request.GET.get('page', 1)
+    try:
+        page = p.page(page_num)
+    except EmptyPage:
+        page = p.page(1)
+
+    context = {
+        'page_title': 'Sales Transactions',
+        'sale_data': sale_data,
+        'branch': branch,
+        'sales': stock,
+        'list': page,
+        'supplier': supplier
+    }
+    return render(request, 'posApp/branch_supplierstock.html', context)
+
+
+@login_required
+def delete_newsupplierstock(request, pk, pk1):
+    branch = Branch.objects.get(id=pk)
+    supplier = Supplier.objects.get(id=pk1)
+    resp = {'status': 'failed', 'msg': ''}
+    id = request.POST.get('id')
+    try:
+        delete = ProductChange.objects.filter(id=id).delete()
+        resp['status'] = 'success'
+        messages.success(request, 'Stock Record has been deleted.')
+    except:
+        resp['msg'] = "An error occured"
+        print("Unexpected error:", sys.exc_info()[0])
+    return HttpResponse(json.dumps(resp), content_type='application/json')
+
+
+@login_required
+def dashboard_suppliernewstock(request, pk, pk1):
+    user = Users.objects.get(email=pk)
+    supplier = Supplier.objects.get(id=pk1)
+    stock = ProductChange.objects.filter(suppliers=pk1).order_by('-id')
+    context = {
+        'user': user,
+        'supplier': supplier,
+        'stock': stock
+    }
+    return render(request, 'posApp/supplier_supplies.html', context)
+
+
+@login_required
+def dashboard_customersales(request, pk, pk1):
+    user = Users.objects.get(email=pk)
+    customer = Customer.objects.get(id=pk1)
+    sales = CustomerSales.objects.filter(customer_id=pk1).order_by('-id')
+    context = {
+        'user': user,
+        'customer': customer,
+        'sales': sales
+    }
+    return render(request, 'posApp/customer_sales.html', context)
+
+
+@login_required
+def view_dash_customerinvoice(request, pk, pk1, pk2):
+    user = Users.objects.get(email=pk)
+    customers = Customer.objects.get(id=pk1)
+    customer_sales = CustomerSales.objects.get(id=pk2)
+    customer_sales_items = CustomerSalesItems.objects.filter(sale_id=pk2)
+    grand_total = customer_sales.grand_total + customer_sales.tax_amount
+    context = {
+        'user': user,
+        'customers': customers,
+        'customer_sales': customer_sales,
+        'customer_sales_items': customer_sales_items,
+        'grand_total': grand_total
+    }
+    return render(request, 'docs/dashboardsale.html', context)
+
+
+@login_required
+def view_dash_supplyinvoice(request, pk, pk1, pk2):
+    user = Users.objects.get(email=pk)
+    supplier = Supplier.objects.get(id=pk1)
+    stock = ProductChange.objects.get(id=pk2)
+    supplied_items = changeItems.objects.filter(change_id_id=pk2)
+    grand_total = stock.grand_total + stock.tax_amount
+    context = {
+        'user': user,
+        'supplier': supplier,
+        'stock': stock,
+        'supplied_items': supplied_items,
+        'grand_total': grand_total
+    }
+    return render(request, 'docs/dashboardsupplies.html', context)
+
+
+@login_required
+def view_supply_invoice(request, pk, pk1, pk2):
+    branch = Branch.objects.get(id=pk)
+    supplier = Supplier.objects.get(id=pk1)
+    stock = ProductChange.objects.get(id=pk2)
+    supplied_items = changeItems.objects.filter(change_id_id=pk2)
+    grand_total = stock.grand_total + stock.tax_amount
+    context = {
+        'branch': branch,
+        'supplier': supplier,
+        'stock': stock,
+        'supplied_items': supplied_items,
+        'grand_total': grand_total
+    }
+    return render(request, 'docs/branchsupplies.html', context)
 
 
 @login_required

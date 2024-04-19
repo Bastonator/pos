@@ -40,7 +40,17 @@
                             <button class="btn btn-light btn-sm bg-gradient border rounded-0 text-start" type="button" id="add_item"><i class="mdi mdi-plus"></i> Add Item</button>
                         </div>
                     </div>
-
+                    <div class="col-lg-3 col-md-5 col-md-12">
+                        <div class="form-group mb-3">
+                            <label for="supply-from" class="control-label">Supplier</label>
+                            <select name="supply-from" id="supply-from" class="form-select form-select-sm">
+                                <option value="" disabled selected></option>
+                                {% for supplier in suppliers %}
+                                    <option name="supply-from" value="{{ supplier }}">{{ supplier }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </fieldset>
             <fieldset>

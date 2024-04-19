@@ -152,4 +152,14 @@ urlpatterns = [
     path('save_sale_changes/<str:pk>/<str:pk1>', views.save_sale_changes, name="save-sale-changes-page"),
     path('invoice/<str:pk>/<str:pk1>/<str:pk2>', views.view_invoice, name="sale-invoice"),
 
+    path('newstock/<str:pk>', views.view_newstocklist, name="new-stock-list"),
+    path('delete_newstock/<str:pk>', views.delete_newstock, name="delete-newstock"),
+    path('supplier_list/<str:pk>', views.view_supplierlist, name="supplier-list-page"),
+    path('supplier_stocklist/<str:pk>/<str:pk1>', views.view_suppliernewstock, name="supplier-page"),
+    path('delete_supplierstock/<str:pk>/<str:pk1>', views.delete_newsupplierstock, name="delete-supplierstock"),
+    path('supplier_supplies/<str:pk>/<str:pk1>', views.dashboard_suppliernewstock, name="dashboard-supplier-supplies"),
+    path('customer_dashboardsales/<str:pk>/<str:pk1>', views.dashboard_customersales, name="dashboard-customer-sale"),
+    path('dashboard_saleinvoice/<str:pk>/<str:pk1>/<str:pk2>', views.view_dash_customerinvoice, name="dash-customer-invoice"),
+    path('dashboard_supplyinvoice/<str:pk>/<str:pk1>/<str:pk2>', views.view_dash_supplyinvoice, name="dash-supply-invoice"),
+    path('supplyinvoice/<str:pk>/<str:pk1>/<str:pk2>', views.view_supply_invoice, name="supply-invoice"),
 ]
