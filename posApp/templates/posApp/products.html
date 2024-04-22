@@ -64,7 +64,8 @@
                         <th class="text-center py-1">#</th>
                         <th class="text-center py-1">Category</th>
                         <th class="text-center py-1">Product</th>
-                        <th class="text-center py-1">Description</th>
+                        <th class="text-center py-1">Stock available</th>
+                        <th class="text-center py-1">Expiration date</th>
                         <th class="text-center py-1">Cost Price</th>
                         <th class="text-center py-1">Sell Price</th>
                         <th class="text-center py-1">Status</th>
@@ -79,7 +80,20 @@
                         <td class="px-2 py-1 text-center">{{ product.id }}</td>
                         <td class="px-2 py-1 text-start">{{ product.category_id }}</td>
                         <td class="px-2 py-1 text-start">{{ product.code }} - {{ product.name }}</td>
-                        <td class="px-2 py-1 text-start">{{ product.description }}</td>
+                        {% if product.id in low_inventory_ids %}
+                        <td class="px-2 py-1 text-start text-danger"><strong style="color: red;">
+                            {{ product.stock }}</strong>
+                        </td>
+                        {% else %}
+                        <td class="px-2 py-1 text-start">{{ product.stock }}</td>
+                        {% endif %}
+                        {% if product.expiry_date in expired_products_ids %}
+                        <td class="px-2 py-1 text-start text-danger"><strong style="color: red;">
+                            {{ product.expiry_date }}</strong>
+                        </td>
+                        {% else %}
+                        <td class="px-2 py-1 text-start">{{ product.expiry_date }}</td>
+                        {% endif %}
                         <td class="px-2 py-1 text-start">{{ product.cost_price }}</td>
                         <td class="px-2 py-1 text-start">{{ product.price }}</td>
                         <td class="px-2 py-1 text-center">

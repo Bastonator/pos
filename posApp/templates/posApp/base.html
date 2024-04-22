@@ -73,13 +73,24 @@
                             <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
                                 <div class="alert alert-{{message.tags}} w-100 rounded-0 mb-0">
                                     <div class="d-flex w-100">
-                                        <div class="col-auto flex-shrink-1 flex-grow-1">{{ message }}</div>
+                                        {% if message.tags == 'error' %}
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="width: 100%;">
+                                        <div class="col-auto flex-shrink-1 flex-grow-1">
+                                            <strong style="color: salmon;">Low Inventory!</strong>  {{ message }}
+                                        </div>
                                         <div class="col-auto text-center">
                                             <button class="btn-close btn-sm text-sm" type="button" onclick="$(this).closest('.alert').remove()"></button>
                                         </div>
-                                    </div>
-
-                                </div>
+                                        </div>
+                                        {% else %}
+                                        <div class="col-auto flex-shrink-1 flex-grow-1">
+                                              {{ message }}
+                                        </div>
+                                        <div class="col-auto text-center">
+                                            <button class="btn-close btn-sm text-sm" type="button" onclick="$(this).closest('.alert').remove()"></button>
+                                        </div>
+                                        {% endif %}
+                                    </div></div>
                             </div>
                             {% endfor %}
                         </div>

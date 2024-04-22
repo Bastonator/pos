@@ -12,6 +12,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
+from pos.settings import LOW_INVENTORY
+from django.db.models.functions import Now
 import json, sys
 from datetime import date, datetime
 from posApp.forms import RegistrationForm, BranchForm, CustomerForm, SupplierForm, CategoryForm, ProductForm, SaleForm, MoveForm, LipidForm, LiverForm, ElectrolytesForm, AsceticForm, AandCForm, ReproductionForm, RenalForm, DiabeticForm, CardiacForm, IronForm, InflammatoryForm, InvestigationForm, PancreaticForm, ComplaintForm, PrescriptionForm
@@ -668,12 +670,43 @@ def products(request, pk):
     except EmptyPage:
         page = p.page(1)
 
+    low_inventory = Products.objects.filter(
+        branch_owner_id=pk, stock__lte=LOW_INVENTORY
+    )
+
+    if low_inventory.count() > 0:
+        if low_inventory.count() > 1:
+            messages.error(request, f'{low_inventory.count()} items have low inventory')
+        else:
+            messages.error(request, f'{low_inventory.count()} item has low inventory')
+
+    low_inventory_ids = Products.objects.filter(
+        branch_owner_id=pk, stock__lte=LOW_INVENTORY
+    ).values_list('id', flat=True)
+
+    expired_products = Products.objects.filter(
+        branch_owner_id=pk, expiry_date__lte=Now()
+    ) | Products.objects.filter(
+        branch_owner_id=pk, expiry_date=None)
+
+    if expired_products.count() > 0:
+        if expired_products.count() > 1:
+            messages.error(request, f'{expired_products.count()} items are expired or about to be expired')
+        else:
+            messages.error(request, f'{expired_products.count()} item is expired or about to be expired')
+
+    expired_products_ids = Products.objects.filter(
+        branch_owner_id=pk, expiry_date__lte=Now()
+    ).values_list('expiry_date', flat=True)
+
     context = {
         'page_title': 'Product List',
         'products': page,
         'product_list': product_list,
         'branch': branch,
         'branch1': branch1,
+        'low_inventory_ids': low_inventory_ids,
+        'expired_products_ids': expired_products_ids
     }
     return render(request, 'posApp/products.html', context)
 
