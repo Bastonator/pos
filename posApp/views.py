@@ -642,7 +642,7 @@ def search_products(request, pk):
             supplier__icontains=search_str, branch_owner=branch) | Products.objects.filter(
             expiry_date__icontains=search_str, branch_owner=branch) | Products.objects.filter(category_id__name__icontains=search_str, branch_owner=branch)
 
-        p = Paginator(products, 50)
+        p = Paginator(products, 40)
 
         page_num = request.GET.get('page', 1)
         try:
@@ -650,7 +650,38 @@ def search_products(request, pk):
         except EmptyPage:
             page = p.page(1)
 
-        return render(request, 'posApp/productsearch.html', {'branch': branch, 'search_str': search_str, 'products': products, 'product_list': page})
+        low_inventory = Products.objects.filter(
+            branch_owner_id=pk, stock__lte=LOW_INVENTORY
+        )
+
+        if low_inventory.count() > 0:
+            if low_inventory.count() > 1:
+                messages.error(request, f'{low_inventory.count()} items have low inventory')
+            else:
+                messages.error(request, f'{low_inventory.count()} item has low inventory')
+
+        low_inventory_ids = Products.objects.filter(
+            branch_owner_id=pk, stock__lte=LOW_INVENTORY
+        ).values_list('id', flat=True)
+
+        expired_products = Products.objects.filter(
+            branch_owner_id=pk, expiry_date__lte=Now()
+        ) | Products.objects.filter(
+            branch_owner_id=pk, expiry_date=None)
+
+        if expired_products.count() > 0:
+            if expired_products.count() > 1:
+                messages.error(request, f'{expired_products.count()} items are expired or about to be expired')
+            else:
+                messages.error(request, f'{expired_products.count()} item is expired or about to be expired')
+
+        expired_products_ids = Products.objects.filter(
+            branch_owner_id=pk, expiry_date__lte=Now()
+        ).values_list('expiry_date', flat=True)
+
+        return render(request, 'posApp/productsearch.html',
+                      {'branch': branch, 'search_str': search_str, 'products': products, 'product_list': page,
+                       'low_inventory_ids': low_inventory_ids, 'expired_products_ids': expired_products_ids})
     else:
         return render(request, 'posApp/productsearch.html', {'branch': branch})
 
@@ -662,7 +693,7 @@ def products(request, pk):
     branch1 = Branch.objects.get(id=pk)
     product_list = Products.objects.filter(branch_owner_id=pk).order_by('name')
 
-    p = Paginator(product_list, 40)
+    p = Paginator(product_list, 35)
 
     page_num = request.GET.get('page', 1)
     try:
@@ -710,6 +741,60 @@ def products(request, pk):
     }
     return render(request, 'posApp/products.html', context)
 
+
+@login_required
+def low_products(request, pk):
+    branch = Branch.objects.get(id=pk)
+    branch1 = Branch.objects.get(id=pk)
+    product_list = Products.objects.filter(branch_owner_id=pk).order_by('stock')
+
+    p = Paginator(product_list, 35)
+
+    page_num = request.GET.get('page', 1)
+    try:
+        page = p.page(page_num)
+    except EmptyPage:
+        page = p.page(1)
+
+    low_inventory = Products.objects.filter(
+        branch_owner_id=pk, stock__lte=LOW_INVENTORY
+    )
+
+    if low_inventory.count() > 0:
+        if low_inventory.count() > 1:
+            messages.error(request, f'{low_inventory.count()} items have low inventory')
+        else:
+            messages.error(request, f'{low_inventory.count()} item has low inventory')
+
+    low_inventory_ids = Products.objects.filter(
+        branch_owner_id=pk, stock__lte=LOW_INVENTORY
+    ).values_list('id', flat=True)
+
+    expired_products = Products.objects.filter(
+        branch_owner_id=pk, expiry_date__lte=Now()
+    ) | Products.objects.filter(
+        branch_owner_id=pk, expiry_date=None)
+
+    if expired_products.count() > 0:
+        if expired_products.count() > 1:
+            messages.error(request, f'{expired_products.count()} items are expired or about to be expired')
+        else:
+            messages.error(request, f'{expired_products.count()} item is expired or about to be expired')
+
+    expired_products_ids = Products.objects.filter(
+        branch_owner_id=pk, expiry_date__lte=Now()
+    ).values_list('expiry_date', flat=True)
+
+    context = {
+        'page_title': 'Product List',
+        'products': page,
+        'product_list': product_list,
+        'branch': branch,
+        'branch1': branch1,
+        'low_inventory_ids': low_inventory_ids,
+        'expired_products_ids': expired_products_ids
+    }
+    return render(request, 'posApp/low_products.html', context)
 
 @login_required
 def manage_products(request, pk):

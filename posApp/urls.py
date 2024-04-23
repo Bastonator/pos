@@ -33,6 +33,7 @@ urlpatterns = [
     path('delete_category/<str:pk>', views.delete_category, name="delete-category"),
     path('add_prod/<str:pk>', views.addnew_prod, name="prod-add"),
     path('products/<str:pk>', views.products, name="product-page"),
+    path('low_products_stock/<str:pk>', views.low_products, name="low-product-page"),
     path('manage_products/<str:pk>', views.manage_products, name="manage_products-page"),
     path('test', views.test, name="test-page"),
     path('save_product/<str:pk>', views.save_product, name="save-product-page"),
