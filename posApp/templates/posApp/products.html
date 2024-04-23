@@ -40,11 +40,11 @@
         <button class="btn btn-outline-success">
             Search
         </button>
-        <a href="{% url 'low-product-page' branch.pk %}">
-        <button class="btn btn-info bg-gradient btn-sm rounded-0" style="color: white; margin-left: 10px; width: 150px;"><i class="mdi"></i><span>Filter by lowest stock</span></button>
-        </a>
         </div>
     </form>
+    <a href="{% url 'low-product-page' branch.pk %}">
+        <button class="btn btn-info bg-gradient btn-sm rounded-0" style="color: white; margin-left: 10px; width: 150px;"><i class="mdi"></i><span>Filter by lowest stock</span></button>
+    </a>
 
 </div>
 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
