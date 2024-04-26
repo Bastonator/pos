@@ -326,7 +326,7 @@ def save_customer_pos(request, pk, pk1):
         sales = CustomerSales(code=code, sub_total=data['sub_total'], tax=data['tax'], tax_amount=data['tax_amount'],
                       grand_total=data['grand_total'], tendered_amount=data['tendered_amount'],
                       amount_change=data['amount_change'], branch_owner=branch, user=seller, shift_sold=shift, customer=customers,
-                              is_paid= True if request.POST.getlist('invoice', False) else False, due_date=request.POST.get('due-date'), terms_conditons=request.POST.get('terms')).save()
+                              is_paid= True if request.POST.getlist('invoice', False) else False, due_date=request.POST.get('due-date'), terms_conditions=request.POST.get('terms')).save()
         print(request.POST.getlist('invoice'))
         sale_id = CustomerSales.objects.last().pk
         i = 0
