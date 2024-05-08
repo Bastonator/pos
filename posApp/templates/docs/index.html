@@ -63,24 +63,24 @@ body {
             block: none;
         }
         #table, #table *{
-            width: 150%;
+            width: 320%;
             margin-left: 0%;
         }
-        header * {
-            block: none;
+        #print, #print *{
+            display: none;
         }
-        aside * {
-            block: none;
+        #section, #section *{
+            width: 100%;
         }
     }
 </style>
 
-    <section id="section" style="width: 700px; background-color: white;">
-        <button onclick="window.print()" id="print"> Print invoice
+    <section id="section" style="width: 710px; background-color: white;">
+        <button onclick="window.print()" style="border: none; background-color: blue; color: white;" id="print"> Print invoice
         </button>
         <br>
         <div class="container" id="invoice">
-            <div class="text-center">
+            <div class="text-center" style="margin-top: -26px; margin-bottom: -25px;">
                 <img src="images/logo_dark.png" alt="">
                 <h1>
                     {{ branch.name }}
@@ -88,31 +88,33 @@ body {
             </div>
             <div class="text-center border-top border-bottom my-5 py-3">
                 <p style="color: coral;" class="m-0"><strong>Wriber Invoicing Service V1</strong></p>
-                <p class="m-0">Invoice No: {{ customer_sales.code }}</p>
-                <p class="m-0">Invoice Date: <strong>{{ customer_sales.date_added |date:'Y/m/d'}}</strong></p>
+                <center>
+                <div style="display: flex; margin: 2px;">
+                <p class="m-0">Invoice No: {{ customer_sales.code }} &nbsp;</p>
+                <p class="m-0">Invoice Date: <strong>{{ customer_sales.date_added |date:'Y/m/d'}}</strong> &nbsp;</p>
                 <p class="m-0">Due Date: <strong>{{ customer_sales.due_date |date:'Y/m/d'}}</strong></p>
+                </div>
+                </center>
             </div>
 
             <div class="justify-content-between" style="display: flex;">
-                <div>
+                <div style="margin-top: -30px; margin-bottom: -35px;">
                     <p class="text-primary">Invoice To</p>
-                    <h4></h4>
                     <ul class="list-unstyled">
                         <li>{{ customer_sales.customer }}</li>
-                        <li>{{ customer_sales.customer.email }}
+                        <li>{{ customer_sales.customer.address }}</li>
                     </ul>
                 </div>
-                <div>
+                <div style="margin-top: -30px; margin-bottom: -35px;">
                     <p class="text-primary">Invoice From</p>
                     <ul class="list-unstyled">
                         <li>{{ branch.name }}</li>
-                        <li>Phone: {{ branch.phone }}</li>
                         <li>{{ branch.address }}</li>
                     </ul>
                 </div>
             </div>
 
-            <table class="table border my-5" id="table">
+            <table class="table border my-5 table-bordered" id="table">
                 <thead>
                     <tr class="bg-primary-subtle">
                         <th scope="col">No.</th>
@@ -156,31 +158,40 @@ body {
                 </tbody>
             </table>
 
-            <div class="d-md-flex justify-content-between my-5">
+            <div class="justify-content-between my-5" style="display: flex; margin-top: -42px; margin-bottom: -55px;">
+                <div>
+                    <h5 class="fw-bold">Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li><iconify-icon class="social-icon text-primary fs-5 me-2" icon="mdi:location"
+                                style="vertical-align:text-bottom"></iconify-icon> {{ branch.address }}</li>
+                        <li><iconify-icon class="social-icon text-primary fs-5 me-2" icon="solar:phone-bold"
+                                style="vertical-align:text-bottom"></iconify-icon> (+220) {{ branch.phone }}</li>
+                    </ul>
+                </div>
 
-            <div class="text-center my-5">
-                <p class="text-muted" style="color: black;"><span class="fw-semibold"><strong>Terms & Conditions of sale: </strong></span>{{ customer_sales.terms_conditions }}.</p>
+            <div class="text-center">
+                <p class="text-muted" style="color: black;"><span class="fw-semibold">Terms & Conditions of invoice: </span>{{ customer_sales.terms_conditons }}.</p>
             </div>
 
             </div>
 
-            <div id="footer-bottom">
-                <div class="container border-top">
-                    <div class="row mt-3">
-                        <div class="col-md-6 copyright">
+            <div id="footer-bottom" style="margin-top: -36px; margin-bottom: -25px;">
+                <div class="container">
+                    <div class="row" style="display: flex;">
+                        <div class="copyright">
                             <div>
-                                Sellers Signature: _____________
+                                Sellers Signature: _______________
                             </div>
-                            <p>© 2024 Invoice, by Wriber. <a href="#" target="_blank"
-                                    class="text-decoration-none text-black-50">Terms & Conditions apply</a> </p>
                         </div>
-                        <div class="col-md-6 text-md-end">
+                        <div class="text-md-end" style="margin-top: 8px;">
                             <div>
                                 Buyers signature: _______________
                             </div>
                             <strong>
                                 <p>Invoice composed using<strong style="color: coral;"> Wriber</strong> services </p>
                             </strong>
+                            <p>© 2024 Invoice, by Wriber. <a href="#" target="_blank"
+                                    class="text-decoration-none text-black-50">Terms & Conditions apply</a> </p>
                         </div>
                     </div>
                 </div>

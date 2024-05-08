@@ -101,7 +101,7 @@
 <script>
     $(function() {
         $('.edit-data').click(function() {
-            uni_modal("Edit Product", "{% url 'manage-sales-page' branch.pk customers.pk %}?id=" + $(this).attr('data-id'))
+            uni_modal("Edit Payment status", "{% url 'manage-sales-page' branch.pk customers.pk %}?id=" + $(this).attr('data-id'))
         })
 
         $('#uni_modal').on('shown.bs.modal', function() {

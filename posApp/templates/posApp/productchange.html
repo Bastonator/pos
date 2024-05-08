@@ -54,18 +54,20 @@
                 </div>
             </fieldset>
             <fieldset>
-                <div class="d-flex w-100" id="POS-field">
-                    <div class="col-8 bg-gradient bg-light border h-100">
+                <div class="d-flex w-100" id="POS-field" style="width: 150%;">
+                    <div class="col-8 bg-gradient bg-light border h-100" style="width: 82%;">
                         <table class="table table-bordered">
                             <colgroup>
                                 <col width="5%">
-                                <col width="9%">
-                                <col width="25%">
-                                <col width="12%">
-                                <col width="10%">
-                                <col width="18%">
+                                <col width="7%">
+                                <col width="20%">
+                                <col width="8%">
+                                <col width="8%">
                                 <col width="15%">
+                                <col width="9%">
                                 <col width="5%">
+                                <col width="10%">
+                                <col width="8%">
                             </colgroup>
                             <thead>
                                 <tr class="bg-dark bg-gradient bg-opacity-50 text-light">
@@ -77,13 +79,15 @@
                                     <th class="py-1 px-2 text-center  text-light">Supplier</th>
                                     <th class="py-1 px-2 text-center  text-light">New Cost Price</th>
                                     <th class="py-1 px-2 text-center  text-light">Stock</th>
+                                    <th class="py-1 px-2 text-center  text-light">New Sell Price</th>
+                                    <th class="py-1 px-2 text-center  text-light">Exp dte</th>
                                 </tr>
                             </thead>
                             <tbody>
                             </tbody>
                         </table>
                     </div>
-                    <div class="col-4 bg-gradient bg-dark bg-opacity-50 border h-100">
+                    <div class="col-4 bg-gradient bg-dark bg-opacity-50 border h-100" style="width: 20%;">
                         <div class="col-12 py-4 px-2">
                             <dl>
                                 <dt class="h4 fw-bold text-light">Sub Total</dt>
@@ -147,6 +151,12 @@
             <input type="number" name="cost_price[]" id="cost_price[]" class="form-control form-control-sm rounded-0 text-center">
         </td>
         <td class="px-2 py-1 product_stock text-end"></td>
+        <td class="px-2 py-1">
+            <input type="number" name="sell_price[]" id="sell_price[]" class="form-control form-control-sm rounded-0 text-center">
+        </td>
+        <td class="px-2 py-1">
+            <input type="date" name="expiry_date[]" id="expiry_date[]" class="form-control form-control-sm rounded-0 text-center">
+        </td>
     </tr>
 </noscript>
 {% endif %} {% endblock pageContent %} {% block ScriptBlock %}

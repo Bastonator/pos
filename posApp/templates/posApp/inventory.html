@@ -6,7 +6,7 @@
         </div>
     </div>
 </div>
-<button onclick="window.print()" id="print"> Print Inventory
+<button onclick="window.print()" id="print" style="border: none; width: 140px; height: 60px;"> Print Inventory
 </button>
 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12" id="stock">
     <div class="mdc-card">
@@ -49,5 +49,22 @@
             </table>
         </div>
     </div>
+</div>
+
+<div class="pagination">
+{% if product.has_previous %}
+    <div class="" style="position: absolute; bottom: 55px; right: 175px;">
+        <a href="{% url 'inventory' pk=branch.pk  %}?page={{product.previous_page_number}}">
+        <button class="btn btn-primary bg-gradient btn-sm rounded-0" style="width: auto;"><i class="mdi mdi"></i><span>Previous inventory List</span></button>
+        </a>
+    </div>
+{% endif %}
+{% if product.has_next %}
+    <div class="" style="position: absolute; bottom: 55px; right: 40px;">
+        <a href="{% url 'inventory' pk=branch.pk  %}?page={{product.next_page_number}}">
+        <button class="btn btn-primary bg-gradient btn-sm rounded-0"><i class="mdi mdi"></i><span>Next inventory List</span></button>
+        </a>
+    </div>
+{% endif %}
 </div>
 {% endblock pageContent %}

@@ -10,6 +10,13 @@
     {% else %}
     <title>No name POS</title>
     {% endif %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.6.4.min.js"
+      integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
+      crossorigin="anonymous">
+    </script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-v4-grid-only@1.0.0/dist/bootstrap-grid.min.css">
     <link rel="stylesheet" type="text/css" href="{% static 'posAPP/assets/bootstrap/css/bootstrap.min.css' %}">
 
     <link rel="stylesheet" type="text/css" href="{% static 'posAPP/assets/material-admin/vendors/mdi/css/materialdesignicons.min.css' %}">
@@ -72,7 +79,7 @@
                             {% for message in messages %}
                             <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
                                 <div class="alert alert-{{message.tags}} w-100 rounded-0 mb-0">
-                                    <div class="d-flex w-100">
+                                    <div class="d-flex w-100" style="margin-top: -25px; margin-bottom: -30px">
                                         {% if message.tags == 'error' %}
                                         <div class="alert alert-danger alert-dismissible fade show" role="alert" style="width: 100%;">
                                         <div class="col-auto flex-shrink-1 flex-grow-1">
@@ -157,7 +164,7 @@
             $(this).attr("disabled", true);
             setTimeout(function() {
                 $('#submit').removeAttr("disabled");
-            }, 10000);
+            }, 30000);
         });
         $("#confirm").click(function() {
             $(this).attr("disabled", true);

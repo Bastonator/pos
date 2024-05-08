@@ -5,18 +5,27 @@
     <form action="" id="product-form" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-group mb-3">
-            <label for="user" class="control-label">User email</label>
-            <input type="text" name="new_user" id="user" placeholder="write the email of the user you want to add. Maka esure they already have an account" class="form-control form-control-sm rounded-0" list="userlist1" required>
-            <datalist id="userlist1">
-                {% for user in users %}
-                    <option value="{{ user.email }}"></option>
-                {% endfor %}
-            </datalist>
+            <label for="user" class="form-label">Branch  Master User</label>
+            <select id="user" name="new_user" style="width: 100%; height: 70px;" placeholder="Select user's email address"  class="operator">
+            <br>
+            <option value="" name="user1">Select user's email address</option>
+            {% for user in users %}
+             <option name="user1" value="{{ user.email }}" ><strong>{{ user.email }}-{{ user.username }}</strong></option>
+            {% endfor %}
+        </select>
         </div>
-            <input class="btn btn-success btn-block py-2 mb-4 mt-5 fw500 w-100" type="submit" VALUE="Add user">
+
+            <input class="btn btn-success btn-block py-2 mb-4 mt-5 fw500 w-100" type="submit" VALUE="Add user" style="margin-top: -30px;">
 
     </form>
     </div>
 </div>
 {% endif %}
-{% endblock pageContent %}
+{% endblock pageContent %}{% block ScriptBlock %}
+        <script>
+          $(document).ready(function () {
+          //change selectboxes to selectize mode to be searchable
+             $("select").select2();
+          });
+        </script>
+      {% endblock ScriptBlock %}

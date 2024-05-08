@@ -17,11 +17,15 @@
     </div>
 </div>
   {% else %}
-
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card">
   <a href="{% url 'shift' pk=branch.pk %}">
+      <h4>
       Shift has started. All sales will now be added to this shift
+      </h4>
   </a>
-
+    </div>
+</div>
   {% endif %}
 
 {% endif %}

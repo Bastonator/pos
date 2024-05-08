@@ -23,6 +23,11 @@
                 <button class="btn btn-primary bg-gradient btn-sm rounded-0" id="create_new"><i class="mdi mdi-plus"></i><span> Add New</span></button>
             </div>
             {% endif %}
+            <div class="text-start">
+                <a href="{% url 'new-stock-list' branch.pk %}">
+                <button class="btn btn-warning bg-gradient btn-sm rounded-0" style="color: white;"><i class="mdi"></i><span>View new supplies</span></button>
+                </a>
+            </div>
         </div>
     </div>
 </div>

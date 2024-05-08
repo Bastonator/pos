@@ -136,14 +136,14 @@
                 {% endif %}
                 {% if branch1 %}
                 <div class="mdc-list-item mdc-drawer-item" style="border-radius: 20px;">
-                    <a class="mdc-drawer-link" href="{% url 'todays-sales' pk=branch1.pk %}">
-                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i> Today's Sales
+                    <a class="mdc-drawer-link" href="{% url 'sale-items' pk=branch1.pk %}">
+                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i> Item Sales
                     </a>
                 </div>
                 {% elif branch %}
                 <div class="mdc-list-item mdc-drawer-item" style="border-radius: 20px;">
-                    <a class="mdc-drawer-link" href="{% url 'todays-sales' pk=branch.pk %}">
-                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i> Today's Sales
+                    <a class="mdc-drawer-link" href="{% url 'sale-items' pk=branch.pk %}">
+                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i> Item Sales
                     </a>
                 </div>
                 {% endif %}

@@ -1,6 +1,6 @@
 from pickle import FALSE
 from django.shortcuts import redirect, render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from flask import jsonify
 from posApp.models import Category, Products, CustomerSales, Customer, Supplier, CustomerSalesItems, Sales, salesItems, Shifts, ProductChange, changeItems, Move, Lab, LipidProfile_Test, Liver_Function_Test, Renal_Function_Test, Ironprofile_Test, Inflammtory_Test
 from posApp.models import Ascetic_Fluid_Test, Elements_conc_Test, Pancreatic_enzymes_Test, Test_performed, Patient, Reproduction, Investigations, Diabetic_Test, Autoimmunity_and_cancer_Test, Cardiac_Markers, Complaint, Prescription
@@ -14,12 +14,17 @@ from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 from pos.settings import LOW_INVENTORY
 from django.db.models.functions import Now
+from django.db.models import F
+from datetime import datetime, timedelta
 import json, sys
 from datetime import date, datetime
 from posApp.forms import RegistrationForm, BranchForm, CustomerForm, SupplierForm, CategoryForm, ProductForm, SaleForm, MoveForm, LipidForm, LiverForm, ElectrolytesForm, AsceticForm, AandCForm, ReproductionForm, RenalForm, DiabeticForm, CardiacForm, IronForm, InflammatoryForm, InvestigationForm, PancreaticForm, ComplaintForm, PrescriptionForm
 from django.conf import settings
 from django.core.paginator import Paginator
 from django.contrib.admin.views.decorators import staff_member_required
+from utils.charts import months, colorPrimary, colorSuccess, colorDanger, generate_color_palette, get_year_dict
+from django.db.models.functions import ExtractYear, ExtractMonth
+
 
 from django.core.mail import send_mail, EmailMultiAlternatives
 from django.template.loader import get_template
@@ -1125,37 +1130,396 @@ def delete_sale(request, pk):
 def inventory(request, pk):
     branch = Branch.objects.get(id=pk)
     products = Products.objects.filter(branch_owner_id=pk).order_by('name')
-    return render(request, 'posApp/inventory.html', {'branch': branch, 'products': products})
+    p = Paginator(products, 38)
 
+    page_num = request.GET.get('page', 1)
+    try:
+        page = p.page(page_num)
+    except EmptyPage:
+        page = p.page(1)
+    return render(request, 'posApp/inventory.html', {'branch': branch, 'products': page})
 
 @login_required
-def todays_sales(request, pk):
+def sale_items_qty(request, pk):
     now = datetime.now()
     current_year = now.strftime("%Y")
     current_month = now.strftime("%m")
     current_day = now.strftime("%d")
     branch = Branch.objects.get(id=pk)
-    today_sales = Sales.objects.filter(
-        date_added__year=current_year,
-        date_added__month=current_month,
-        date_added__day=current_day
-    ).filter(branch_owner_id=pk).order_by('-id')
-    return render(request, 'posApp/todays_sales.html', {'branch': branch, 'today_sales': today_sales})
+    sale_items = salesItems.objects.filter(branch_owner_id=pk).values('product_id').annotate(
+        quantity=Sum('qty'), product_name=F('product_id__name'), amount_made=Sum(F('qty') * F('product_id__price'))
+    )
+    print(sale_items)
+
+    p = Paginator(sale_items, 32)
+
+    page_num = request.GET.get('page', 1)
+    try:
+        page = p.page(page_num)
+    except EmptyPage:
+        page = p.page(1)
+
+    return render(request, 'posApp/sales_items.html', {'branch': branch, 'sale_items': sale_items, 'sale': page})
 
 
 @login_required
-def todays_sale_items(request, pk):
+def sale_items_qty_today(request, pk):
     now = datetime.now()
     current_year = now.strftime("%Y")
     current_month = now.strftime("%m")
     current_day = now.strftime("%d")
     branch = Branch.objects.get(id=pk)
-    todays_sale_items = salesItems.objects.filter(
-        date_added__year=current_year,
-        date_added__month=current_month,
-        date_added__day=current_day
-    ).filter(branch_owner_id=pk).order_by('-id')
-    return render(request, 'posApp/todays_sale_items.html', {'branch': branch, 'todays_sale_items': todays_sale_items})
+    sale_items = salesItems.objects.filter(
+            date_added__year=current_year,
+            date_added__month=current_month,
+            date_added__day=current_day
+        ).filter(branch_owner_id=pk).values('product_id').annotate(
+        quantity=Sum('qty'), product_name=F('product_id__name'), amount_made=Sum(F('qty') * F('product_id__price'))
+    )
+    print(sale_items)
+
+    p = Paginator(sale_items, 32)
+
+    page_num = request.GET.get('page', 1)
+    try:
+        page = p.page(page_num)
+    except EmptyPage:
+        page = p.page(1)
+
+    return render(request, 'posApp/sales_items_today.html', {'branch': branch, 'sale_items': sale_items, 'sale': page})
+
+
+@login_required
+def sale_items_qty_week(request, pk):
+    one_week_ago = datetime.today() - timedelta(days=7)
+    now = datetime.now()
+    current_year = now.strftime("%Y")
+    current_month = now.strftime("%m")
+    current_day = now.strftime("%d")
+    branch = Branch.objects.get(id=pk)
+    sale_items = salesItems.objects.filter(branch_owner_id=pk, date_added__gte=one_week_ago).values('product_id').annotate(
+        quantity=Sum('qty'), product_name=F('product_id__name'), amount_made=Sum(F('qty') * F('product_id__price'))
+    )
+    print(sale_items)
+
+    p = Paginator(sale_items, 32)
+
+    page_num = request.GET.get('page', 1)
+    try:
+        page = p.page(page_num)
+    except EmptyPage:
+        page = p.page(1)
+
+    return render(request, 'posApp/sales_items_week.html', {'branch': branch, 'sale_items': sale_items, 'sale': page})
+
+
+@login_required
+def sale_items_qty_month(request, pk):
+    one_week_ago = datetime.today() - timedelta(days=30)
+    now = datetime.now()
+    current_year = now.strftime("%Y")
+    current_month = now.strftime("%m")
+    current_day = now.strftime("%d")
+    branch = Branch.objects.get(id=pk)
+    sale_items = salesItems.objects.filter(branch_owner_id=pk, date_added__gte=one_week_ago).values('product_id').annotate(
+        quantity=Sum('qty'), product_name=F('product_id__name'), amount_made=Sum(F('qty') * F('product_id__price'))
+    )
+    print(sale_items)
+
+    p = Paginator(sale_items, 32)
+
+    page_num = request.GET.get('page', 1)
+    try:
+        page = p.page(page_num)
+    except EmptyPage:
+        page = p.page(1)
+
+    return render(request, 'posApp/sales_items_month.html', {'branch': branch, 'sale_items': sale_items, 'sale': page})
+
+@login_required
+def sale_items_qty_quarter(request, pk):
+    one_week_ago = datetime.today() - timedelta(days=91)
+    now = datetime.now()
+    current_year = now.strftime("%Y")
+    current_month = now.strftime("%m")
+    current_day = now.strftime("%d")
+    branch = Branch.objects.get(id=pk)
+    sale_items = salesItems.objects.filter(branch_owner_id=pk, date_added__gte=one_week_ago).values('product_id').annotate(
+        quantity=Sum('qty'), product_name=F('product_id__name'), amount_made=Sum(F('qty') * F('product_id__price'))
+    )
+    print(sale_items)
+
+    p = Paginator(sale_items, 32)
+
+    page_num = request.GET.get('page', 1)
+    try:
+        page = p.page(page_num)
+    except EmptyPage:
+        page = p.page(1)
+
+    return render(request, 'posApp/sales_items_quarter.html', {'branch': branch, 'sale_items': sale_items, 'sale': page})
+
+
+@login_required
+def sale_items_qty_year(request, pk):
+    one_week_ago = datetime.today() - timedelta(days=365)
+    now = datetime.now()
+    current_year = now.strftime("%Y")
+    current_month = now.strftime("%m")
+    current_day = now.strftime("%d")
+    branch = Branch.objects.get(id=pk)
+    sale_items = salesItems.objects.filter(branch_owner_id=pk, date_added__gte=one_week_ago).values('product_id').annotate(
+        quantity=Sum('qty'), product_name=F('product_id__name'), amount_made=Sum(F('qty') * F('product_id__price'))
+    )
+    print(sale_items)
+
+    p = Paginator(sale_items, 32)
+
+    page_num = request.GET.get('page', 1)
+    try:
+        page = p.page(page_num)
+    except EmptyPage:
+        page = p.page(1)
+
+    return render(request, 'posApp/sales_items_year.html', {'branch': branch, 'sale_items': sale_items, 'sale': page})
+
+def get_filter_options(request):
+    grouped_sales = salesItems.objects.annotate(year=ExtractYear("date_added")).values("year").order_by("-year").distinct()
+    options = [order["year"] for order in grouped_sales]
+
+    return JsonResponse({
+        "options": options,
+    })
+
+
+@staff_member_required
+def get_item_sale_chart(request, pk, year):
+    one_week_ago = datetime.today() - timedelta(days=365)
+    now = datetime.now()
+    current_year = now.strftime("%Y")
+    current_month = now.strftime("%m")
+    current_day = now.strftime("%d")
+    product_clicked = Products.objects.get(id=pk)
+    sale_items = salesItems.objects.filter(product_id=pk,  date_added__year=year).annotate(quantity=Sum('qty')).annotate(month=ExtractMonth("date_added")) \
+        .values("month").annotate(average=Sum('qty'), product=F('product_id__id')).values("month", "average").order_by("month")
+
+    sales_dict = get_year_dict()
+
+    for group in sale_items:
+        sales_dict[months[group["month"] - 1]] = round(group["average"], 2)
+
+    return JsonResponse({
+        "title": f"Sales in {year}",
+        "data": {
+            "labels": list(sales_dict.keys()),
+            "datasets": [{
+                "label": "Quantity",
+                "backgroundColor": colorPrimary,
+                "borderColor": colorPrimary,
+                "data": list(sales_dict.values()),
+            }]
+        },
+    })
+
+
+def product_statistics_view(request, pk, pk1):
+    branch = Branch.objects.get(id=pk)
+    product_clicked = Products.objects.get(id=pk1)
+    now = datetime.now()
+    return render(request, "posApp/product_statistics.html", {'branch': branch, 'product_clicked': product_clicked, 'now': now})
+
+
+@login_required
+def wholesale_items_qty(request, pk):
+    now = datetime.now()
+    current_year = now.strftime("%Y")
+    current_month = now.strftime("%m")
+    current_day = now.strftime("%d")
+    branch = Branch.objects.get(id=pk)
+    sale_items = CustomerSalesItems.objects.filter(branch_owner_id=pk).values('product_id').annotate(
+        quantity=Sum('qty'), product_name=F('product_id__name'), amount_made=Sum(F('qty') * F('product_id__price'))
+    )
+    print(sale_items)
+
+    p = Paginator(sale_items, 32)
+
+    page_num = request.GET.get('page', 1)
+    try:
+        page = p.page(page_num)
+    except EmptyPage:
+        page = p.page(1)
+
+    return render(request, 'posApp/wholesale_items.html', {'branch': branch, 'sale_items': sale_items, 'sale': page})
+
+
+@login_required
+def wholesale_items_qty_today(request, pk):
+    now = datetime.now()
+    current_year = now.strftime("%Y")
+    current_month = now.strftime("%m")
+    current_day = now.strftime("%d")
+    branch = Branch.objects.get(id=pk)
+    sale_items = CustomerSalesItems.objects.filter(
+            date_added__year=current_year,
+            date_added__month=current_month,
+            date_added__day=current_day
+        ).filter(branch_owner_id=pk).values('product_id').annotate(
+        quantity=Sum('qty'), product_name=F('product_id__name'), amount_made=Sum(F('qty') * F('product_id__price'))
+    )
+    print(sale_items)
+
+    p = Paginator(sale_items, 32)
+
+    page_num = request.GET.get('page', 1)
+    try:
+        page = p.page(page_num)
+    except EmptyPage:
+        page = p.page(1)
+
+    return render(request, 'posApp/wholesale_items_today.html', {'branch': branch, 'sale_items': sale_items, 'sale': page})
+
+
+@login_required
+def wholesale_items_qty_week(request, pk):
+    one_week_ago = datetime.today() - timedelta(days=7)
+    now = datetime.now()
+    current_year = now.strftime("%Y")
+    current_month = now.strftime("%m")
+    current_day = now.strftime("%d")
+    branch = Branch.objects.get(id=pk)
+    sale_items = CustomerSalesItems.objects.filter(branch_owner_id=pk, date_added__gte=one_week_ago).values('product_id').annotate(
+        quantity=Sum('qty'), product_name=F('product_id__name'), amount_made=Sum(F('qty') * F('product_id__price'))
+    )
+    print(sale_items)
+
+    p = Paginator(sale_items, 32)
+
+    page_num = request.GET.get('page', 1)
+    try:
+        page = p.page(page_num)
+    except EmptyPage:
+        page = p.page(1)
+
+    return render(request, 'posApp/wholesale_items_week.html', {'branch': branch, 'sale_items': sale_items, 'sale': page})
+
+
+@login_required
+def wholesale_items_qty_month(request, pk):
+    one_week_ago = datetime.today() - timedelta(days=30)
+    now = datetime.now()
+    current_year = now.strftime("%Y")
+    current_month = now.strftime("%m")
+    current_day = now.strftime("%d")
+    branch = Branch.objects.get(id=pk)
+    sale_items = CustomerSalesItems.objects.filter(branch_owner_id=pk, date_added__gte=one_week_ago).values('product_id').annotate(
+        quantity=Sum('qty'), product_name=F('product_id__name'), amount_made=Sum(F('qty') * F('product_id__price'))
+    )
+    print(sale_items)
+
+    p = Paginator(sale_items, 32)
+
+    page_num = request.GET.get('page', 1)
+    try:
+        page = p.page(page_num)
+    except EmptyPage:
+        page = p.page(1)
+
+    return render(request, 'posApp/wholesale_items_month.html', {'branch': branch, 'sale_items': sale_items, 'sale': page})
+
+@login_required
+def wholesale_items_qty_quarter(request, pk):
+    one_week_ago = datetime.today() - timedelta(days=91)
+    now = datetime.now()
+    current_year = now.strftime("%Y")
+    current_month = now.strftime("%m")
+    current_day = now.strftime("%d")
+    branch = Branch.objects.get(id=pk)
+    sale_items = CustomerSalesItems.objects.filter(branch_owner_id=pk, date_added__gte=one_week_ago).values('product_id').annotate(
+        quantity=Sum('qty'), product_name=F('product_id__name'), amount_made=Sum(F('qty') * F('product_id__price'))
+    )
+    print(sale_items)
+
+    p = Paginator(sale_items, 32)
+
+    page_num = request.GET.get('page', 1)
+    try:
+        page = p.page(page_num)
+    except EmptyPage:
+        page = p.page(1)
+
+    return render(request, 'posApp/wholesale_items_quarter.html', {'branch': branch, 'sale_items': sale_items, 'sale': page})
+
+
+@login_required
+def wholesale_items_qty_year(request, pk):
+    one_week_ago = datetime.today() - timedelta(days=365)
+    now = datetime.now()
+    current_year = now.strftime("%Y")
+    current_month = now.strftime("%m")
+    current_day = now.strftime("%d")
+    branch = Branch.objects.get(id=pk)
+    sale_items = CustomerSalesItems.objects.filter(branch_owner_id=pk, date_added__gte=one_week_ago).values('product_id').annotate(
+        quantity=Sum('qty'), product_name=F('product_id__name'), amount_made=Sum(F('qty') * F('product_id__price'))
+    )
+    print(sale_items)
+
+    p = Paginator(sale_items, 32)
+
+    page_num = request.GET.get('page', 1)
+    try:
+        page = p.page(page_num)
+    except EmptyPage:
+        page = p.page(1)
+
+    return render(request, 'posApp/wholesale_items_year.html', {'branch': branch, 'sale_items': sale_items, 'sale': page})
+
+
+def get_wholesale_filter_options(request):
+    grouped_sales = CustomerSalesItems.objects.annotate(year=ExtractYear("date_added")).values("year").order_by("-year").distinct()
+    options = [order["year"] for order in grouped_sales]
+
+    return JsonResponse({
+        "options": options,
+    })
+
+
+@staff_member_required
+def get_wholesale_item_sale_chart(request, pk, year):
+    one_week_ago = datetime.today() - timedelta(days=365)
+    now = datetime.now()
+    current_year = now.strftime("%Y")
+    current_month = now.strftime("%m")
+    current_day = now.strftime("%d")
+    product_clicked = Products.objects.get(id=pk)
+    sale_items = CustomerSalesItems.objects.filter(product_id=pk,  date_added__year=year).annotate(quantity=Sum('qty')).annotate(month=ExtractMonth("date_added")) \
+        .values("month").annotate(average=Sum('qty'), product=F('product_id__id')).values("month", "average").order_by("month")
+
+    sales_dict = get_year_dict()
+
+    for group in sale_items:
+        sales_dict[months[group["month"] - 1]] = round(group["average"], 2)
+
+    return JsonResponse({
+        "title": f"Sales in {year}",
+        "data": {
+            "labels": list(sales_dict.keys()),
+            "datasets": [{
+                "label": "Quantity",
+                "backgroundColor": colorPrimary,
+                "borderColor": colorPrimary,
+                "data": list(sales_dict.values()),
+            }]
+        },
+    })
+
+
+def wholesale_product_statistics_view(request, pk, pk1):
+    branch = Branch.objects.get(id=pk)
+    product_clicked = Products.objects.get(id=pk1)
+    now = datetime.now()
+    return render(request, "posApp/wholesaleproduct_statistics.html", {'branch': branch, 'product_clicked': product_clicked, 'now': now})
+
+
 
 
 @login_required
@@ -1227,10 +1591,14 @@ def save_change(request, pk):
             print(supplier)
             supplier_id = Supplier.objects.get(id=supplier)
             new_costprice = data.getlist('cost_price[]')[i]
+            new_sellprice = data.getlist('sell_price[]')[i]
+            new_exp_date = data.getlist('expiry_date[]')[i]
             total = float(qty) * float(price)
             product.stock = product.stock + float(qty)
             product.suppliers = supplier_id
             product.cost_price = new_costprice
+            product.price = new_sellprice
+            product.expiry_date = new_exp_date
             product.save()
             print({'change_id': change, 'product_id': product, 'qty': qty, 'price': price, 'total': total})
             changeItems(change_id=change, product_id=product, qty=qty, price=new_costprice, total=total,
