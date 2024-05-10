@@ -126,14 +126,14 @@
 <div class="pagination">
 {% if products.has_previous %}
     <div class="" style="position: absolute; bottom: 55px; right: 175px;">
-        <a href="{% url 'product-page' pk=branch.pk  %}?page={{products.previous_page_number}}">
+        <a href="{% url 'low-product-page' pk=branch.pk  %}?page={{products.previous_page_number}}">
         <button class="btn btn-primary bg-gradient btn-sm rounded-0" style="width: auto;"><i class="mdi mdi-plus"></i><span>Previous Product List</span></button>
         </a>
     </div>
 {% endif %}
 {% if products.has_next %}
     <div class="" style="position: absolute; bottom: 55px; right: 40px;">
-        <a href="{% url 'product-page' pk=branch.pk  %}?page={{products.next_page_number}}">
+        <a href="{% url 'low-product-page' pk=branch.pk  %}?page={{products.next_page_number}}">
         <button class="btn btn-primary bg-gradient btn-sm rounded-0"><i class="mdi mdi-plus"></i><span>Next Product List</span></button>
         </a>
     </div>
