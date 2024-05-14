@@ -4,6 +4,10 @@
         background-color: blue;
         color: white;
     }
+    .btn-complaint-view:hover{
+        background-color: green;
+        color: white;
+    }
 </style>
 {% if lab %}
 {% if patient %}
@@ -68,47 +72,24 @@
     </div>
 </div>
 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
-        {% if complaint %}
         <div class="mdc-card">
             <div class="card" style="width: 960px;">
                 <div class="card-body">
                     <div style="display: flex;">
-                        <h4.8 style="display: flex;">
-                            First complaint: <strong>{{ complaint.complaint1 }}</strong>
-                        </h4.8>
-                        &nbsp; &nbsp;
-                        <h4.8 style="display: flex;">
-                            Second complaint: <strong>{{ complaint.complaint2 }}</strong>
-                        </h4.8>
-                        &nbsp; &nbsp;<h4.8 style="display: flex;">
-                            Third complaint: <strong>{{ complaint.complaint3 }}</strong>
-                        </h4.8>
-                        &nbsp; &nbsp;<h4.8 style="display: flex;">
-                            Fourth complaint: <strong>{{ complaint.complaint4 }}</strong>
-                        </h4.8>
-                        &nbsp; &nbsp;
-                        <h4>
-                        Querying Diagnosis : {% if complaint.query_diagnosis %}
-                        {{ complaint.query_diagnosis }}
-                        {% else %}
-                        <strong>
-                            No Queried Diagnosis
-                        </strong>
-                        {% endif %}
-                    </h4>
+                        <a href="{% url 'patient-complaints' pk=lab.pk pk1=patient.pk %}" style="margin: 2px;">
+                            <button class="btn-complaint-view" style="width: 380px; height: 60px; border-radius: 15px; border-width: 0px; border-color: green; transition: 0.5s;">
+                                View complaints
+                            </button>
+                        </a>
+                        <a href="{% url 'complaint' pk=lab.pk pk1=patient.pk %}">
+                            <button class="btn-complaint" style="width: 380px; height: 60px; border-radius: 15px; border-width: 0px; border-color: blue; transition: 0.5s;">
+                                What are the patients Complaints?(add complaints)
+                            </button>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
-        {% else %}
-        <center>
-        <a href="{% url 'complaint' pk=lab.pk pk1=patient.pk %}">
-            <button class="btn-complaint" style="width: 380px; height: 60px; border-radius: 15px; border-width: 2px; border-color: blue; transition: 0.5s;">
-                What are the patients Complaints?
-            </button>
-        </a>
-        </center>
-        {% endif %}
 </div>
 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
     <div class="mdc-card">

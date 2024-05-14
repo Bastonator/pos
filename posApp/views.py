@@ -5,7 +5,7 @@ from flask import jsonify
 from posApp.models import Category, Products, CustomerSales, Customer, Supplier, CustomerSalesItems, Sales, salesItems, Shifts, ProductChange, changeItems, Move, Lab, LipidProfile_Test, Liver_Function_Test, Renal_Function_Test, Ironprofile_Test, Inflammtory_Test
 from posApp.models import Ascetic_Fluid_Test, Elements_conc_Test, Pancreatic_enzymes_Test, Test_performed, Patient, Reproduction, Investigations, Diabetic_Test, Autoimmunity_and_cancer_Test, Cardiac_Markers, Complaint, Prescription
 from django.db.models import Count, Sum
-from posApp.models import Branch, Users
+from posApp.models import Branch, Users, Lab_Shifts
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -453,9 +453,12 @@ def save_sale_changes(request, pk, pk1):
     id = ''
     try:
         if (data['id']).isnumeric() and int(data['id']) > 0:
-            save_customersale = CustomerSales.objects.filter(id=data['id']).update(is_paid=True if request.POST.getlist('invoice', False) else False)
+            save_customersale = CustomerSales.objects.filter(id=data['id']).update(is_paid=True if request.POST.getlist('invoice', False) else False,
+                                                                                   is_partially_paid=True if request.POST.getlist('invoice2', False) else False,
+                                                                                   not_paid=True if request.POST.getlist('invoice3', False) else False,
+                                                                                   amount_paid=data['amount'])
         resp['status'] = 'success'
-        messages.success(request, 'Paid status change Successfully saved.')
+        messages.success(request, 'Paid status changed Successfully saved.')
     except:
         resp['status'] = 'failed'
     return HttpResponse(json.dumps(resp), content_type="application/json")
@@ -858,13 +861,13 @@ def save_product(request, pk):
                                                                              status=data['status'],
                                                                              stock=int(data['stock']),
                                                                              expiry_date=request.POST.get('date'),
-                                                                             image=request.FILES['img'], suppliers=data['suppliers'])
+                                                                             suppliers=data['suppliers'])
             else:
                 save_product = Products(code=data['code'], category_id=category, name=data['name'],
                                         description=data['description'], price=float(data['price']),
                                         cost_price=float(data['cost_price']),
                                         status=data['status'], stock=int(data['stock']), branch_owner=branch,
-                                        expiry_date=request.POST.get('date'), image=request.FILES['img'])
+                                        expiry_date=request.POST.get('date'), suppliers=data['suppliers'])
                 save_product.save()
             resp['status'] = 'success'
             messages.success(request, 'Product Successfully saved.')
@@ -1882,6 +1885,26 @@ def move_product(request, pk, pk1):
     return render(request, 'posApp/moveproduct.html', context=context)
 
 
+
+@login_required
+def search_wholesale_customers(request, pk):
+    branch = Branch.objects.get(id=pk)
+
+    if request.method == "POST":
+        search_str = request.POST['search_str']
+        customer = Customer.objects.filter(
+            name__icontains=search_str, branch_owner=branch) | Customer.objects.filter(
+            address__icontains=search_str, branch_owner=branch) | Customer.objects.filter(
+            email__icontains=search_str, branch_owner=branch) | Customer.objects.filter(
+            phone__icontains=search_str, branch_owner=branch)
+
+        return render(request, 'posApp/customersearch.html',
+                  {'branch': branch, 'search_str': search_str, 'customer': customer})
+    else:
+        return render(request, 'posApp/customersearch.html', {'branch': branch})
+
+
+
 @login_required
 def lab_register(request, pk):
     users = Users.objects.get(email=pk)
@@ -1978,6 +2001,7 @@ def register_patient(request, pk):
     if request.method == "POST":
         # form = BranchForm(request.POST or None)
         # branch = form
+        ID = request.POST.get('id')
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         # branch.location = request.POST['branchlocation']
@@ -1986,12 +2010,15 @@ def register_patient(request, pk):
         contact = request.POST.get('contact')
         address = request.POST.get('address')
         email = request.POST.get('email')
-        patient = Patient.objects.create(firstname=first_name or None, middlename=None, lastname=last_name or None,
-                                         gender=gender or None, dob=dob or None, contact=contact or None,
-                                         address=address or None, email=email or None, created_by=request.user,
-                                         lab_owner=lab)
-        context['patientid'] = patient
-        context['created'] = True
+        if Patient.objects.filter(lab_owner_id=pk, code=ID).exists():
+            messages.error(request, ('This patient ID already exists in the database, please choose a different patient ID'))
+        else:
+            patient = Patient.objects.create(code=ID, firstname=first_name or None, middlename=None, lastname=last_name or None,
+                                             gender=gender or None, dob=dob or None, contact=contact or None,
+                                             address=address or None, email=email or None, created_by=request.user,
+                                             lab_owner=lab)
+            context['patientid'] = patient
+            context['created'] = True
 
     return render(request, 'labApp/newpatient.html', context=context)
 
@@ -2001,16 +2028,28 @@ def patient(request, pk, pk1):
     if request.user.is_authenticated:
         lab = Lab.objects.get(id=pk)
         patient = Patient.objects.get(id=pk1)
-        complaint = Complaint.objects.filter(patient_id=pk1).first()
         context = {
             'page_title': 'Home',
             'lab': lab,
             'patient': patient,
-            'complaint': complaint
         }
         return render(request, 'labApp/patient_info.html', context)
     else:
         return redirect('login-me')
+
+
+@login_required
+def patient_complaints(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    patient = Patient.objects.get(id=pk1)
+    complaint = Complaint.objects.filter(patient_id=pk1)
+    context = {
+        'page_title': 'Home',
+        'lab': lab,
+        'patient': patient,
+        'complaint': complaint
+    }
+    return render(request, 'labApp/patient_complaints.html', context)
 
 
 @login_required
@@ -2182,6 +2221,7 @@ def liver_test(request, pk, pk1):
     lab = Lab.objects.get(id=pk)
     patient = Patient.objects.get(id=pk1)
     form = LiverForm(request.POST or None, request.FILES or None)
+    shift = Lab_Shifts.objects.filter(lab_owner_id=pk).last()
     context = {'lab': lab, 'patient': patient, 'form': form}
     if request.method == "POST":
         print(form)
@@ -2197,7 +2237,8 @@ def liver_test(request, pk, pk1):
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
 
             for test in result.investigation_request.all():
-                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user,
+                                                           test_shift=shift)
 
                 saved_test.save()
 
@@ -2225,6 +2266,7 @@ def renal_test(request, pk, pk1):
     lab = Lab.objects.get(id=pk)
     patient = Patient.objects.get(id=pk1)
     form = RenalForm(request.POST or None, request.FILES or None)
+    shift = Lab_Shifts.objects.filter(lab_owner_id=pk).last()
     context = {'lab': lab, 'patient': patient, 'form': form}
     if request.method == "POST":
         print(form)
@@ -2240,7 +2282,8 @@ def renal_test(request, pk, pk1):
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
 
             for test in result.investigation_request.all():
-                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user,
+                                                           test_shift=shift)
 
                 saved_test.save()
 
@@ -2268,6 +2311,8 @@ def pancreatic_test(request, pk, pk1):
     lab = Lab.objects.get(id=pk)
     patient = Patient.objects.get(id=pk1)
     form = PancreaticForm(request.POST or None, request.FILES or None)
+    shift = Lab_Shifts.objects.filter(lab_owner_id=pk).last()
+
     context = {'lab': lab, 'patient': patient, 'form': form}
     if request.method == "POST":
         print(form)
@@ -2283,7 +2328,8 @@ def pancreatic_test(request, pk, pk1):
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
 
             for test in result.investigation_request.all():
-                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user,
+                                                           test_shift=shift)
 
                 saved_test.save()
 
@@ -2311,6 +2357,8 @@ def ironprofile_test(request, pk, pk1):
     lab = Lab.objects.get(id=pk)
     patient = Patient.objects.get(id=pk1)
     form = IronForm(request.POST or None, request.FILES or None)
+    shift = Lab_Shifts.objects.filter(lab_owner_id=pk).last()
+
     context = {'lab': lab, 'patient': patient, 'form': form}
     if request.method == "POST":
         print(form)
@@ -2326,7 +2374,8 @@ def ironprofile_test(request, pk, pk1):
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
 
             for test in result.investigation_request.all():
-                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user,
+                                                           test_shift=shift)
 
                 saved_test.save()
 
@@ -2354,6 +2403,7 @@ def lipidprofile_test(request, pk, pk1):
     lab = Lab.objects.get(id=pk)
     patient = Patient.objects.get(id=pk1)
     form = LipidForm(request.POST or None, request.FILES or None)
+    shift = Lab_Shifts.objects.filter(lab_owner_id=pk).last()
     context = {'lab': lab, 'patient': patient, 'form': form}
     if request.method == "POST":
         print(form)
@@ -2369,7 +2419,8 @@ def lipidprofile_test(request, pk, pk1):
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
 
             for test in result.investigation_request.all():
-                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user,
+                                                           test_shift=shift)
 
                 saved_test.save()
 
@@ -2397,6 +2448,7 @@ def inflammatory_test(request, pk, pk1):
     lab = Lab.objects.get(id=pk)
     patient = Patient.objects.get(id=pk1)
     form = InflammatoryForm(request.POST or None, request.FILES or None)
+    shift = Lab_Shifts.objects.filter(lab_owner_id=pk).last()
     context = {'lab': lab, 'patient': patient, 'form': form}
     if request.method == "POST":
         print(form)
@@ -2412,7 +2464,8 @@ def inflammatory_test(request, pk, pk1):
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
 
             for test in result.investigation_request.all():
-                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user,
+                                                           test_shift=shift)
 
                 saved_test.save()
 
@@ -2440,6 +2493,7 @@ def ascetic_test(request, pk, pk1):
     lab = Lab.objects.get(id=pk)
     patient = Patient.objects.get(id=pk1)
     form = AsceticForm(request.POST or None, request.FILES or None)
+    shift = Lab_Shifts.objects.filter(lab_owner_id=pk).last()
     context = {'lab': lab, 'patient': patient, 'form': form}
     if request.method == "POST":
         print(form)
@@ -2455,7 +2509,8 @@ def ascetic_test(request, pk, pk1):
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
 
             for test in result.investigation_request.all():
-                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user,
+                                                           test_shift=shift)
 
                 saved_test.save()
 
@@ -2483,6 +2538,7 @@ def electrolytes_test(request, pk, pk1):
     lab = Lab.objects.get(id=pk)
     patient = Patient.objects.get(id=pk1)
     form = ElectrolytesForm(request.POST or None, request.FILES or None)
+    shift = Lab_Shifts.objects.filter(lab_owner_id=pk).last()
     context = {'lab': lab, 'patient': patient, 'form': form}
     if request.method == "POST":
         print(form)
@@ -2498,7 +2554,8 @@ def electrolytes_test(request, pk, pk1):
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
 
             for test in result.investigation_request.all():
-                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user,
+                                                           test_shift=shift)
 
                 saved_test.save()
 
@@ -2526,6 +2583,7 @@ def sugar_test(request, pk, pk1):
     lab = Lab.objects.get(id=pk)
     patient = Patient.objects.get(id=pk1)
     form = DiabeticForm(request.POST or None, request.FILES or None)
+    shift = Lab_Shifts.objects.filter(lab_owner_id=pk).last()
     context = {'lab': lab, 'patient': patient, 'form': form}
     if request.method == "POST":
         print(form)
@@ -2541,7 +2599,8 @@ def sugar_test(request, pk, pk1):
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
 
             for test in result.investigation_request.all():
-                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user,
+                                                           test_shift=shift)
 
                 saved_test.save()
 
@@ -2569,6 +2628,7 @@ def cardiac_test(request, pk, pk1):
     lab = Lab.objects.get(id=pk)
     patient = Patient.objects.get(id=pk1)
     form = CardiacForm(request.POST or None, request.FILES or None)
+    shift = Lab_Shifts.objects.filter(lab_owner_id=pk).last()
     context = {'lab': lab, 'patient': patient, 'form': form}
     if request.method == "POST":
         print(form)
@@ -2584,7 +2644,8 @@ def cardiac_test(request, pk, pk1):
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
 
             for test in result.investigation_request.all():
-                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user,
+                                                           test_shift=shift)
 
                 saved_test.save()
 
@@ -2612,6 +2673,7 @@ def reproductive_test(request, pk, pk1):
     lab = Lab.objects.get(id=pk)
     patient = Patient.objects.get(id=pk1)
     form = ReproductionForm(request.POST or None, request.FILES or None)
+    shift = Lab_Shifts.objects.filter(lab_owner_id=pk).last()
     context = {'lab': lab, 'patient': patient, 'form': form}
     if request.method == "POST":
         print(form)
@@ -2627,8 +2689,8 @@ def reproductive_test(request, pk, pk1):
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
 
             for test in result.investigation_request.all():
-                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
-
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user,
+                                                           test_shift=shift)
                 saved_test.save()
 
             return render(request, 'labApp/reprotestalert.html', {'lab': lab, 'patient': patient, 'result': result})
@@ -2655,6 +2717,7 @@ def auto_and_ca_test(request, pk, pk1):
     lab = Lab.objects.get(id=pk)
     patient = Patient.objects.get(id=pk1)
     form = AandCForm(request.POST or None, request.FILES or None)
+    shift = Lab_Shifts.objects.filter(lab_owner_id=pk).last()
     context = {'lab': lab, 'patient': patient, 'form': form}
     if request.method == "POST":
         print(form)
@@ -2670,7 +2733,8 @@ def auto_and_ca_test(request, pk, pk1):
             result.investigation_request.set(form.cleaned_data['investigation_request'] or None)
 
             for test in result.investigation_request.all():
-                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user)
+                saved_test = Test_performed.objects.create(name=test.name, price=test.cost, lab_owner=lab, created_by=request.user,
+                                                           test_shift=shift)
 
                 saved_test.save()
 
@@ -2772,6 +2836,35 @@ def update_prescription(request, pk, pk1, pk2):
 
     return render(request, 'labApp/prescriptionupdateform.html', context=context)
 
+@login_required
+def lab_shift_list(request, pk):
+    lab = Lab.objects.get(id=pk)
+    shifts = Lab_Shifts.objects.filter(lab_owner_id=pk).order_by('-id')
+    return render(request, 'labApp/shifts.html', {'lab': lab, 'shifts': shifts})
+
+
+def start_lab_shift(request, pk):
+    lab = Lab.objects.get(id=pk)
+    context = {'lab': lab}
+    if request.method == "POST":
+        name = request.POST.get('shift_name')
+        shift = Lab_Shifts.objects.create(name=name, lab_owner=lab, user=request.user)
+        context['shiftid'] = shift
+        context['created'] = True
+    return render(request, 'labApp/startshift.html', context=context)
+
+
+def shift_tests(request, pk, pk1):
+    lab = Lab.objects.get(id=pk)
+    shift = Lab_Shifts.objects.get(id=pk1)
+    tests = Test_performed.objects.filter(test_shift_id=pk1)
+    total = 0
+
+    for test in tests:
+        total = total + test.price
+
+    return render(request, 'labApp/shifttests.html', {'lab': lab, 'shift': shift, 'tests': tests, 'total': total})
+
 
 @login_required
 def all_testperformed(request, pk):
@@ -2782,3 +2875,22 @@ def all_testperformed(request, pk):
         'tests': tests
     }
     return render(request, 'labApp/alltestperformed.html', context)
+
+@login_required
+def search_patients(request, pk):
+    lab = Lab.objects.get(id=pk)
+
+    if request.method == "POST":
+        search_str = request.POST['search_str']
+        patients = Patient.objects.filter(
+            code__icontains=search_str, lab_owner=lab) | Patient.objects.filter(
+            gender__icontains=search_str, lab_owner=lab) | Patient.objects.filter(
+            contact__icontains=search_str, lab_owner=lab) | Patient.objects.filter(
+            address__icontains=search_str, lab_owner=lab) | Patient.objects.filter(
+            dob__icontains=search_str, lab_owner=lab) | Patient.objects.filter(
+            email__icontains=search_str, lab_owner=lab)
+
+        return render(request, 'labApp/patientsearch.html',
+                  {'lab': lab, 'search_str': search_str, 'patients': patients})
+    else:
+        return render(request, 'labApp/patientsearch.html', {'lab': lab})

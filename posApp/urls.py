@@ -109,6 +109,8 @@ urlpatterns = [
     path('patients/<str:pk>', views.all_patients, name="patient-page"),
     path('register_patient/<str:pk>', views.register_patient, name="register-patient"),
     path('patient_info/<str:pk>/<str:pk1>', views.patient, name="patient"),
+    path('patient_complaint/<str:pk>/<str:pk1>', views.patient_complaints, name="patient-complaints"),
+
     path('add_investigation/<str:pk>', views.new_investigation, name="new-investigation"),
     path('investigations/<str:pk>', views.investigations_list, name="investigations"),
     path('liver_function_history/<str:pk>/<str:pk1>', views.liver_patient, name="liver-patient"),
@@ -185,4 +187,12 @@ urlpatterns = [
     path('dashboard_saleinvoice/<str:pk>/<str:pk1>/<str:pk2>', views.view_dash_customerinvoice, name="dash-customer-invoice"),
     path('dashboard_supplyinvoice/<str:pk>/<str:pk1>/<str:pk2>', views.view_dash_supplyinvoice, name="dash-supply-invoice"),
     path('supplyinvoice/<str:pk>/<str:pk1>/<str:pk2>', views.view_supply_invoice, name="supply-invoice"),
+
+    path('lab_shift/<str:pk>', views.lab_shift_list, name="lab-shift"),
+    path('lab_start_shift/<str:pk>', views.start_lab_shift, name="start-lab-shift"),
+    path('lab_shift_investigations/<str:pk>/<str:pk1>', views.shift_tests, name="shift-tests"),
+
+    path('search_patient/<str:pk>', csrf_exempt(views.search_patients), name="search-patients"),
+
+    path('search_customers/<str:pk>', csrf_exempt(views.search_wholesale_customers), name="search-customers"),
 ]

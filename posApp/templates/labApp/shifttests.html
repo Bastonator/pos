@@ -1,23 +1,21 @@
-{% extends "posApp/base.html" %}  {% block pageContent %}
-{% if branch %}
+{% extends "labApp/base.html" %}  {% block pageContent %}
+{% if lab %}
 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
     <div class="mdc-card py-2">
         <div class="d-flex justify-content-between align-items-center">
-            <h4 class="card-title mb-0">Shift Items sold</h4>
+            <h4 class="card-title mb-0">Shift Investigations</h4>
             <div class="text-start">
-                {% if shift %}
-                    Total Sales: GMD{{ shift.shift_sales }}
-                {% endif %}
+                Total Investigations Sales: GMD{{ total }}
             </div>
         </div>
     </div>
 </div>
 <div>
-<button onclick="window.print()" class="btn btn-outline-dark" id="print" style="border: none; width: 140px; height: 60px;"> Print Sold Items
+<button onclick="window.print()" class="btn btn-outline-dark" id="print" style="border: none; width: 140px; height: 60px;"> Print Investigations
 </button>
 </div>
 <button id="copy-to-clipboard" class="btn btn-outline-dark" style="border: none; background-color: black; color: white; width: 140px; height: 60px;  margin-left: 22px;">
-    Copy sales
+    Copy Investigations
 </button>
 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
     <div class="mdc-card">
@@ -29,37 +27,25 @@
                     <col width="25%">
                     <col width="10%">
                     <col width="10%">
-                    <col width="10%">
-                    <col width="10%">
-                    <col width="10%">
-
                 </colgroup>
                 <thead>
                     <tr>
                         <th class="text-center py-1">#</th>
-                        <th class="text-center py-1">Sale ID</th>
-                        <th class="text-center py-1">Product</th>
+                        <th class="text-center py-1">Test</th>
                         <th class="text-center py-1">Price</th>
-                        <th class="text-center py-1">Quantity</th>
-                        <th class="text-center py-1">Total</th>
-                        <th class="text-center py-1">Date Sold</th>
-                        <th class="text-center py-1">Sold by</th>
-                        <th class="text-center py-1">Remaining stock</th>
+                        <th class="text-center py-1">Date added</th>
+                        <th class="text-center py-1">technician</th>
                     </tr>
                 </thead>
                 <tbody>
-                {% if sale_data %}
-                    {% for sold in sale_data %}
+                {% if tests %}
+                    {% for sold in tests %}
                     <tr>
                         <td class="px-2 py-1 text-center">{{ sold.id }}</td>
-                        <td class="px-2 py-1 text-start">{{ sold.sale_id }}</td>
-                        <td class="px-2 py-1 text-start">{{ sold.product_id }}</td>
+                        <td class="px-2 py-1 text-start">{{ sold.name }}</td>
                         <td class="px-2 py-1 text-end">D{{ sold.price }}</td>
-                        <td class="px-2 py-1 text-end">{{ sold.qty }}</td>
-                        <td class="px-2 py-1 text-center">D{{ sold.total }}</td>
                         <td class="px-2 py-1 text-center">{{ sold.date_added|date:'Y-m-d H:i' }}</td>
-                        <td class="px-2 py-1 text-center">{{ sold.user }}</td>
-                        <td class="px-2 py-1 text-start">{{ sold.product_id.stock }}</td>
+                        <td class="px-2 py-1 text-center">{{ sold.created_by }}</td>
                     </tr>
                     {% endfor %}
                 {% endif %}

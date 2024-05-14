@@ -261,18 +261,30 @@ class Investigations(models.Model):
         return self.name
 
 
+class Lab_Shifts(models.Model):
+    name = models.CharField(max_length=200)
+    user = models.ForeignKey(Users, null=True, related_name='labshiftuser', on_delete=models.CASCADE)
+    lab_owner = models.ForeignKey(Lab, null=True, related_name='shiftlab', on_delete=models.CASCADE)
+    date_added = models.DateTimeField(default=timezone.now)
+    shift_sales = models.IntegerField(null=True)
+
+    def __str__(self):
+        return self.name
+
 class Test_performed(models.Model):
     name = models.TextField(blank=True, null=True)
-    price = models.TextField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
     date_added = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(Users, related_name="testsperformer", on_delete=models.DO_NOTHING, null=True)
     lab_owner = models.ForeignKey(Lab, null=True, related_name='labtestperformed', on_delete=models.CASCADE)
+    test_shift = models.ForeignKey(Lab_Shifts, null=True, related_name='testshift', on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return self.name
 
 
 class Patient(models.Model):
+    code = models.CharField(max_length=100, null=True, blank=True)
     firstname = models.TextField(blank=True, null=True)
     middlename = models.TextField(blank=True, null=True)
     lastname = models.TextField(blank=True, null=True)

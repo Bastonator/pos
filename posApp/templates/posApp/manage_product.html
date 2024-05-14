@@ -54,10 +54,6 @@
                 <input type="date" name="date" id="date" class="form-control form-control-sm rounded-0" value="{% if product.expiry_date %}{{product.expiry_date |date:'Y-m-d'}}{% endif %}" required>{% if product.expiry_date %}{{product.expiry_date}}{% endif %}
             </div>
             <div class="form-group mb-3">
-                <label for="formFile" class="control-label">Product image</label>
-                <input type="file" name="img" id="formFile"  class="form-control form-control-sm rounded-0" value="{% if product.image %}{{product.image}}{% endif %}">{% if product.image %}{{product.image.url}}{% else %} NO IMAGE {% endif %}
-            </div>
-            <div class="form-group mb-3">
                 <label for="status" class="control-label">Status</label>
                 <select name="status" id="status" class="form-select form-select-sm rounded-0" required>
             {% if product.status and product.status == 1 %}

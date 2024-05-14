@@ -4,21 +4,9 @@
     <div class="mdc-card py-2">
         <div class="d-flex justify-content-between align-items-center">
             <h4 class="card-title mb-0">Customers</h4>
-            <div class="text-start">
-
-            </div>
         </div>
     </div>
 </div>
-<div>
-<button id="print" style="border-width: 0px; width: 140px; height: 60px;" onclick="window.print()"> Print Customer list
-</button>
-</div>
-<button id="copy-to-clipboard" style="border-width: 0px; width: 140px; height: 60px; color: white; background-color: black; margin-left: 19px;">
-    Copy Customer list
-</button>
-
-<br>
 
 <div class="container-fluid" align="right;" style="display: inline-block;">
 
@@ -32,8 +20,10 @@
         </div>
     </form>
 </div>
+
 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
     <div class="mdc-card">
+                          {% if customer %}
         <div class="table-responsive">
             <table class="table table-striped table-bordered" id="content-to-copy">
                 <colgroup>
@@ -52,16 +42,16 @@
                         <th class="text-center py-1">#</th>
                         <th class="text-center py-1">Customer Name</th>
                         <th class="text-center py-1">Customer address</th>
-                        <th class="text-center py-1">Customer Price</th>
-                        <th class="text-center py-1">Customer Quantity</th>
+                        <th class="text-center py-1">Customer Phone</th>
+                        <th class="text-center py-1">Customer Email</th>
                         <th class="text-center py-1">Date Added</th>
+                        <th class="text-center py-1">Added by</th>
                         <th class="text-center py-1">View customer History</th>
                         <th class="text-center py-1">Sell to customer</th>
                     </tr>
                 </thead>
                 <tbody>
-                {% if customers %}
-                    {% for customer in customers %}
+                    {% for customer in customer %}
                     <tr>
                         <td class="px-2 py-1 text-center">{{ customer.id }}</td>
                         <td class="px-2 py-1 text-start">{{ customer.name }}</td>
@@ -69,6 +59,7 @@
                         <td class="px-2 py-1 text-end">{{ customer.phone }}</td>
                         <td class="px-2 py-1 text-end">{{ customer.email }}</td>
                         <td class="px-2 py-1 text-center">{{ customer.date_added|date:'Y-m-d H:i' }}</td>
+                        <td class="px-2 py-1 text-center">{{ customer.created_by }}</td>
                         <td class="px-2 py-1 text-center">
                             <a href="{% url 'customer-sales-page' branch.pk customer.pk %}">
                                 <button class="btn btn-outline-secondary">
@@ -84,9 +75,11 @@
                     </tr>
                     {% endfor %}
                 {% else %}
-                <h4>
-                  No customers connection found for this branch.
-                </h4>
+                <center>
+                    <h4 style="color: slategray;">
+                        NO RESULTS FOUND FOR YOUR SEARCH, PLEASE TRY AGAIN WITH ANOTHER KEYWORD/S.
+                    </h4>
+                </center>
                 {% endif %}
                 </tbody>
             </table>

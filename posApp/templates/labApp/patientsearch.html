@@ -14,7 +14,6 @@
         </div>
     </div>
 </div>
-
 <div class="container-fluid" align="right;" style="display: inline-block;">
 
     <form action="{% url 'search-patients' lab.pk %}" method="POST" style="width: 1400%; border-radius: 20px;">
@@ -29,6 +28,7 @@
 </div>
 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
     <div class="mdc-card">
+                  {% if patients %}
         <div class="table-responsive">
             <table class="table table-striped table-bordered">
                 <colgroup>
@@ -79,6 +79,13 @@
                     {% endfor %}
                 </tbody>
             </table>
+          {% else %}
+                <center>
+                    <h4 style="color: slategray;">
+                        NO RESULTS FOUND FOR YOUR SEARCH, PLEASE TRY AGAIN WITH ANOTHER KEYWORD/S.
+                    </h4>
+                </center>
+            {% endif %}
         </div>
     </div>
 </div>
