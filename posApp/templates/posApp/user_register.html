@@ -23,10 +23,13 @@
             <div class="login d-flex align-items-center py-5">
                 <div class="container">
                     <div class="row">
+                        <h5 style="color: tomato;">
+                            Please note that as you create an account, don't create resources(Branches and Labs) without calling +220 3169993, because they will be deleted.
+                        </h5>
                         <div class="col-12 col-lg-7  mx-auto">
                              <form class="account-form p-4 rounded col-lg-10 mx-auto" action="." method="post">
                                 {% csrf_token %}
-                                <h3 class="mb-2 font-weight-bold">Create a Account</h3>
+                                <h3 class="mb-2 font-weight-bold">Create an Account</h3>
                                 <p class="mb-4">It only takes a minute.</p>
                                 {% if form.errors %}
                                 <p>Please correct the following errors:</p>
