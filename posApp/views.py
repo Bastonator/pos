@@ -852,6 +852,10 @@ def save_product(request, pk):
     else:
         category = Category.objects.filter(id=data['category_id']).first()
         try:
+
+            suppliers = request.POST.get('suppliers')
+            supplier_forchange = Supplier.objects.get(id=suppliers)
+
             if (data['id']).isnumeric() and int(data['id']) > 0:
                 save_product = Products.objects.filter(id=data['id']).update(code=data['code'], category_id=category,
                                                                              name=data['name'],
@@ -861,18 +865,19 @@ def save_product(request, pk):
                                                                              status=data['status'],
                                                                              stock=int(data['stock']),
                                                                              expiry_date=request.POST.get('date'),
-                                                                             suppliers=data['suppliers'])
+                                                                             suppliers=supplier_forchange)
             else:
                 save_product = Products(code=data['code'], category_id=category, name=data['name'],
                                         description=data['description'], price=float(data['price']),
                                         cost_price=float(data['cost_price']),
                                         status=data['status'], stock=int(data['stock']), branch_owner=branch,
-                                        expiry_date=request.POST.get('date'), suppliers=data['suppliers'])
+                                        expiry_date=request.POST.get('date'), suppliers=supplier_forchange)
                 save_product.save()
             resp['status'] = 'success'
             messages.success(request, 'Product Successfully saved.')
         except:
             resp['status'] = 'failed'
+            raise ValueError()
     return HttpResponse(json.dumps(resp), content_type="application/json")
 
 
