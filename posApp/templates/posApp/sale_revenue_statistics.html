@@ -2,11 +2,6 @@
 
   {% now "Y" as current_year %}
 
-
-<h4>
-    Look for trends!!!
-</h4>
-
 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12 just-a-list" style="margin-top: -10px;">
     <div class="mdc-card">
     <div class="container">
@@ -16,7 +11,7 @@
         <input type="submit" value="Load" name="_load">
       </form>
       <div class="row">
-        <div class="col-6">
+        <div class="col-6" style="width: 1000px;">
           <canvas id="salesChart"></canvas>
         </div>
       </div>
@@ -36,7 +31,7 @@
       <script>
   $(document).ready(function() {
     $.ajax({
-      url: "/wholesale_chart/filter-options/",
+      url: "/sale_revenue_chart/filter-options/",
       type: "GET",
       dataType: "json",
       success: (jsonResponse) => {
@@ -87,7 +82,7 @@
   }
 
   function loadAllCharts(year) {
-    loadChart(salesChart, "{% url 'whole-chart-product-sales' product_clicked.id current_year %}");
+    loadChart(salesChart, "{% url 'sale-revenue-chart' branch.pk current_year %}");
   }
 </script>
     </div>

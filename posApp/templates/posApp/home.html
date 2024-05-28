@@ -1,4 +1,10 @@
 {% extends "posApp/base.html" %} {% load humanize %} {% block pageContent %}
+<style>
+    .btn:hover{
+        color: white;
+        background-color: blue;
+    }
+</style>
 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
     <div class="mdc-card">
         <div class="d-flex justify-content-between">
@@ -10,14 +16,15 @@
     <hr class="w-100">
 </div>
 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-3-desktop mdc-layout-grid__cell--span-3-tablet">
-    <div class="mdc-card info-card info-card--success">
+    <div class="mdc-card info-card info-card--light">
         <div class="card-inner">
-            <h5 class="card-title">Categories</h5>
-            <h5 class="font-weight-light pb-2 mb-1 border-bottom">{{ categories|intcomma }}</h5>
-            <p class="tx-12 text-muted">Over All Count of Categories</p>
-            <div class="card-icon-wrapper">
-                <i class="material-icons">list</i>
-            </div>
+            <h5 class="card-title">Revenue Growth</h5>
+            <p class="tx-12 text-muted">How much has revenue grown month over month</p>
+            <a href="{% url 'sale-revenue' pk=branch.pk %}">
+            <button class="btn" style="border-color: blue; border-width: 1px; border-radius: 20px; transition: 0.5s;">
+                View revenue chart
+            </button>
+            </a>
         </div>
     </div>
 </div>
@@ -57,5 +64,76 @@
         </div>
     </div>
 </div>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-3-desktop mdc-layout-grid__cell--span-3-tablet">
+    <div class="mdc-card info-card info-card--dark">
+        <div class="card-inner">
+            <h5 class="card-title">Today's Wholesales</h5>
+            <h5 class="font-weight-light pb-2 mb-1 border-bottom">GMD{{ total_wholesales|intcomma }}</h5>
+            <p class="tx-12 text-muted">Total Wholesales Today</p>
+            <div class="card-icon-wrapper">
+                <i class="mdi mdi-cash-multiple"></i>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-3-desktop mdc-layout-grid__cell--span-3-tablet">
+    <div class="mdc-card info-card info-card--secondary">
+        <div class="card-inner">
+            <h5 class="card-title">Current Shift Sales</h5>
+            <h5 class="font-weight-light pb-2 mb-1 border-bottom">GMD{{ total_sales_shift|intcomma }}</h5>
+            <p class="tx-12 text-muted">Total Sales Current Shift</p>
+            <div class="card-icon-wrapper">
+                <i class="mdi mdi-cash-multiple"></i>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-3-desktop mdc-layout-grid__cell--span-3-tablet">
+    <div class="mdc-card info-card info-card--success">
+        <div class="card-inner">
+            <h5 class="card-title">Current Shift Wholesales</h5>
+            <h5 class="font-weight-light pb-2 mb-1 border-bottom">GMD{{ total_wholesales_shift|intcomma }}</h5>
+            <p class="tx-12 text-muted">Total Wholesales Current Shift</p>
+            <div class="card-icon-wrapper">
+                <i class="mdi mdi-cash-multiple"></i>
+            </div>
+        </div>
+    </div>
+</div>
+{% if user.is_superuser %}
+                    {% if branch1 %}
+                        {% if user %}
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-3-desktop mdc-layout-grid__cell--span-3-tablet">
+    <div class="mdc-card info-card info-card--warning">
+        <div class="card-inner">
+            <h5 class="card-title">Manage Users</h5>
+            <p class="tx-12 text-muted">You can manage users that have access to this branch.</p>
+            <a href="{% url 'users' pk=branch1.pk pk1=user.pk %}">
+            <button class="btn" style="border-color: blue; border-width: 1px; border-radius: 20px; transition: 0.5s;">
+                Manage users
+            </button>
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+                    {% elif branch %}
+                        {% if user %}
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-3-desktop mdc-layout-grid__cell--span-3-tablet">
+    <div class="mdc-card info-card info-card--warning">
+        <div class="card-inner">
+            <h5 class="card-title">Manage Users</h5>
+            <p class="tx-12 text-muted">You can manage users that have access to this branch.</p>
+            <a href="{% url 'users' pk=branch.pk pk1=user.pk %}">
+            <button class="btn" style="border-color: blue; border-width: 1px; border-radius: 20px; transition: 0.5s;">
+                Manage users
+            </button>
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+                    {% endif %}
+                {% endif %}
 
 {% endblock pageContent %}

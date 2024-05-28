@@ -25,7 +25,7 @@
 </style>
 
 <!-- partial:partials/_sidebar.html -->
-<aside id="nav" class="mdc-drawer mdc-drawer--dismissible mdc-drawer--open bg-gradient" style="border-radius: 8px; transition: 1.0s; color: white; background-color: LightGray;">
+<aside id="nav" class="mdc-drawer mdc-drawer--dismissible mdc-drawer--open bg-gradient" style="border-radius: 8px; transition: 1.0s; color: white; background-color: white;">
     <div class="mdc-drawer__header border-bottom border-light">
         {% if branch1 %}
         <a href="{% url 'home-page' pk=branch1.pk %}" class="brand-logo">
@@ -133,25 +133,6 @@
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i> Inventory
                     </a>
                 </div>
-                {% endif %}
-                {% if user.is_superuser %}
-                    {% if branch1 %}
-                        {% if user %}
-                    <div class="mdc-list-item mdc-drawer-item" style="border-radius: 20px;">
-                        <a class="mdc-drawer-link" href="{% url 'users' pk=branch1.pk pk1=user.pk %}">
-                            <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i>Manage Users
-                        </a>
-                    </div>
-                        {% endif %}
-                    {% elif branch %}
-                        {% if user %}
-                    <div class="mdc-list-item mdc-drawer-item" style="border-radius: 20px;">
-                        <a class="mdc-drawer-link" href="{% url 'users' pk=branch.pk pk1=user.pk %}">
-                            <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true"></i>Manage Users
-                        </a>
-                    </div>
-                        {% endif %}
-                    {% endif %}
                 {% endif %}
                 {% if branch1 %}
                 <div class="mdc-list-item mdc-drawer-item" style="border-radius: 20px;">

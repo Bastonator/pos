@@ -204,6 +204,7 @@ def home(request, pk):
         current_day = now.strftime("%d")
         categories = len(Category.objects.filter(branch_owner_id=pk))
         products = len(Products.objects.filter(branch_owner_id=pk))
+        shift = Shifts.objects.filter(branch_owner_id=pk).last()
         transaction = len(Sales.objects.filter(
             date_added__year=current_year,
             date_added__month=current_month,
@@ -214,19 +215,74 @@ def home(request, pk):
             date_added__month=current_month,
             date_added__day=current_day
         ).filter(branch_owner_id=pk)
+        today_sales_shift = Sales.objects.filter(branch_owner_id=pk, shift_sold=shift)
+        today_wholesales = CustomerSales.objects.filter(
+            date_added__year=current_year,
+            date_added__month=current_month,
+            date_added__day=current_day
+        ).filter(branch_owner_id=pk)
+        today_wholesales_shift = CustomerSales.objects.filter(branch_owner_id=pk, shift_sold=shift)
         total_sales = sum(today_sales.values_list('grand_total', flat=True))
+        total_sales_shift = sum(today_sales_shift.values_list('grand_total', flat=True))
+        total_wholesales_shift = sum(today_wholesales_shift.values_list('grand_total', flat=True))
+        total_wholesales = sum(today_wholesales.values_list('grand_total', flat=True))
         context = {
             'page_title': 'Home',
             'categories': categories,
             'products': products,
             'transaction': transaction,
             'total_sales': total_sales,
+            'total_sales_shift': total_sales_shift,
+            'total_wholesales_shift': total_wholesales_shift,
+            'total_wholesales': total_wholesales,
             'branch': branch
         }
         return render(request, 'posApp/home.html', context)
     else:
         return redirect('login-me')
 
+def get_revenue_filter_options(request):
+    grouped_sales = Sales.objects.annotate(year=ExtractYear("date_added")).values("year").order_by("-year").distinct()
+    options = [order["year"] for order in grouped_sales]
+
+    return JsonResponse({
+        "options": options,
+    })
+
+
+def get_sale_revenue_chart(request, pk, year):
+    now = datetime.now()
+    current_year = now.strftime("%Y")
+    current_month = now.strftime("%m")
+    current_day = now.strftime("%d")
+    branch = Branch.objects.get(id=pk)
+
+    sale_items = Sales.objects.filter(branch_owner_id=branch, date_added__year=year).annotate(quantity=Sum('grand_total')).annotate(month=ExtractMonth("date_added")) \
+        .values("month").annotate(average=Sum('grand_total')).values("month", "average").order_by("month")
+
+    sales_dict = get_year_dict()
+
+    for group in sale_items:
+        sales_dict[months[group["month"] - 1]] = round(group["average"], 2)
+
+    return JsonResponse({
+        "title": f"Sales in {year}",
+        "data": {
+            "labels": list(sales_dict.keys()),
+            "datasets": [{
+                "label": "Quantity",
+                "backgroundColor": colorPrimary,
+                "borderColor": colorPrimary,
+                "data": list(sales_dict.values()),
+            }]
+        },
+    })
+
+
+def sale_revenue_statistics_view(request, pk):
+    branch = Branch.objects.get(id=pk)
+    now = datetime.now()
+    return render(request, "posApp/sale_revenue_statistics.html", {'branch': branch, 'now': now})
 
 def about(request):
     context = {

@@ -272,6 +272,7 @@ class Lab_Shifts(models.Model):
         return self.name
 
 class Test_performed(models.Model):
+    id = models.ForeignKey(Investigations, primary_key=True, null=False, blank=True, related_name='testid', on_delete=models.DO_NOTHING)
     name = models.TextField(blank=True, null=True)
     price = models.FloatField(blank=True, null=True)
     date_added = models.DateTimeField(default=timezone.now)

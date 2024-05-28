@@ -195,4 +195,8 @@ urlpatterns = [
     path('search_patient/<str:pk>', csrf_exempt(views.search_patients), name="search-patients"),
 
     path('search_customers/<str:pk>', csrf_exempt(views.search_wholesale_customers), name="search-customers"),
+
+    path("sale_revenue_growth/<str:pk>", views.sale_revenue_statistics_view, name="sale-revenue"),
+    path("sale_revenue_chart/filter-options/", views.get_revenue_filter_options, name="sale-revenue-filter-options"),
+    path("chart/sale_revenue/<str:pk>/<int:year>/", views.get_sale_revenue_chart, name="sale-revenue-chart"),
 ]
